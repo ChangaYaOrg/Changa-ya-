@@ -1,6 +1,13 @@
 <!DOCTYPE html>  
 <html lang="es">  
 <head>  
+    <script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabaseUrl = 'https://yyfldvialbkozrclylxg.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpZmxkdmlhbGJrb3pyY2x5bHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzOTExNDEsImV4cCI6MjA1NTk2NzE0MX0.UtEbmWK-doDGevl0BMi_s-aKirBnvaMThc6tkENIFg4'
+  window.supabase = createClient(supabaseUrl, supabaseKey)
+</script>
+
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>Changa Ya - Trabajos y Servicios en Argentina</title>  
