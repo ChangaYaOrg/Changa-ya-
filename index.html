@@ -668,21 +668,38 @@
         openModal('modalContact');  
     }  
   
-    function handlePublishSubmit(e) {  
-        e.preventDefault();  
-  
-        const newChanga = {  
-            id: Date.now(),  
-            title: document.getElementById('pubTitle').value,  
-            category: document.getElementById('pubCategory').value,  
-            province: document.getElementById('pubProvince').value,  
-            city: document.getElementById('pubCity').value,  
-            budget: parseFloat(document.getElementById('pubBudget').value) || 0,  
-            description: document.getElementById('pubDescription').value,  
-            clientName: currentUser ? currentUser.email.split('@')[0] : (document.getElementById('pubName').value + " (Usuario)"),  
-            clientPhone: document.getElementById('pubPhone').value,  
-            date: "Recién publicado"  
-        };  
+    async function handlePublishSubmit(e) {
+    e.preventDefault();
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    
+    const newChanga = {
+        title: document.getElementById('pubTitle').value,
+        category: document.getElementById('pubCategory').value,
+        province: document.getElementById('pubProvince').value,
+        city: document.getElementById('pubCity').value,
+        budget: parseFloat(document.getElementById('pubBudget').value) || 0,
+        description: document.getElementById('pubDescription').value,
+        clientName: currentUser ? currentUser.email.split('@')[0] : "Usuario",
+        clientPhone: document.getElementById('pubPhone').value,
+        date: "Recién publicado"
+    };
+
+    // Guardar en Supabase
+    const { error } = await supabase.from('publicaciones').insert([newChanga]);
+    if (error) {
+        console.error("Error al guardar en Supabase:", error);
+    }
+
+    // Guardar también en local para la vista inmediata
+    userChangas.unshift(newChanga);
+    localStorage.setItem('changa_list', JSON.stringify(userChangas));
+    changas = [...userChangas, ...defaultChangas];
+    
+    renderChangas();
+    closePublishModal();
+    alert("¡Publicación realizada con éxito!");
+}
+
   
         userChangas.unshift(newChanga);  
         localStorage.setItem('changa_list', JSON.stringify(userChangas));  
