@@ -1,0 +1,701 @@
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Changa Ya - Trabajos y Servicios en Argentina</title>  
+    <!-- Tailwind CSS -->  
+    <script src="https://cdn.tailwindcss.com"></script>  
+    <!-- FontAwesome Icons -->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+    <!-- Google Fonts -->  
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">  
+    <script>  
+        tailwind.config = {  
+            theme: {  
+                extend: {  
+                    colors: {  
+                        celeste: {  
+                            50: '#f0f9ff',  
+                            100: '#e0f2fe',  
+                            400: '#38bdf8',  
+                            500: '#0ea5e9',  
+                            600: '#0284c7',  
+                            700: '#0369a1',  
+                        },  
+                        sol: '#f59e0b'  
+                    },  
+                    fontFamily: {  
+                        sans: ['Inter', 'sans-serif'],  
+                    }  
+                }  
+            }  
+        }  
+    </script>  
+    <style>  
+        .glass-card {  
+            background: rgba(255, 255, 255, 0.95);  
+            backdrop-filter: blur(10px);  
+        }  
+        .animate-fade-in {  
+            animation: fadeIn 0.3s ease-in-out;  
+        }  
+        @keyframes fadeIn {  
+            from { opacity: 0; transform: translateY(8px); }  
+            to { opacity: 1; transform: translateY(0); }  
+        }  
+    </style>  
+</head>  
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">  
+  
+<!-- TOP HEADER / NAVBAR -->  
+<header class="bg-gradient-to-r from-celeste-600 via-celeste-500 to-sky-600 text-white shadow-md sticky top-0 z-30">  
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">  
+        <!-- Logo Brand -->  
+        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="resetFilters()">  
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">  
+                <i class="fa-solid fa-briefcase text-celeste-600 text-lg sm:text-xl"></i>  
+            </div>  
+            <div>  
+                <div class="flex items-center space-x-1">  
+                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-white">CHANGA</span>  
+                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-sol">YA!</span>  
+                </div>  
+                <p class="text-[10px] sm:text-xs text-celeste-100 font-medium tracking-wide">Trabajo independiente en Argentina 🇦🇷</p>  
+            </div>  
+        </div>  
+  
+        <!-- User / Action Buttons -->  
+        <div class="flex items-center space-x-2">  
+            <button onclick="openModal('modalPublish')" class="bg-sol hover:bg-amber-600 text-slate-900 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-1 transform active:scale-95">  
+                <i class="fa-solid fa-circle-plus text-sm sm:text-base"></i>  
+                <span class="hidden sm:inline">Publicar</span>  
+                <span class="sm:hidden">Publicar</span>  
+            </button>  
+              
+            <button id="btnUserAuth" onclick="handleAuthClick()" class="bg-white/10 hover:bg-white/25 text-white border border-white/30 font-semibold px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm transition flex items-center space-x-1.5 max-w-[120px] sm:max-w-[160px] truncate">  
+                <i class="fa-solid fa-user-circle text-base sm:text-lg flex-shrink-0"></i>  
+                <span id="txtUserAuth" class="truncate">Ingresar</span>  
+            </button>  
+        </div>  
+    </div>  
+</header>  
+  
+<!-- HERO / BANNER PRINCIPAL Y GUÍA RÁPIDA -->  
+<section class="bg-gradient-to-b from-celeste-600 to-sky-700 text-white py-6 sm:py-8 px-4 shadow-inner">  
+    <div class="max-w-4xl mx-auto text-center space-y-3">  
+        <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-celeste-100">  
+            🇦🇷 Plataforma 100% Gratuita y Libre  
+        </span>  
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">  
+            Encontrá laburo o contratá al toque  
+        </h1>  
+        <p class="text-xs sm:text-sm text-celeste-100 max-w-xl mx-auto">  
+            Conectamos personas que necesitan resolver un trabajo rápido con trabajadores independientes de todo el país. Sin comisiones ni intermediarios.  
+        </p>  
+  
+        <!-- Tarjetas de Explicación / Cómo Funciona -->  
+        <div class="grid grid-cols-3 gap-2 pt-3 max-w-2xl mx-auto text-left">  
+            <div class="bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/15">  
+                <div class="text-sol font-black text-sm mb-0.5">1. Buscá</div>  
+                <p class="text-[10px] sm:text-xs text-celeste-100 leading-tight">Filtrá por tu provincia o categoría de interés.</p>  
+            </div>  
+            <div class="bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/15">  
+                <div class="text-sol font-black text-sm mb-0.5">2. Contactá</div>  
+                <p class="text-[10px] sm:text-xs text-celeste-100 leading-tight">Hablá directamente por WhatsApp con el cliente.</p>  
+            </div>  
+            <div class="bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/15">  
+                <div class="text-sol font-black text-sm mb-0.5">3. Acordá</div>  
+                <p class="text-[10px] sm:text-xs text-celeste-100 leading-tight">Realizá la changa y cobrá tu dinero en el día.</p>  
+            </div>  
+        </div>  
+    </div>  
+</section>  
+  
+<!-- FILTROS DE BÚSQUEDA -->  
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 z-20 relative">  
+    <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-5 border border-slate-200/80">  
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">  
+              
+            <!-- Buscador Keyword -->  
+            <div class="relative">  
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">¿Qué buscas?</label>  
+                <div class="relative">  
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>  
+                    <input type="text" id="searchKeyword" oninput="applyFilters()" placeholder="Ej. Armar mueble, pintura..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500 transition">  
+                </div>  
+            </div>  
+  
+            <!-- Filtro Provincia -->  
+            <div>  
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Provincia</label>  
+                <div class="relative">  
+                    <i class="fa-solid fa-location-dot absolute left-3 top-3 text-slate-400 text-sm"></i>  
+                    <select id="filterProvince" onchange="applyFilters()" class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500 transition appearance-none">  
+                        <option value="TODAS">Todas las Provincias</option>  
+                        <option value="Buenos Aires">Buenos Aires</option>  
+                        <option value="CABA">CABA (Ciudad Autónoma)</option>  
+                        <option value="Catamarca">Catamarca</option>  
+                        <option value="Chaco">Chaco</option>  
+                        <option value="Chubut">Chubut</option>  
+                        <option value="Córdoba">Córdoba</option>  
+                        <option value="Corrientes">Corrientes</option>  
+                        <option value="Entre Ríos">Entre Ríos</option>  
+                        <option value="Formosa">Formosa</option>  
+                        <option value="Jujuy">Jujuy</option>  
+                        <option value="La Pampa">La Pampa</option>  
+                        <option value="La Rioja">La Rioja</option>  
+                        <option value="Mendoza">Mendoza</option>  
+                        <option value="Misiones">Misiones</option>  
+                        <option value="Neuquén">Neuquén</option>  
+                        <option value="Río Negro">Río Negro</option>  
+                        <option value="Salta">Salta</option>  
+                        <option value="San Juan">San Juan</option>  
+                        <option value="San Luis">San Luis</option>  
+                        <option value="Santa Cruz">Santa Cruz</option>  
+                        <option value="Santa Fe">Santa Fe</option>  
+                        <option value="Santiago del Estero">Santiago del Estero</option>  
+                        <option value="Tierra del Fuego">Tierra del Fuego</option>  
+                        <option value="Tucumán">Tucumán</option>  
+                    </select>  
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>  
+                </div>  
+            </div>  
+  
+            <!-- Filtro Categoría -->  
+            <div>  
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Categoría</label>  
+                <div class="relative">  
+                    <i class="fa-solid fa-list-check absolute left-3 top-3 text-slate-400 text-sm"></i>  
+                    <select id="filterCategory" onchange="applyFilters()" class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500 transition appearance-none">  
+                        <option value="TODAS">Todas las Categorías</option>  
+                        <option value="Muebles y Carpintería">Muebles y Carpintería</option>  
+                        <option value="Construcción y Albañilería">Construcción y Albañilería</option>  
+                        <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>  
+                        <option value="Jardinería y Poda">Jardinería y Poda</option>  
+                        <option value="Electricidad y Plomería">Electricidad y Plomería</option>  
+                        <option value="Pintura">Pintura</option>  
+                        <option value="Fletes y Traslados">Fletes y Traslados</option>  
+                        <option value="Reparaciones / Varios">Reparaciones / Varios</option>  
+                    </select>  
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>  
+                </div>  
+            </div>  
+  
+            <!-- Botón Resetear -->  
+            <div class="flex items-end">  
+                <button onclick="resetFilters()" class="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center justify-center space-x-2 border border-slate-200">  
+                    <i class="fa-solid fa-rotate-left text-xs"></i>  
+                    <span>Limpiar Filtros</span>  
+                </button>  
+            </div>  
+  
+        </div>  
+    </div>  
+</section>  
+  
+<!-- LISTA PRINCIPAL DE CHANGAS -->  
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">  
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">  
+        <div>  
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">  
+                <span>Changas de Ejemplo y Disponibles</span>  
+                <span id="badgeCount" class="bg-celeste-100 text-celeste-700 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>  
+            </h2>  
+            <p class="text-xs text-slate-500">Publicaciones reales y de ejemplo actualizadas en tiempo real.</p>  
+        </div>  
+          
+        <div class="flex items-center space-x-2 text-xs font-medium text-slate-500">  
+            <span>Estado:</span>  
+            <span class="text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">🟢 Activo</span>  
+        </div>  
+    </div>  
+  
+    <!-- Grid Container de Tarjetas -->  
+    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>  
+  
+    <!-- Estado Vacío -->  
+    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm">  
+        <div class="w-16 h-16 bg-celeste-50 text-celeste-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">  
+            <i class="fa-solid fa-folder-open"></i>  
+        </div>  
+        <h3 class="text-lg font-bold text-slate-800 mb-1">No encontramos changas con esos filtros</h3>  
+        <p class="text-sm text-slate-500 max-w-md mx-auto mb-4">Intentá cambiar la provincia, categoría o probá buscar otra palabra clave.</p>  
+        <button onclick="resetFilters()" class="bg-celeste-600 text-white font-semibold text-xs px-4 py-2 rounded-xl shadow hover:bg-celeste-700 transition">  
+            Mostrar todas las changas  
+        </button>  
+    </div>  
+</main>  
+  
+<!-- FOOTER -->  
+<footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-auto">  
+    <div class="max-w-7xl mx-auto px-4 text-center space-y-3">  
+        <div class="flex justify-center items-center space-x-2">  
+            <span class="font-black text-white text-base">CHANGA</span>  
+            <span class="font-black text-sol text-base">YA!</span>  
+        </div>  
+        <p class="max-w-md mx-auto text-slate-400">Plataforma libre para conectar personas que necesitan realizar un trabajo rápido con trabajadores independientes de toda Argentina.</p>  
+        <p class="text-slate-500">© 2026 Changa Ya Argentina - Red de Trabajo Independiente.</p>  
+    </div>  
+</footer>  
+  
+<!-- MODAL 1: INICIO DE SESIÓN / REGISTRO DIRECTO -->  
+<div id="modalAuth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">  
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in border border-slate-100">  
+        <div class="bg-gradient-to-r from-celeste-600 to-sky-600 p-5 text-white flex justify-between items-center">  
+            <div>  
+                <h3 class="font-bold text-lg">Ingresar o Registrarse</h3>  
+                <p class="text-xs text-celeste-100">Acceso rápido y sin vueltas</p>  
+            </div>  
+            <button onclick="closeModal('modalAuth')" class="text-white/80 hover:text-white text-xl">  
+                <i class="fa-solid fa-xmark"></i>  
+            </button>  
+        </div>  
+  
+        <form id="formAuth" onsubmit="handleAuthSubmit(event)" class="p-6 space-y-4">  
+            <div>  
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">¿Cuál es tu objetivo?</label>  
+                <div class="grid grid-cols-2 gap-2">  
+                    <label class="cursor-pointer">  
+                        <input type="radio" name="userRole" value="WORKER" checked class="peer sr-only">  
+                        <div class="p-3 border-2 border-slate-200 rounded-xl text-center peer-checked:border-celeste-500 peer-checked:bg-celeste-50 transition hover:border-slate-300">  
+                            <i class="fa-solid fa-person-digging text-celeste-600 text-lg mb-1 block"></i>  
+                            <span class="text-xs font-bold text-slate-800 block">Busco Changa</span>  
+                            <span class="text-[10px] text-slate-500">Quiero trabajar</span>  
+                        </div>  
+                    </label>  
+                    <label class="cursor-pointer">  
+                        <input type="radio" name="userRole" value="CLIENT" class="peer sr-only">  
+                        <div class="p-3 border-2 border-slate-200 rounded-xl text-center peer-checked:border-sol peer-checked:bg-amber-50 transition hover:border-slate-300">  
+                            <i class="fa-solid fa-bullhorn text-sol text-lg mb-1 block"></i>  
+                            <span class="text-xs font-bold text-slate-800 block">Publico Changa</span>  
+                            <span class="text-[10px] text-slate-500">Ofrezco pago</span>  
+                        </div>  
+                    </label>  
+                </div>  
+            </div>  
+  
+            <div>  
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico</label>  
+                <input type="email" id="authEmail" required placeholder="tuemail@ejemplo.com" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-celeste-500 focus:outline-none">  
+            </div>  
+  
+            <div>  
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña</label>  
+                <input type="password" id="authPassword" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-celeste-500 focus:outline-none">  
+            </div>  
+  
+            <button type="submit" class="w-full bg-celeste-600 hover:bg-celeste-700 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-md">  
+                Ingresar / Registrarse  
+            </button>  
+        </form>  
+    </div>  
+</div>  
+  
+<!-- MODAL PERFIL / CERRAR SESIÓN -->  
+<div id="modalProfile" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">  
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-fade-in border border-slate-100 p-6 text-center space-y-4">  
+        <div class="w-14 h-14 bg-celeste-100 text-celeste-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">  
+            <i class="fa-solid fa-user"></i>  
+        </div>  
+        <div>  
+            <h3 class="font-bold text-base text-slate-900" id="profileEmailDisplay">usuario@email.com</h3>  
+            <p class="text-xs text-slate-500" id="profileRoleDisplay">Rol: Trabajador</p>  
+        </div>  
+        <div class="pt-2 space-y-2">  
+            <button onclick="closeModal('modalProfile')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs transition">  
+                Volver  
+            </button>  
+            <button onclick="logoutUser()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">  
+                Cerrar Sesión  
+            </button>  
+        </div>  
+    </div>  
+</div>  
+  
+<!-- MODAL 2: PUBLICAR NUEVA CHANGA -->  
+<div id="modalPublish" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">  
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-fade-in border border-slate-100">  
+        <div class="bg-gradient-to-r from-sol to-amber-600 p-5 text-slate-900 flex justify-between items-center">  
+            <div>  
+                <h3 class="font-extrabold text-lg">Publicar una Changa</h3>  
+                <p class="text-xs font-medium text-slate-800">Detallá lo que necesitás y cuánto pagás</p>  
+            </div>  
+            <button onclick="closeModal('modalPublish')" class="text-slate-900/80 hover:text-slate-900 text-xl">  
+                <i class="fa-solid fa-xmark"></i>  
+            </button>  
+        </div>  
+  
+        <form id="formPublish" onsubmit="handlePublishSubmit(event)" class="p-6 space-y-4">  
+            <div>  
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Título del Trabajo *</label>  
+                <input type="text" id="pubTitle" required placeholder="Ej: Necesito armar un ropero de 3 puertas" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+            </div>  
+  
+            <div>  
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Categoría *</label>  
+                <select id="pubCategory" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+                    <option value="Muebles y Carpintería">Muebles y Carpintería</option>  
+                    <option value="Construcción y Albañilería">Construcción y Albañilería</option>  
+                    <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>  
+                    <option value="Jardinería y Poda">Jardinería y Poda</option>  
+                    <option value="Electricidad y Plomería">Electricidad y Plomería</option>  
+                    <option value="Pintura">Pintura</option>  
+                    <option value="Fletes y Traslados">Fletes y Traslados</option>  
+                    <option value="Reparaciones / Varios">Reparaciones / Varios</option>  
+                </select>  
+            </div>  
+  
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">  
+                <div>  
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Provincia *</label>  
+                    <select id="pubProvince" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+                        <option value="Santa Fe">Santa Fe</option>  
+                        <option value="Buenos Aires">Buenos Aires</option>  
+                        <option value="CABA">CABA</option>  
+                        <option value="Córdoba">Córdoba</option>  
+                        <option value="Mendoza">Mendoza</option>  
+                        <option value="Tucumán">Tucumán</option>  
+                        <option value="Formosa">Formosa</option>  
+                        <option value="Chubut">Chubut</option>  
+                        <option value="Catamarca">Catamarca</option>  
+                        <option value="Chaco">Chaco</option>  
+                        <option value="Corrientes">Corrientes</option>  
+                        <option value="Entre Ríos">Entre Ríos</option>  
+                        <option value="Jujuy">Jujuy</option>  
+                        <option value="La Pampa">La Pampa</option>  
+                        <option value="La Rioja">La Rioja</option>  
+                        <option value="Misiones">Misiones</option>  
+                        <option value="Neuquén">Neuquén</option>  
+                        <option value="Río Negro">Río Negro</option>  
+                        <option value="Salta">Salta</option>  
+                        <option value="San Juan">San Juan</option>  
+                        <option value="San Luis">San Luis</option>  
+                        <option value="Santa Cruz">Santa Cruz</option>  
+                        <option value="Santiago del Estero">Santiago del Estero</option>  
+                        <option value="Tierra del Fuego">Tierra del Fuego</option>  
+                    </select>  
+                </div>  
+                <div>  
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Barrio / Ciudad *</label>  
+                    <input type="text" id="pubCity" required placeholder="Ej: Rosario Centro, Quilmes..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+                </div>  
+            </div>  
+  
+            <div>  
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto Disponible ($ARS) *</label>  
+                <div class="relative">  
+                    <span class="absolute left-3 top-2 text-slate-500 font-bold">$</span>  
+                    <input type="number" id="pubBudget" required min="1000" step="500" placeholder="50000" class="w-full pl-7 pr-3 py-2 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-sol focus:outline-none">  
+                </div>  
+            </div>  
+  
+            <div>  
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción del Trabajo *</label>  
+                <textarea id="pubDescription" required rows="3" placeholder="Explicá en detalle qué hay que hacer..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none"></textarea>  
+            </div>  
+  
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">  
+                <div>  
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tu Nombre *</label>  
+                    <input type="text" id="pubName" required placeholder="Ej: Juan Pérez" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+                </div>  
+                <div>  
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono / WhatsApp *</label>  
+                    <input type="tel" id="pubPhone" required placeholder="Ej: 341 555 1234" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sol focus:outline-none">  
+                </div>  
+            </div>  
+  
+            <button type="submit" class="w-full bg-sol hover:bg-amber-600 text-slate-900 font-extrabold py-3 rounded-xl text-sm shadow-md transition transform active:scale-95 mt-2">  
+                ¡Publicar Changa Ahora!  
+            </button>  
+        </form>  
+    </div>  
+</div>  
+  
+<!-- MODAL 3: CONTACTO / DETALLES DE LA CHANGA -->  
+<div id="modalContact" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">  
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in border border-slate-100">  
+        <div class="bg-emerald-600 text-white p-5 flex justify-between items-center">  
+            <div class="flex items-center space-x-2">  
+                <i class="fa-solid fa-circle-check text-2xl text-emerald-200"></i>  
+                <div>  
+                    <h3 class="font-bold text-base">Contacto Directo</h3>  
+                    <p class="text-xs text-emerald-100">Comunicate por WhatsApp o llamada</p>  
+                </div>  
+            </div>  
+            <button onclick="closeModal('modalContact')" class="text-white/80 hover:text-white text-xl">  
+                <i class="fa-solid fa-xmark"></i>  
+            </button>  
+        </div>  
+  
+        <div class="p-6 space-y-4" id="contactModalContent"></div>  
+    </div>  
+</div>  
+  
+<!-- JAVASCRIPT LOGIC -->  
+<script>  
+    let currentUser = JSON.parse(localStorage.getItem('changa_user')) || null;  
+  
+    // Ejemplos con números ficticios seguros  
+    let defaultChangas = [  
+        {  
+            id: 1,  
+            title: "Armado de placard 4 puertas con cajonera",  
+            category: "Muebles y Carpintería",  
+            province: "Santa Fe",  
+            city: "Rosario (Zona Centro)",  
+            budget: 50000,  
+            description: "Ejemplo: Compré un ropero desarmado de melamina. Necesito a alguien con sus herramientas (atornilladora) para armarlo en mi casa el sábado.",  
+            clientName: "Martín R. (Ejemplo)",  
+            clientPhone: "+54 9 341 000-0000",  
+            date: "Ejemplo destacado"  
+        },  
+        {  
+            id: 2,  
+            title: "Pintura de cocina y pasillo (aprox 35m²)",  
+            category: "Pintura",  
+            province: "Formosa",  
+            city: "Formosa Capital",  
+            budget: 85000,  
+            description: "Ejemplo: Tengo la pintura latex blanca comprada. Solo necesito la mano de obra para enduir pequeñas grietas y dar dos manos.",  
+            clientName: "Valeria G. (Ejemplo)",  
+            clientPhone: "+54 9 370 000-0000",  
+            date: "Ejemplo destacado"  
+        },  
+        {  
+            id: 3,  
+            title: "Corte de pasto y poda de ligustro chico",  
+            category: "Jardinería y Poda",  
+            province: "Chubut",  
+            city: "Puerto Madryn",  
+            budget: 35000,  
+            description: "Ejemplo: Terreno de 10x20m. El pasto está alto. Busco alguien que tenga bordeadora. Trabajo para hacer en el día.",  
+            clientName: "Roberto M. (Ejemplo)",  
+            clientPhone: "+54 9 280 000-0000",  
+            date: "Ejemplo destacado"  
+        }  
+    ];  
+  
+    let userChangas = JSON.parse(localStorage.getItem('changa_list')) || [];  
+    let changas = [...userChangas, ...defaultChangas];  
+  
+    window.addEventListener('DOMContentLoaded', () => {  
+        updateAuthUI();  
+        renderChangas(changas);  
+    });  
+  
+    function updateAuthUI() {  
+        const txtAuth = document.getElementById('txtUserAuth');  
+        if (currentUser) {  
+            txtAuth.innerText = currentUser.email.split('@')[0];  
+        } else {  
+            txtAuth.innerText = "Ingresar";  
+        }  
+    }  
+  
+    function handleAuthClick() {  
+        if (currentUser) {  
+            document.getElementById('profileEmailDisplay').innerText = currentUser.email;  
+            document.getElementById('profileRoleDisplay').innerText = currentUser.role === 'WORKER' ? 'Rol: Busco Changa (Trabajador)' : 'Rol: Publico Changa (Cliente)';  
+            openModal('modalProfile');  
+        } else {  
+            openModal('modalAuth');  
+        }  
+    }  
+  
+    function logoutUser() {  
+        localStorage.removeItem('changa_user');  
+        currentUser = null;  
+        updateAuthUI();  
+        closeModal('modalProfile');  
+        alert("Has cerrado sesión correctamente.");  
+    }  
+  
+    function handleAuthSubmit(e) {  
+        e.preventDefault();  
+        const email = document.getElementById('authEmail').value;  
+        const role = document.querySelector('input[name="userRole"]:checked').value;  
+  
+        currentUser = { email, role };  
+        localStorage.setItem('changa_user', JSON.stringify(currentUser));  
+          
+        updateAuthUI();  
+        closeModal('modalAuth');  
+        document.getElementById('formAuth').reset();  
+        alert(`¡Bienvenido/a a Changa Ya!\nSesión iniciada como: ${email}`);  
+    }  
+  
+    function renderChangas(list) {  
+        const grid = document.getElementById('jobsGrid');  
+        const emptyState = document.getElementById('emptyState');  
+        const badgeCount = document.getElementById('badgeCount');  
+  
+        badgeCount.innerText = list.length;  
+        grid.innerHTML = '';  
+  
+        if (list.length === 0) {  
+            emptyState.classList.remove('hidden');  
+            grid.classList.add('hidden');  
+            return;  
+        } else {  
+            emptyState.classList.add('hidden');  
+            grid.classList.remove('hidden');  
+        }  
+  
+        list.forEach(item => {  
+            const card = document.createElement('div');  
+            card.className = "bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all border border-slate-200/80 flex flex-col justify-between animate-fade-in";  
+              
+            const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(item.budget);  
+  
+            card.innerHTML = `  
+                <div>  
+                    <div class="flex items-center justify-between mb-2">  
+                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-celeste-100 flex items-center space-x-1">  
+                            <i class="fa-solid fa-tag text-[9px]"></i>  
+                            <span>${item.category}</span>  
+                        </span>  
+                        <span class="text-[11px] font-medium text-slate-400 flex items-center space-x-1">  
+                            <i class="fa-regular fa-clock"></i>  
+                            <span>${item.date}</span>  
+                        </span>  
+                    </div>  
+  
+                    <h3 class="font-extrabold text-slate-900 text-base leading-snug mb-2 hover:text-celeste-600 transition cursor-pointer" onclick="postulateToChanga(${item.id})">  
+                        ${item.title}  
+                    </h3>  
+  
+                    <div class="flex items-center space-x-1.5 text-xs text-slate-600 font-medium mb-3">  
+                        <i class="fa-solid fa-location-dot text-rose-500"></i>  
+                        <span>${item.city}, <strong>${item.province}</strong></span>  
+                    </div>  
+  
+                    <p class="text-xs text-slate-600 line-clamp-3 mb-4 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">  
+                        "${item.description}"  
+                    </p>  
+                </div>  
+  
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">  
+                    <div>  
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block leading-tight">Presupuesto</span>  
+                        <span class="text-lg font-black text-slate-900">${formattedBudget}</span>  
+                    </div>  
+                    <button onclick="postulateToChanga(${item.id})" class="bg-celeste-600 hover:bg-celeste-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-1.5 active:scale-95">  
+                        <i class="fa-solid fa-handshake"></i>  
+                        <span>Ver Contacto</span>  
+                    </button>  
+                </div>  
+            `;  
+            grid.appendChild(card);  
+        });  
+    }  
+  
+    function applyFilters() {  
+        const keyword = document.getElementById('searchKeyword').value.toLowerCase().trim();  
+        const province = document.getElementById('filterProvince').value;  
+        const category = document.getElementById('filterCategory').value;  
+  
+        const filtered = changas.filter(item => {  
+            const matchesKeyword = item.title.toLowerCase().includes(keyword) ||   
+                                   item.description.toLowerCase().includes(keyword) ||   
+                                   item.city.toLowerCase().includes(keyword);  
+              
+            const matchesProvince = (province === "TODAS") || (item.province === province);  
+            const matchesCategory = (category === "TODAS") || (item.category === category);  
+  
+            return matchesKeyword && matchesProvince && matchesCategory;  
+        });  
+  
+        renderChangas(filtered);  
+    }  
+  
+    function resetFilters() {  
+        document.getElementById('searchKeyword').value = '';  
+        document.getElementById('filterProvince').value = 'TODAS';  
+        document.getElementById('filterCategory').value = 'TODAS';  
+        renderChangas(changas);  
+    }  
+  
+    function postulateToChanga(changaId) {  
+        const changa = changas.find(c => c.id === changaId);  
+        if (!changa) return;  
+  
+        const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(changa.budget);  
+  
+        const content = document.getElementById('contactModalContent');  
+        content.innerHTML = `  
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">  
+                <span class="text-[10px] uppercase font-bold text-celeste-600">${changa.category}</span>  
+                <h4 class="font-bold text-slate-900 text-sm mb-1">${changa.title}</h4>  
+                <p class="text-xs text-slate-600 mb-2"><i class="fa-solid fa-location-dot text-rose-500"></i> ${changa.city}, ${changa.province}</p>  
+                <div class="text-sm font-black text-slate-900">Monto ofrecido: ${formattedBudget}</div>  
+            </div>  
+  
+            <div class="space-y-2">  
+                <label class="text-xs font-bold text-slate-500 uppercase block">Datos de Contacto</label>  
+                <div class="flex items-center space-x-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">  
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-sm">  
+                        <i class="fa-solid fa-user"></i>  
+                    </div>  
+                    <div>  
+                        <div class="font-bold text-slate-800 text-sm">${changa.clientName}</div>  
+                        <div class="text-xs text-slate-500">Disponible para hablar</div>  
+                    </div>  
+                </div>  
+            </div>  
+  
+            <div class="space-y-2 pt-1">  
+                <a href="https://wa.me/${changa.clientPhone.replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(changa.clientName)},%20vi%20tu%20publicación%20en%20Changa%20Ya:%20'${encodeURIComponent(changa.title)}'%20y%20me%20interesa%20hacer%20el%20trabajo." target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow">  
+                    <i class="fa-brands fa-whatsapp text-lg"></i>  
+                    <span>Contactar por WhatsApp</span>  
+                </a>  
+  
+                <a href="tel:${changa.clientPhone}" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 border border-slate-200">  
+                    <i class="fa-solid fa-phone text-slate-500"></i>  
+                    <span>Llamar al ${changa.clientPhone}</span>  
+                </a>  
+            </div>  
+        `;  
+  
+        openModal('modalContact');  
+    }  
+  
+    function handlePublishSubmit(e) {  
+        e.preventDefault();  
+  
+        const newChanga = {  
+            id: Date.now(),  
+            title: document.getElementById('pubTitle').value,  
+            category: document.getElementById('pubCategory').value,  
+            province: document.getElementById('pubProvince').value,  
+            city: document.getElementById('pubCity').value,  
+            budget: parseFloat(document.getElementById('pubBudget').value) || 0,  
+            description: document.getElementById('pubDescription').value,  
+            clientName: currentUser ? currentUser.email.split('@')[0] : (document.getElementById('pubName').value + " (Usuario)"),  
+            clientPhone: document.getElementById('pubPhone').value,  
+            date: "Recién publicado"  
+        };  
+  
+        userChangas.unshift(newChanga);  
+        localStorage.setItem('changa_list', JSON.stringify(userChangas));  
+        changas = [...userChangas, ...defaultChangas];  
+  
+        resetFilters();  
+        closeModal('modalPublish');  
+        document.getElementById('formPublish').reset();  
+  
+        alert(`¡Excelente! Tu changa "${newChanga.title}" se publicó correctamente.`);  
+    }  
+  
+    function openModal(modalId) {  
+        document.getElementById(modalId).classList.remove('hidden');  
+    }  
+  
+    function closeModal(modalId) {  
+        document.getElementById(modalId).classList.add('hidden');  
+    }  
+</script>  
+</body>  
+</html>  
+  
