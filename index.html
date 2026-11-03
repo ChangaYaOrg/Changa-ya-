@@ -1,286 +1,93 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Changa Ya - Trabajos y Servicios en Argentina</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        celeste: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                        },
-                        sol: '#f59e0b'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
 
-<!-- TOP HEADER / NAVBAR -->
-<header class="bg-gradient-to-r from-celeste-600 via-celeste-500 to-sky-600 text-white shadow-md sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="resetFilters()">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">
-                <i class="fa-solid fa-briefcase text-celeste-600 text-lg sm:text-xl"></i>
-            </div>
-            <div>
-                <div class="flex items-center space-x-1">
-                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-white">CHANGA</span>
-                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-sol">YA!</span>
-                </div>
-                <p class="text-[10px] sm:text-xs text-celeste-100 font-medium tracking-wide">Trabajo independiente en Argentina 🇦🇷</p>
-            </div>
-        </div>
+<!-- CONEXIÓN CON SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        <div class="flex items-center space-x-2">
-            <button onclick="openModal('modalPublish')" class="bg-sol hover:bg-amber-600 text-slate-900 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-1 transform active:scale-95">
-                <i class="fa-solid fa-circle-plus text-sm sm:text-base"></i>
-                <span>Publicar</span>
-            </button>
-            <button id="btnUserAuth" onclick="handleAuthClick()" class="bg-white/10 hover:bg-white/25 text-white border border-white/30 font-semibold px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm transition flex items-center space-x-1.5 max-w-[120px] sm:max-w-[160px] truncate">
-                <i class="fa-solid fa-user-circle text-base sm:text-lg flex-shrink-0"></i>
-                <span id="txtUserAuth" class="truncate">Ingresar</span>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- HERO -->
-<section class="bg-gradient-to-b from-celeste-600 to-sky-700 text-white py-6 sm:py-8 px-4 shadow-inner">
-    <div class="max-w-4xl mx-auto text-center space-y-3">
-        <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-celeste-100">
-            🇦🇷 Sincronizado en la Nube
-        </span>
-        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            Encontrá laburo o contratá al toque
-        </h1>
-        <p class="text-xs sm:text-sm text-celeste-100 max-w-xl mx-auto">
-            Conectamos personas que necesitan resolver un trabajo rápido con trabajadores independientes de todo el país.
-        </p>
-    </div>
-</section>
-
-<!-- FILTROS -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 z-20 relative">
-    <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-5 border border-slate-200/80">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">¿Qué buscas?</label>
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchKeyword" oninput="applyFilters()" placeholder="Ej. Armar mueble, pintura..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Provincia</label>
-                <div class="relative">
-                    <i class="fa-solid fa-location-dot absolute left-3 top-3 text-slate-400 text-sm"></i>
-                    <select id="filterProvince" onchange="applyFilters()" class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500 appearance-none">
-                        <option value="TODAS">Todas las Provincias</option>
-                        <option value="Buenos Aires">Buenos Aires</option>
-                        <option value="CABA">CABA (Ciudad Autónoma)</option>
-                        <option value="Catamarca">Catamarca</option>
-                        <option value="Chaco">Chaco</option>
-                        <option value="Chubut">Chubut</option>
-                        <option value="Córdoba">Córdoba</option>
-                        <option value="Corrientes">Corrientes</option>
-                        <option value="Entre Ríos">Entre Ríos</option>
-                        <option value="Formosa">Formosa</option>
-                        <option value="Jujuy">Jujuy</option>
-                        <option value="La Pampa">La Pampa</option>
-                        <option value="La Rioja">La Rioja</option>
-                        <option value="Mendoza">Mendoza</option>
-                        <option value="Misiones">Misiones</option>
-                        <option value="Neuquén">Neuquén</option>
-                        <option value="Río Negro">Río Negro</option>
-                        <option value="Salta">Salta</option>
-                        <option value="San Juan">San Juan</option>
-                        <option value="San Luis">San Luis</option>
-                        <option value="Santa Cruz">Santa Cruz</option>
-                        <option value="Santa Fe">Santa Fe</option>
-                        <option value="Santiago del Estero">Santiago del Estero</option>
-                        <option value="Tierra del Fuego">Tierra del Fuego</option>
-                        <option value="Tucumán">Tucumán</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Categoría</label>
-                <div class="relative">
-                    <i class="fa-solid fa-list-check absolute left-3 top-3 text-slate-400 text-sm"></i>
-                    <select id="filterCategory" onchange="applyFilters()" class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-celeste-500 appearance-none">
-                        <option value="TODAS">Todas las Categorías</option>
-                        <option value="Muebles y Carpintería">Muebles y Carpintería</option>
-                        <option value="Construcción y Albañilería">Construcción y Albañilería</option>
-                        <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
-                        <option value="Jardinería y Poda">Jardinería y Poda</option>
-                        <option value="Electricidad y Plomería">Electricidad y Plomería</option>
-                        <option value="Pintura">Pintura</option>
-                        <option value="Fletes y Traslados">Fletes y Traslados</option>
-                        <option value="Reparaciones / Varios">Reparaciones / Varios</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex items-end">
-                <button onclick="resetFilters()" class="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center justify-center space-x-2 border border-slate-200">
-                    <i class="fa-solid fa-rotate-left text-xs"></i>
-                    <span>Limpiar Filtros</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- LISTA PRINCIPAL -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
-                <span>Changas en la Nube</span>
-                <span id="badgeCount" class="bg-celeste-100 text-celeste-700 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>
-            </h2>
-            <p class="text-xs text-slate-500">Sincronizadas en tiempo real para cualquier dispositivo.</p>
-        </div>
-        <span class="text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 text-xs px-2.5 py-1 rounded-lg">🟢 Nube Activa</span>
-    </div>
-
-    <!-- Indicador de Carga -->
-    <div id="loadingIndicator" class="text-center py-10 text-slate-400 text-sm">
-        <i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i>
-        <p>Conectando con la base de datos...</p>
-    </div>
-
-    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-
-    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm">
-        <div class="w-16 h-16 bg-celeste-50 text-celeste-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-            <i class="fa-solid fa-folder-open"></i>
-        </div>
-        <h3 class="text-lg font-bold text-slate-800 mb-1">No hay changas publicadas</h3>
-        <p class="text-sm text-slate-500 max-w-md mx-auto mb-4">Sé el primero en publicar una changa desde cualquier dispositivo.</p>
-    </div>
-</main>
-
-<!-- FOOTER -->
-<footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center space-y-3">
-        <span class="font-black text-white text-base">CHANGA <span class="text-sol">YA!</span></span>
-        <p class="text-slate-500">© 2026 Changa Ya Argentina - Red de Trabajo Independiente.</p>
-    </div>
-</footer>
-
-<!-- MODALS -->
-<div id="modalAuth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
-        <div class="flex justify-between items-center"><h3 class="font-bold text-lg">Ingresar</h3><button onclick="closeModal('modalAuth')"><i class="fa-solid fa-xmark"></i></button></div>
-        <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
-            <input type="email" id="authEmail" required placeholder="Tu correo" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <button type="submit" class="w-full bg-celeste-600 text-white font-bold py-2 rounded-xl text-sm">Entrar</button>
-        </form>
-    </div>
-</div>
-
-<div id="modalPublish" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
-        <div class="flex justify-between items-center bg-sol p-3 rounded-xl"><h3 class="font-extrabold text-slate-900">Publicar Changa</h3><button onclick="closeModal('modalPublish')"><i class="fa-solid fa-xmark"></i></button></div>
-        <form onsubmit="handlePublishSubmit(event)" class="space-y-3">
-            <input type="text" id="pubTitle" required placeholder="Título del trabajo" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <select id="pubCategory" class="w-full px-3 py-2 border rounded-xl text-sm">
-                <option value="Muebles y Carpintería">Muebles y Carpintería</option>
-                <option value="Construcción y Albañilería">Construcción y Albañilería</option>
-                <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
-                <option value="Jardinería y Poda">Jardinería y Poda</option>
-                <option value="Electricidad y Plomería">Electricidad y Plomería</option>
-                <option value="Pintura">Pintura</option>
-                <option value="Fletes y Traslados">Fletes y Traslados</option>
-                <option value="Reparaciones / Varios">Reparaciones / Varios</option>
-            </select>
-            <select id="pubProvince" class="w-full px-3 py-2 border rounded-xl text-sm">
-                <option value="Santa Fe">Santa Fe</option>
-                <option value="Buenos Aires">Buenos Aires</option>
-                <option value="CABA">CABA</option>
-                <option value="Córdoba">Córdoba</option>
-                <option value="Mendoza">Mendoza</option>
-                <option value="Formosa">Formosa</option>
-                <option value="Tucumán">Tucumán</option>
-            </select>
-            <input type="text" id="pubCity" required placeholder="Ciudad / Barrio" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <input type="number" id="pubBudget" required placeholder="Monto en $ARS" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <textarea id="pubDescription" required placeholder="Descripción" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm"></textarea>
-            <input type="text" id="pubName" required placeholder="Tu Nombre" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <input type="tel" id="pubPhone" required placeholder="WhatsApp (Ej: 3415551234)" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <button type="submit" class="w-full bg-sol text-slate-900 font-extrabold py-2.5 rounded-xl text-sm shadow">Publicar en la Nube</button>
-        </form>
-    </div>
-</div>
-
-<div id="modalContact" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
-        <div class="flex justify-between items-center"><h3 class="font-bold text-base text-emerald-700">Contacto Directo</h3><button onclick="closeModal('modalContact')"><i class="fa-solid fa-xmark"></i></button></div>
-        <div id="contactModalContent" class="space-y-3"></div>
-    </div>
-</div>
-
-<!-- SCRIPT CONECTADO A MOCKAPI -->
 <script>
-    const API_URL = 'https://6ae93d7b1a7b15aaa50fe708.mockapi.io/publicaciones';
+    const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ';
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
     let currentUser = JSON.parse(localStorage.getItem('changa_user')) || null;
     let changas = [];
+    let realtimeChannel = null;
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         updateAuthUI();
-        fetchChangas();
+        await fetchChangas();
+        subscribeToChangas();
     });
 
+    function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[char]);
+    }
+
     async function fetchChangas() {
-        const loadingIndicator = document.getElementById('loadingIndicator');
+        const loading = document.getElementById('loadingIndicator');
+
         try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error('Error al conectar');
-            changas = await response.json();
-            
-            loadingIndicator.classList.add('hidden');
-            renderChangas(changas);
+            const { data, error } = await supabaseClient
+                .from('changas')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            changas = data.map(item => ({
+                id: item.id,
+                title: item.title,
+                category: item.category,
+                province: item.province,
+                city: item.city,
+                budget: Number(item.budget),
+                description: item.description,
+                clientName: item.client_name,
+                clientPhone: item.client_phone,
+                date: item.created_at
+            }));
+
+            loading.classList.add('hidden');
+            applyFilters();
+
         } catch (error) {
-            console.error(error);
-            loadingIndicator.innerHTML = '<p class="text-rose-500">Error al conectar con la nube. Verificá tu conexión.</p>';
+            console.error('Error cargando changas:', error);
+            loading.innerHTML =
+                '<p class="text-rose-500">No se pudieron cargar las publicaciones. Revisá la conexión.</p>';
         }
+    }
+
+    function subscribeToChangas() {
+        realtimeChannel = supabaseClient
+            .channel('changas-en-tiempo-real')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'changas'
+                },
+                () => fetchChangas()
+            )
+            .subscribe(status => {
+                console.log('Estado de sincronización:', status);
+            });
     }
 
     function updateAuthUI() {
         const txtAuth = document.getElementById('txtUserAuth');
-        if (currentUser) txtAuth.innerText = currentUser.email.split('@')[0];
+
+        if (currentUser) {
+            txtAuth.innerText = currentUser.email.split('@')[0];
+        }
     }
 
     function handleAuthClick() {
@@ -289,11 +96,16 @@
 
     function handleAuthSubmit(e) {
         e.preventDefault();
-        currentUser = { email: document.getElementById('authEmail').value };
+
+        currentUser = {
+            email: document.getElementById('authEmail').value
+        };
+
         localStorage.setItem('changa_user', JSON.stringify(currentUser));
         updateAuthUI();
         closeModal('modalAuth');
-        alert("¡Sesión iniciada!");
+
+        alert('¡Sesión iniciada!');
     }
 
     function renderChangas(list) {
@@ -308,38 +120,59 @@
             emptyState.classList.remove('hidden');
             grid.classList.add('hidden');
             return;
-        } else {
-            emptyState.classList.add('hidden');
-            grid.classList.remove('hidden');
         }
+
+        emptyState.classList.add('hidden');
+        grid.classList.remove('hidden');
 
         list.forEach(item => {
             const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition border border-slate-200 flex flex-col justify-between animate-fade-in";
-            
-            const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(item.budget || 0);
+
+            card.className =
+                'bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition border border-slate-200 flex flex-col justify-between animate-fade-in';
+
+            const formattedBudget = new Intl.NumberFormat('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+                maximumFractionDigits: 0
+            }).format(item.budget || 0);
 
             card.innerHTML = `
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-celeste-100">${item.category}</span>
+                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-celeste-100">
+                            ${escapeHTML(item.category)}
+                        </span>
                         <span class="text-[11px] text-slate-400">Reciente</span>
                     </div>
-                    <h3 class="font-extrabold text-slate-900 text-base mb-2">${item.title}</h3>
+
+                    <h3 class="font-extrabold text-slate-900 text-base mb-2">
+                        ${escapeHTML(item.title)}
+                    </h3>
+
                     <div class="flex items-center space-x-1.5 text-xs text-slate-600 font-medium mb-3">
                         <i class="fa-solid fa-location-dot text-rose-500"></i>
-                        <span>${item.city}, <strong>${item.province}</strong></span>
+                        <span>${escapeHTML(item.city)}, <strong>${escapeHTML(item.province)}</strong></span>
                     </div>
-                    <p class="text-xs text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">"${item.description}"</p>
+
+                    <p class="text-xs text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">
+                        "${escapeHTML(item.description)}"
+                    </p>
                 </div>
+
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
                     <div>
                         <span class="text-[10px] uppercase font-bold text-slate-400 block">Presupuesto</span>
                         <span class="text-lg font-black text-slate-900">${formattedBudget}</span>
                     </div>
-                    <button onclick="postulateToChanga('${item.id}')" class="bg-celeste-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow">Ver Contacto</button>
+
+                    <button onclick="postulateToChanga('${item.id}')"
+                        class="bg-celeste-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow">
+                        Ver Contacto
+                    </button>
                 </div>
             `;
+
             grid.appendChild(card);
         });
     }
@@ -350,11 +183,17 @@
         const category = document.getElementById('filterCategory').value;
 
         const filtered = changas.filter(item => {
-            const matchesKeyword = (item.title && item.title.toLowerCase().includes(keyword)) || 
-                                   (item.description && item.description.toLowerCase().includes(keyword)) || 
-                                   (item.city && item.city.toLowerCase().includes(keyword));
-            const matchesProvince = (province === "TODAS") || (item.province === province);
-            const matchesCategory = (category === "TODAS") || (item.category === category);
+            const matchesKeyword =
+                (item.title || '').toLowerCase().includes(keyword) ||
+                (item.description || '').toLowerCase().includes(keyword) ||
+                (item.city || '').toLowerCase().includes(keyword);
+
+            const matchesProvince =
+                province === 'TODAS' || item.province === province;
+
+            const matchesCategory =
+                category === 'TODAS' || item.category === category;
+
             return matchesKeyword && matchesProvince && matchesCategory;
         });
 
@@ -365,6 +204,7 @@
         document.getElementById('searchKeyword').value = '';
         document.getElementById('filterProvince').value = 'TODAS';
         document.getElementById('filterCategory').value = 'TODAS';
+
         renderChangas(changas);
     }
 
@@ -372,62 +212,89 @@
         const changa = changas.find(c => String(c.id) === String(changaId));
         if (!changa) return;
 
-        const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(changa.budget || 0);
+        const formattedBudget = new Intl.NumberFormat('es-AR', {
+            style: 'currency',
+            currency: 'ARS',
+            maximumFractionDigits: 0
+        }).format(changa.budget || 0);
+
+        const phone = (changa.clientPhone || '').replace(/[^0-9]/g, '');
 
         document.getElementById('contactModalContent').innerHTML = `
             <div class="bg-slate-50 p-3 rounded-xl border">
-                <h4 class="font-bold text-slate-900 text-sm">${changa.title}</h4>
+                <h4 class="font-bold text-slate-900 text-sm">${escapeHTML(changa.title)}</h4>
                 <p class="text-xs text-slate-600">Presupuesto: ${formattedBudget}</p>
             </div>
+
             <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="font-bold text-slate-800 text-sm">${changa.clientName}</div>
-                <div class="text-xs text-slate-500">Teléfono: ${changa.clientPhone}</div>
+                <div class="font-bold text-slate-800 text-sm">${escapeHTML(changa.clientName)}</div>
+                <div class="text-xs text-slate-500">Teléfono: ${escapeHTML(changa.clientPhone)}</div>
             </div>
-            <a href="https://wa.me/${(changa.clientPhone || '').replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(changa.clientName || '')},%20me%20interesa%20tu%20changa:%20'${encodeURIComponent(changa.title || '')}'" target="_blank" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm text-center block shadow">
-                <i class="fa-brands fa-whatsapp text-lg"></i> Contactar por WhatsApp
+
+            <a href="https://wa.me/${phone}?text=${encodeURIComponent(
+                'Hola ' + changa.clientName + ', me interesa tu changa: ' + changa.title
+            )}" target="_blank" rel="noopener noreferrer"
+                class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm text-center block shadow">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                Contactar por WhatsApp
             </a>
         `;
+
         openModal('modalContact');
     }
 
     async function handlePublishSubmit(e) {
         e.preventDefault();
 
+        const button = e.submitter;
+        button.disabled = true;
+        button.innerText = 'Publicando...';
+
         const newChanga = {
-            title: document.getElementById('pubTitle').value,
+            title: document.getElementById('pubTitle').value.trim(),
             category: document.getElementById('pubCategory').value,
             province: document.getElementById('pubProvince').value,
-            city: document.getElementById('pubCity').value,
-            budget: parseFloat(document.getElementById('pubBudget').value) || 0,
-            description: document.getElementById('pubDescription').value,
-            clientName: document.getElementById('pubName').value,
-            clientPhone: document.getElementById('pubPhone').value
+            city: document.getElementById('pubCity').value.trim(),
+            budget: Number(document.getElementById('pubBudget').value),
+            description: document.getElementById('pubDescription').value.trim(),
+            client_name: document.getElementById('pubName').value.trim(),
+            client_phone: document.getElementById('pubPhone').value.trim()
         };
 
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newChanga)
-            });
+            const { error } = await supabaseClient
+                .from('changas')
+                .insert([newChanga]);
 
-            if (!response.ok) throw new Error('Error al guardar');
+            if (error) throw error;
 
+            document.querySelector('#modalPublish form').reset();
             closeModal('modalPublish');
-            document.getElementById('formPublish').reset();
-            alert("¡Changa publicada en la nube con éxito!");
-            fetchChangas();
+
+            alert('¡Changa publicada correctamente!');
+
+            await fetchChangas();
+
         } catch (error) {
-            console.error(error);
-            alert("Hubo un error al publicar en la nube.");
+            console.error('Error publicando:', error);
+            alert('No se pudo publicar. Revisá los datos y los permisos.');
+        } finally {
+            button.disabled = false;
+            button.innerText = 'Publicar en la Nube';
         }
     }
 
-    function openModal(modalId) { document.getElementById(modalId).classList.remove('hidden'); }
-    function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
 </script>
 </body>
 </html>
+
 
 
 
