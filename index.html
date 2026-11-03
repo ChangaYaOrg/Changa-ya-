@@ -11,6 +11,7 @@
         const supabaseUrl = 'https://yyfldvialbkozrclylxg.supabase.co'
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5ZmxkdmlhbGJrb3pyY2x5bHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjI3NDksImV4cCI6MjA1NTkzODc0OX0.kZ_S7V5z-yD7tW2P3e0kX1_4L6I8B0Q'
         window.supabase = createClient(supabaseUrl, supabaseKey)
+        window.dispatchEvent(new Event('supabase-ready'));
     </script>
 
     <!-- Tailwind CSS -->
@@ -220,13 +221,27 @@
 
 <script>
     let defaultChangas = [
-        { id: 1, title: "Armado de placard", category: "Muebles y Carpintería", province: "Santa Fe", city: "Rosario", budget: 40000, description: "Armado rápido en domicilio.", clientName: "Martín", clientPhone: "549341000000", date: "Ejemplo" },
-        { id: 2, title: "Pintura de living", category: "Pintura", province: "Buenos Aires", city: "La Plata", budget: 35000, description: "Pintar paredes y techo.", clientName: "Valeria", clientPhone: "549110000000", date: "Ejemplo" }
+        { id: 1, title: "Armado de placard", category: "Muebles y Carpintería", province: "Santa Fe", city: "Rosario", budget: 40000, description: "Armado rápido en domicilio.", clientname: "Martín", clientphone: "549341000000", date: "Ejemplo" },
+        { id: 2, title: "Pintura de living", category: "Pintura", province: "Buenos Aires", city: "La Plata", budget: 35000, description: "Pintar paredes y techo.", clientname: "Valeria", clientphone: "549110000000", date: "Ejemplo" }
     ];
-    let userChangas = JSON.parse(localStorage.getItem('changa_list')) || [];
-    let changas = [...userChangas, ...defaultChangas];
+    let changas = [...defaultChangas];
 
-    window.addEventListener('DOMContentLoaded', () => { renderJobs(changas); });
+    window.addEventListener('supabase-ready', () => { fetchSupabaseChangas(); });
+    window.addEventListener('DOMContentLoaded', () => { 
+        if(window.supabase) fetchSupabaseChangas();
+        else renderJobs(changas);
+    });
+
+    async function fetchSupabaseChangas() {
+        if (!window.supabase) return;
+        const { data, error } = await window.supabase.from('publicaciones').select('*').order('id', { ascending: false });
+        if (!error && data && data.length > 0) {
+            changas = [...data, ...defaultChangas];
+            renderJobs(changas);
+        } else {
+            renderJobs(changas);
+        }
+    }
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -243,29 +258,29 @@
     async function handlePublish(e) {
         e.preventDefault();
         const newJob = {
-            id: Date.now(),
             title: document.getElementById('pubTitle').value,
             category: document.getElementById('pubCategory').value,
             province: document.getElementById('pubProvince').value,
             city: document.getElementById('pubCity').value,
             budget: parseFloat(document.getElementById('pubBudget').value),
             description: document.getElementById('pubDescription').value,
-            clientName: document.getElementById('pubName').value,
-            clientPhone: document.getElementById('pubPhone').value,
+            clientname: document.getElementById('pubName').value,
+            clientphone: document.getElementById('pubPhone').value,
             date: "Recién publicado"
         };
+        
         if (window.supabase) {
-            await window.supabase.from('publicaciones').insert([newJob]);
+            const { error } = await window.supabase.from('publicaciones').insert([newJob]);
+            if (error) {
+                alert("Error al guardar en Supabase: " + error.message);
+                return;
+            }
         }
-        userChangas.unshift(newJob);
-        localStorage.setItem('changa_list', JSON.stringify(userChangas));
-        changas = [...userChangas, ...defaultChangas];
-        renderJobs(changas);
+        
         closeModal('modalPublish');
-        document.getElementById('pubTitle').value = '';
-        document.getElementById('pubBudget').value = '';
-        document.getElementById('pubDescription').value = '';
-        alert("¡Changa publicada correctamente!");
+        document.getElementById('formPublish').reset();
+        alert("¡Changa publicada y guardada en Supabase con éxito!");
+        fetchSupabaseChangas();
     }
 
     function renderJobs(list) {
@@ -286,22 +301,22 @@
                 </div>
                 <div class="pt-2 border-t flex justify-between items-center">
                     <span class="font-black text-sm text-slate-900">$${job.budget}</span>
-                    <button onclick="contactJob(${job.id})" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl">Ver Contacto</button>
+                    <button onclick='contactJob(${JSON.stringify(job).replace(/'/g, "&#39;")})' class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl">Ver Contacto</button>
                 </div>
             `;
             grid.appendChild(card);
         });
     }
 
-    function contactJob(id) {
-        const job = changas.find(j => j.id === id);
-        if(!job) return;
+    function contactJob(job) {
+        const clientName = job.clientname || job.clientName || 'Cliente';
+        const clientPhone = job.clientphone || job.clientphone || '';
         document.getElementById('contactModalContent').innerHTML = `
             <div class="bg-slate-50 p-3 rounded-xl border">
                 <h4 class="font-bold text-sm">${job.title}</h4>
-                <p class="text-xs text-slate-500">Publicado por: ${job.clientName || 'Cliente'}</p>
+                <p class="text-xs text-slate-500">Publicado por: ${clientName}</p>
             </div>
-            <a href="https://wa.me/${job.clientPhone}?text=Hola,%20vi%20tu%20aviso%20de%20${encodeURIComponent(job.title)}" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-center block text-xs shadow">
+            <a href="https://wa.me/${clientPhone}?text=Hola,%20vi%20tu%20aviso%20de%20${encodeURIComponent(job.title)}" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-center block text-xs shadow">
                 <i class="fa-brands fa-whatsapp text-sm"></i> Chatear por WhatsApp
             </a>
         `;
@@ -330,6 +345,7 @@
 </script>
 </body>
 </html>
+
 
 
 
