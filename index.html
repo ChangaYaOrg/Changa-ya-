@@ -9,7 +9,7 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
         const supabaseUrl = 'https://yyfldvialbkozrclylxg.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5ZmxkdmlhbGJrb3pyY2x5bHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjI3NDksImV4cCI6MjA1NTkzODc0OX0.kZ_S7V5z-yD7tW2P3e0kX1_4L6I8B0Q'
+        const supabaseKey = 'Sb_publishable_c-o6mUSgeksJnHTS1DHb1g_Tpcdm7yU'
         window.supabase = createClient(supabaseUrl, supabaseKey)
         window.dispatchEvent(new Event('supabase-ready'));
     </script>
@@ -159,7 +159,7 @@
             <h3 class="font-bold text-base text-amber-600">Publicar una Changa</h3>
             <button onclick="closeModal('modalPublish')" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form onsubmit="handlePublish(event)" class="space-y-3">
+        <form id="formPublish" onsubmit="handlePublish(event)" class="space-y-3">
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Título del Trabajo</label>
                 <input type="text" id="pubTitle" required placeholder="Ej. Reparar canilla" class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
@@ -278,7 +278,8 @@
         }
         
         closeModal('modalPublish');
-        document.getElementById('formPublish').reset();
+        const form = document.getElementById('formPublish');
+        if (form) form.reset();
         alert("¡Changa publicada y guardada en Supabase con éxito!");
         fetchSupabaseChangas();
     }
@@ -310,14 +311,14 @@
 
     function contactJob(job) {
         const clientName = job.clientname || job.clientName || 'Cliente';
-        const clientPhone = job.clientphone || job.clientphone || '';
+        const clientPhone = job.clientphone || job.clientPhone || '';
         document.getElementById('contactModalContent').innerHTML = `
             <div class="bg-slate-50 p-3 rounded-xl border">
                 <h4 class="font-bold text-sm">${job.title}</h4>
                 <p class="text-xs text-slate-500">Publicado por: ${clientName}</p>
             </div>
-            <a href="https://wa.me/${clientPhone}?text=Hola,%20vi%20tu%20aviso%20de%20${encodeURIComponent(job.title)}" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-center block text-xs shadow">
-                <i class="fa-brands fa-whatsapp text-sm"></i> Chatear por WhatsApp
+            <a href="https://wa.me/${clientPhone}?text=Hola,%20vi%20tu%20aviso%20de%20${encodeURIComponent(job.title)}" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-center block text-xs shadow flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-whatsapp text-sm"></i> <span>Chatear por WhatsApp</span>
             </a>
         `;
         openModal('modalContact');
@@ -345,6 +346,7 @@
 </script>
 </body>
 </html>
+
 
 
 
