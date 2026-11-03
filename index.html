@@ -6,2063 +6,938 @@
 <meta name="theme-color" content="#1267a5">
 <title>Changa Ya! | Encontrá tu próxima oportunidad</title>
 <meta name="description" content="Encontrá changas, trabajos independientes y servicios en toda Argentina. Publicá gratis y conectá directamente.">
-
-<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --blue:#1267a5;
-  --blue-dark:#104c7b;
-  --sky:#42b9ec;
-  --sky-light:#e8f8ff;
-  --yellow:#ffd84d;
-  --mint:#bdf3df;
-  --pink:#ffe0e9;
-  --lilac:#e9e2ff;
-  --cream:#fffdf7;
-  --ink:#19364c;
-  --muted:#647b8d;
-  --white:#fff;
-  --shadow:0 12px 35px rgba(24,85,125,.10);
-}
-
-* { box-sizing:border-box; }
-
-html { scroll-behavior:smooth; }
-
-body {
-  margin:0;
-  background:#f4faff;
-  color:var(--ink);
-  font-family:'Nunito',sans-serif;
-  font-size:16px;
-}
-
-button,input,select,textarea { font:inherit; }
-button { cursor:pointer; }
-
-.container {
-  width:min(1160px, calc(100% - 32px));
-  margin:auto;
-}
-
-.panel {
-  background:white;
-  border:1px solid #e6f0f6;
-  border-radius:24px;
-  box-shadow:var(--shadow);
-}
-
-.topbar {
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:rgba(255,255,255,.95);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid #e5eff6;
-}
-
-.topbar-inner {
-  min-height:76px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-}
-
-.brand {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:var(--blue-dark);
-  font-size:23px;
-  font-weight:900;
-  text-decoration:none;
-}
-
-.brand-icon {
-  width:43px;
-  height:43px;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--yellow),#ffed9b);
-  box-shadow:0 5px 0 #edc43e;
-  font-size:23px;
-}
-
-.header-actions {
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.btn {
-  border:0;
-  border-radius:15px;
-  padding:13px 19px;
-  font-weight:900;
-  transition:.2s ease;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  text-decoration:none;
-}
-
-.btn:hover {
-  transform:translateY(-2px);
-  filter:brightness(1.02);
-}
-
-.btn-primary {
-  background:var(--blue);
-  color:white;
-  box-shadow:0 5px 0 #0d4f83;
-}
-
-.btn-yellow {
-  background:var(--yellow);
-  color:#463b14;
-  box-shadow:0 5px 0 #e9bd37;
-}
-
-.btn-light {
-  background:white;
-  color:var(--blue);
-  border:1px solid #dcecf6;
-}
-
-.btn-soft {
-  background:var(--sky-light);
-  color:var(--blue-dark);
-}
-
-.btn:disabled {
-  opacity:.6;
-  cursor:not-allowed;
-  transform:none;
-}
-
-.avatar {
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--sky-light);
-  border:2px solid white;
-}
-
-.hero {
-  position:relative;
-  overflow:hidden;
-  padding:66px 0 55px;
-  background:
-    radial-gradient(circle at 90% 10%,rgba(255,216,77,.55),transparent 22%),
-    radial-gradient(circle at 8% 90%,rgba(189,243,223,.65),transparent 25%),
-    linear-gradient(135deg,#e7f7ff 0%,#f8fbff 55%,#fff9e7 100%);
-}
-
-.hero-grid {
-  display:grid;
-  grid-template-columns:1.15fr .85fr;
-  align-items:center;
-  gap:35px;
-}
-
-.eyebrow {
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  background:white;
-  color:var(--blue);
-  border:1px solid #dceefa;
-  padding:9px 14px;
-  border-radius:99px;
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:.4px;
-}
-
-.hero h1 {
-  margin:20px 0 15px;
-  max-width:680px;
-  font-size:clamp(36px,5.5vw,62px);
-  line-height:1.06;
-  letter-spacing:-1.8px;
-  font-weight:900;
-  color:var(--blue-dark);
-}
-
-.hero h1 span { color:#e4a900; }
-
-.hero-copy {
-  max-width:610px;
-  color:#4d687c;
-  font-size:18px;
-  line-height:1.7;
-}
-
-.hero-buttons {
-  display:flex;
-  flex-wrap:wrap;
-  gap:13px;
-  margin-top:26px;
-}
-
-.hero-note {
-  margin-top:23px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:17px;
-  color:#526f81;
-  font-size:14px;
-  font-weight:800;
-}
-
-.hero-note span { display:flex;align-items:center;gap:6px; }
-
-.hero-art {
-  position:relative;
-  min-height:350px;
-  display:grid;
-  place-items:center;
-}
-
-.art-circle {
-  width:min(340px,85vw);
-  aspect-ratio:1;
-  border-radius:48% 52% 45% 55%;
-  background:linear-gradient(145deg,#b9ebff,#dff8ff);
-  border:8px solid white;
-  box-shadow:0 20px 50px rgba(27,113,162,.14);
-  display:grid;
-  place-items:center;
-  font-size:125px;
-  transform:rotate(-5deg);
-}
-
-.floating-card {
-  position:absolute;
-  background:white;
-  border-radius:17px;
-  padding:13px 16px;
-  box-shadow:var(--shadow);
-  font-weight:900;
-  font-size:14px;
-}
-
-.float-one { top:30px;right:0;transform:rotate(4deg); }
-.float-two { bottom:30px;left:0;transform:rotate(-4deg); }
-
-.section {
-  padding:65px 0;
-}
-
-.section-heading {
-  text-align:center;
-  max-width:750px;
-  margin:0 auto 32px;
-}
-
-.section-kicker {
-  color:var(--blue);
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:1.2px;
-}
-
-.section-heading h2 {
-  margin:9px 0;
-  color:var(--blue-dark);
-  font-size:clamp(27px,4vw,39px);
-  font-weight:900;
-  line-height:1.15;
-}
-
-.section-heading p {
-  color:var(--muted);
-  font-size:17px;
-  line-height:1.65;
-}
-
-.intro-box {
-  background:white;
-  padding:30px;
-  border-radius:25px;
-  box-shadow:var(--shadow);
-  border:1px solid #e5f0f6;
-  line-height:1.8;
-  font-size:17px;
-  color:#526a7d;
-}
-
-.intro-box strong { color:var(--blue-dark); }
-
-.steps-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-  margin-top:25px;
-}
-
-.step-card {
-  padding:24px;
-  border-radius:23px;
-  min-height:220px;
-  border:1px solid rgba(20,80,120,.06);
-}
-
-.step-card:nth-child(1) { background:#e5f7ff; }
-.step-card:nth-child(2) { background:#fff6d9; }
-.step-card:nth-child(3) { background:#e3f8ed; }
-
-.step-icon {
-  width:57px;
-  height:57px;
-  display:grid;
-  place-items:center;
-  border-radius:18px;
-  background:white;
-  font-size:27px;
-  box-shadow:0 5px 15px rgba(20,70,100,.07);
-}
-
-.step-card h3 {
-  font-size:20px;
-  font-weight:900;
-  margin:17px 0 7px;
-}
-
-.step-card p {
-  margin:0;
-  line-height:1.6;
-  color:#587083;
-}
-
-.callout {
-  margin-top:22px;
-  padding:20px 24px;
-  border-radius:20px;
-  background:linear-gradient(100deg,#fff1b7,#fff9df);
-  display:flex;
-  align-items:center;
-  gap:14px;
-  font-weight:900;
-  color:#68500c;
-}
-
-.categories-grid {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:13px;
-}
-
-.category-tile {
-  background:white;
-  border:1px solid #e4eef5;
-  border-radius:19px;
-  padding:19px 12px;
-  text-align:center;
-  box-shadow:0 5px 18px rgba(25,80,120,.05);
-  transition:.2s;
-}
-
-.category-tile:hover {
-  transform:translateY(-4px);
-  box-shadow:var(--shadow);
-}
-
-.category-tile .emoji { font-size:29px;display:block;margin-bottom:8px; }
-.category-tile strong { font-size:14px;color:var(--blue-dark); }
-
-.listing-section { background:#edf7fc; }
-
-.listing-top {
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:15px;
-  margin-bottom:22px;
-}
-
-.listing-top h2 {
-  color:var(--blue-dark);
-  font-size:32px;
-  font-weight:900;
-  margin:0;
-}
-
-.search-panel {
-  padding:20px;
-  margin-bottom:22px;
-}
-
-.filters {
-  display:grid;
-  grid-template-columns:2fr 1fr 1fr auto;
-  gap:11px;
-}
-
-.field {
-  width:100%;
-  min-height:49px;
-  padding:12px 14px;
-  border:1.5px solid #dce9f1;
-  border-radius:13px;
-  background:white;
-  color:var(--ink);
-  outline:none;
-}
-
-.field:focus {
-  border-color:var(--sky);
-  box-shadow:0 0 0 3px rgba(66,185,236,.15);
-}
-
-label {
-  display:block;
-  font-size:14px;
-  font-weight:900;
-  margin-bottom:7px;
-  color:#34566d;
-}
-
-.job-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:17px;
-}
-
-.job-card {
-  background:white;
-  border:1px solid #e2edf4;
-  border-radius:22px;
-  padding:21px;
-  box-shadow:0 7px 22px rgba(25,80,120,.06);
-}
-
-.job-card h3 {
-  color:var(--blue-dark);
-  font-size:21px;
-  line-height:1.25;
-  margin:12px 0 8px;
-  font-weight:900;
-}
-
-.job-card p {
-  color:#61798a;
-  line-height:1.6;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.tag {
-  display:inline-flex;
-  padding:6px 11px;
-  border-radius:99px;
-  background:#e8f7ff;
-  color:#176c9f;
-  font-size:12px;
-  font-weight:900;
-}
-
-.job-meta {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  color:#597284;
-  font-size:14px;
-  margin:12px 0;
-}
-
-.job-owner {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  border-top:1px solid #edf2f6;
-  padding-top:14px;
-  margin-top:14px;
-}
-
-.job-owner small {
-  display:block;
-  color:#718697;
-  font-size:12px;
-}
-
-.job-actions {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin-top:15px;
-}
-
-.empty {
-  text-align:center;
-  padding:45px 20px;
-  background:white;
-  border-radius:22px;
-  color:#647b8d;
-}
-
-.empty .emoji { font-size:43px; }
-
-footer {
-  background:#104c7b;
-  color:white;
-  padding:34px 0 95px;
-  text-align:center;
-}
-
-footer p { color:#d6ebf8; }
-
-.modal-bg {
-  position:fixed;
-  inset:0;
-  z-index:100;
-  background:rgba(13,35,51,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  overflow-y:auto;
-}
-
-.modal-bg.active { display:flex; }
-
-.modal {
-  width:min(510px,100%);
-  max-height:92vh;
-  overflow:auto;
-  background:white;
-  border-radius:25px;
-  padding:25px;
-  box-shadow:0 25px 80px rgba(0,0,0,.2);
-}
-
-.modal h2 {
-  color:var(--blue-dark);
-  font-size:25px;
-  font-weight:900;
-  margin:0 0 7px;
-}
-
-.modal-subtitle {
-  color:var(--muted);
-  margin:0 0 20px;
-  line-height:1.5;
-}
-
-.form-group { margin-bottom:14px; }
-
-.message {
-  display:none;
-  padding:12px 14px;
-  border-radius:12px;
-  margin:12px 0;
-  font-weight:800;
-  font-size:14px;
-}
-
-.message.show { display:block; }
-.message.error { background:#ffe7e7;color:#a52e2e; }
-.message.success { background:#e1f8ec;color:#176b45; }
-
-.modal-close {
-  float:right;
-  border:0;
-  background:#eff6fa;
-  color:#36576b;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  font-size:20px;
-}
-
-.bottom-nav { display:none; }
-
-@media(max-width:850px) {
-  .hero-grid { grid-template-columns:1fr; }
-  .hero-art { min-height:280px; }
-  .art-circle { width:250px;font-size:95px; }
-  .categories-grid { grid-template-columns:repeat(3,1fr); }
-  .filters { grid-template-columns:1fr 1fr; }
-}
-
-@media(max-width:600px) {
-  body { font-size:16px; }
-  .container { width:calc(100% - 24px); }
-  .topbar-inner { min-height:66px; }
-  .brand { font-size:20px; }
-  .brand-icon { width:38px;height:38px; }
-  .header-actions { gap:6px; }
-  .header-actions .btn { padding:10px 12px;font-size:13px; }
-  #userMenu { display:flex; }
-  .hero { padding:43px 0 35px; }
-  .hero h1 { font-size:39px; }
-  .hero-copy { font-size:16px; }
-  .hero-art { min-height:235px; }
-  .art-circle { width:205px;font-size:80px;border-width:6px; }
-  .floating-card { font-size:12px;padding:10px 12px; }
-  .float-one { right:0;top:12px; }
-  .float-two { left:0;bottom:10px; }
-  .section { padding:43px 0; }
-  .section-heading p { font-size:16px; }
-  .intro-box { padding:21px;font-size:16px; }
-  .steps-grid { grid-template-columns:1fr; }
-  .step-card { min-height:0; }
-  .categories-grid { grid-template-columns:repeat(2,1fr);gap:10px; }
-  .category-tile { padding:16px 8px; }
-  .listing-top { align-items:start;flex-direction:column; }
-  .listing-top h2 { font-size:27px; }
-  .filters { grid-template-columns:1fr; }
-  .search-panel { padding:14px; }
-  .job-grid { grid-template-columns:1fr; }
-  .job-card { padding:17px; }
-  .btn { min-height:46px; }
-  .bottom-nav {
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    position:fixed;
-    z-index:60;
-    bottom:0;
-    left:0;
-    right:0;
-    background:white;
-    border-top:1px solid #e4edf4;
-    padding:8px 5px calc(8px + env(safe-area-inset-bottom));
-    box-shadow:0 -5px 20px rgba(20,70,100,.08);
-  }
-  .bottom-nav button {
-    border:0;
-    background:transparent;
-    color:#587083;
-    font-size:11px;
-    font-weight:900;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:3px;
-  }
-  .bottom-nav span { font-size:21px; }
-  footer { padding-bottom:110px; }
-}
-
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {
-    scroll-behavior:auto!important;
-    transition:none!important;
-  }
-}
+:root{--blue:#1267a5;--blue-dark:#104c7b;--sky:#42b9ec;--sky-light:#e8f8ff;--yellow:#ffd84d;--ink:#19364c;--muted:#647b8d;--shadow:0 12px 35px rgba(24,85,125,.10)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f4faff;color:var(--ink);font-family:'Nunito',sans-serif;font-size:16px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.container{width:min(1160px,calc(100% - 32px));margin:auto}
+.panel{background:white;border:1px solid #e6f0f6;border-radius:24px;box-shadow:var(--shadow)}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid #e5eff6}
+.topbar-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--blue-dark);font-size:23px;font-weight:900;text-decoration:none}
+.brand-icon{width:43px;height:43px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--yellow),#ffed9b);box-shadow:0 5px 0 #edc43e;font-size:23px}
+.header-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.btn{border:0;border-radius:15px;padding:13px 19px;font-weight:900;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.02)}
+.btn-primary{background:var(--blue);color:white;box-shadow:0 5px 0 #0d4f83}
+.btn-yellow{background:var(--yellow);color:#463b14;box-shadow:0 5px 0 #e9bd37}
+.btn-light{background:white;color:var(--blue);border:1px solid #dcecf6}
+.btn-soft{background:var(--sky-light);color:var(--blue-dark)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--sky-light);border:2px solid white}
+.hero{position:relative;overflow:hidden;padding:66px 0 55px;background:radial-gradient(circle at 90% 10%,rgba(255,216,77,.55),transparent 22%),radial-gradient(circle at 8% 90%,rgba(189,243,223,.65),transparent 25%),linear-gradient(135deg,#e7f7ff 0%,#f8fbff 55%,#fff9e7 100%)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:35px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:white;color:var(--blue);border:1px solid #dceefa;padding:9px 14px;border-radius:99px;font-size:13px;font-weight:900;letter-spacing:.4px}
+.hero h1{margin:20px 0 15px;max-width:680px;font-size:clamp(36px,5.5vw,62px);line-height:1.06;letter-spacing:-1.8px;font-weight:900;color:var(--blue-dark)}
+.hero h1 span{color:#e4a900}
+.hero-copy{max-width:610px;color:#4d687c;font-size:18px;line-height:1.7}
+.hero-buttons{display:flex;flex-wrap:wrap;gap:13px;margin-top:26px}
+.hero-note{margin-top:23px;display:flex;flex-wrap:wrap;gap:17px;color:#526f81;font-size:14px;font-weight:800}
+.hero-art{position:relative;min-height:350px;display:grid;place-items:center}
+.art-circle{width:min(340px,85vw);aspect-ratio:1;border-radius:48% 52% 45% 55%;background:linear-gradient(145deg,#b9ebff,#dff8ff);border:8px solid white;box-shadow:0 20px 50px rgba(27,113,162,.14);display:grid;place-items:center;font-size:125px;transform:rotate(-5deg)}
+.floating-card{position:absolute;background:white;border-radius:17px;padding:13px 16px;box-shadow:var(--shadow);font-weight:900;font-size:14px}
+.float-one{top:30px;right:0;transform:rotate(4deg)}.float-two{bottom:30px;left:0;transform:rotate(-4deg)}
+.section{padding:65px 0}
+.section-heading{text-align:center;max-width:750px;margin:0 auto 32px}
+.section-kicker{color:var(--blue);font-size:13px;font-weight:900;letter-spacing:1.2px}
+.section-heading h2{margin:9px 0;color:var(--blue-dark);font-size:clamp(27px,4vw,39px);font-weight:900;line-height:1.15}
+.section-heading p{color:var(--muted);font-size:17px;line-height:1.65}
+.intro-box{background:white;padding:30px;border-radius:25px;box-shadow:var(--shadow);border:1px solid #e5f0f6;line-height:1.8;font-size:17px;color:#526a7d}
+.intro-box strong{color:var(--blue-dark)}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:25px}
+.step-card{padding:24px;border-radius:23px;min-height:220px;border:1px solid rgba(20,80,120,.06)}
+.step-card:nth-child(1){background:#e5f7ff}.step-card:nth-child(2){background:#fff6d9}.step-card:nth-child(3){background:#e3f8ed}
+.step-icon{width:57px;height:57px;display:grid;place-items:center;border-radius:18px;background:white;font-size:27px;box-shadow:0 5px 15px rgba(20,70,100,.07)}
+.step-card h3{font-size:20px;font-weight:900;margin:17px 0 7px}.step-card p{margin:0;line-height:1.6;color:#587083}
+.callout{margin-top:22px;padding:20px 24px;border-radius:20px;background:linear-gradient(100deg,#fff1b7,#fff9df);display:flex;align-items:center;gap:14px;font-weight:900;color:#68500c}
+.categories-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.category-tile{background:white;border:1px solid #e4eef5;border-radius:19px;padding:19px 12px;text-align:center;box-shadow:0 5px 18px rgba(25,80,120,.05);transition:.2s}
+.category-tile:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.category-tile .emoji{font-size:29px;display:block;margin-bottom:8px}.category-tile strong{font-size:14px;color:var(--blue-dark)}
+.listing-section{background:#edf7fc}
+.listing-top{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:22px}
+.listing-top h2{color:var(--blue-dark);font-size:32px;font-weight:900;margin:0}
+.search-panel{padding:20px;margin-bottom:22px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:11px}
+.field{width:100%;min-height:49px;padding:12px 14px;border:1.5px solid #dce9f1;border-radius:13px;background:white;color:var(--ink);outline:none}
+.field:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(66,185,236,.15)}
+label{display:block;font-size:14px;font-weight:900;margin-bottom:7px;color:#34566d}
+.job-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.job-card{background:white;border:1px solid #e2edf4;border-radius:22px;padding:21px;box-shadow:0 7px 22px rgba(25,80,120,.06)}
+.job-card h3{color:var(--blue-dark);font-size:21px;line-height:1.25;margin:12px 0 8px;font-weight:900}
+.job-card p{color:#61798a;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.tag{display:inline-flex;padding:6px 11px;border-radius:99px;background:#e8f7ff;color:#176c9f;font-size:12px;font-weight:900}
+.job-meta{display:flex;flex-wrap:wrap;gap:9px;color:#597284;font-size:14px;margin:12px 0}
+.job-owner{display:flex;align-items:center;gap:10px;border-top:1px solid #edf2f6;padding-top:14px;margin-top:14px}
+.job-owner small{display:block;color:#718697;font-size:12px}
+.job-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.empty{text-align:center;padding:45px 20px;background:white;border-radius:22px;color:#647b8d}
+.empty .emoji{font-size:43px}
+footer{background:#104c7b;color:white;padding:34px 0 95px;text-align:center}
+footer p{color:#d6ebf8}
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(13,35,51,.55);display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto}
+.modal-bg.active{display:flex}
+.modal{width:min(510px,100%);max-height:92vh;overflow:auto;background:white;border-radius:25px;padding:25px;box-shadow:0 25px 80px rgba(0,0,0,.2)}
+.modal h2{color:var(--blue-dark);font-size:25px;font-weight:900;margin:0 0 7px}
+.modal-subtitle{color:var(--muted);margin:0 0 20px;line-height:1.5}
+.form-group{margin-bottom:14px}
+.message{display:none;padding:12px 14px;border-radius:12px;margin:12px 0;font-weight:800;font-size:14px}
+.message.show{display:block}.message.error{background:#ffe7e7;color:#a52e2e}.message.success{background:#e1f8ec;color:#176b45}
+.modal-close{float:right;border:0;background:#eff6fa;color:#36576b;width:35px;height:35px;border-radius:50%;font-size:20px}
+.bottom-nav{display:none}
+
+/* MI PLAN */
+.plan-summary{background:linear-gradient(135deg,#e7f7ff,#fff9df);border:1px solid #dceefa;border-radius:20px;padding:20px;margin:16px 0}
+.plan-name{font-size:26px;font-weight:900;color:var(--blue-dark)}
+.plan-price{font-size:22px;font-weight:900;color:var(--blue)}
+.usage-track{height:12px;border-radius:99px;background:#e6eef3;overflow:hidden;margin:10px 0}
+.usage-fill{height:100%;width:0;background:linear-gradient(90deg,#42b9ec,#1267a5);border-radius:99px;transition:width .3s}
+.plan-benefit{padding:11px 0;border-bottom:1px solid #edf2f6;color:#456176;font-weight:800}
+.plan-benefit:last-child{border:0}
+.plan-list{display:grid;gap:12px;margin-top:15px}
+.plan-option{border:1px solid #dceaf3;border-radius:17px;padding:15px;background:#fff}
+.plan-option h3{margin:0 0 5px;color:var(--blue-dark);font-size:19px}
+.plan-option p{margin:4px 0;color:var(--muted)}
+.plan-note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:14px}
+
+@media(max-width:850px){
+.hero-grid{grid-template-columns:1fr}.hero-art{min-height:280px}.art-circle{width:250px;font-size:95px}
+.categories-grid{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+.container{width:calc(100% - 24px)}.topbar-inner{min-height:66px}.brand{font-size:20px}.brand-icon{width:38px;height:38px}
+.header-actions{gap:5px}.header-actions .btn{padding:9px 10px;font-size:12px}
+#userMenu{gap:4px!important}#userMenu .btn{padding:8px 9px;font-size:11px}
+.hero{padding:43px 0 35px}.hero h1{font-size:39px}.hero-copy{font-size:16px}
+.hero-art{min-height:235px}.art-circle{width:205px;font-size:80px;border-width:6px}
+.floating-card{font-size:12px;padding:10px 12px}.float-one{right:0;top:12px}.float-two{left:0;bottom:10px}
+.section{padding:43px 0}.section-heading p{font-size:16px}.intro-box{padding:21px;font-size:16px}
+.steps-grid{grid-template-columns:1fr}.step-card{min-height:0}.categories-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+.category-tile{padding:16px 8px}.listing-top{align-items:start;flex-direction:column}.listing-top h2{font-size:27px}
+.filters{grid-template-columns:1fr}.search-panel{padding:14px}.job-grid{grid-template-columns:1fr}.job-card{padding:17px}
+.btn{min-height:46px}.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:60;bottom:0;left:0;right:0;background:white;border-top:1px solid #e4edf4;padding:8px 5px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px rgba(20,70,100,.08)}
+.bottom-nav button{border:0;background:transparent;color:#587083;font-size:10px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottom-nav span{font-size:20px}footer{padding-bottom:110px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
-
 <body>
 
 <header class="topbar">
-  <div class="container topbar-inner">
-    <a href="#" class="brand">
-      <span class="brand-icon">🚀</span>
-      <span>Changa Ya!</span>
-    </a>
-
-    <div class="header-actions">
-      <button id="loginBtn" class="btn btn-light" onclick="openAuth()">Ingresar</button>
-      <button id="publishBtn" class="btn btn-primary" onclick="openPublish()">＋ Publicar</button>
-      <div id="userMenu" style="display:none;align-items:center;gap:8px">
-        <img id="headerAvatar" class="avatar" alt="Mi perfil">
-        <button class="btn btn-light" onclick="openMyProfile()">Mi perfil</button>
-        <button class="btn btn-light" onclick="logout()">Salir</button>
-      </div>
-    </div>
+ <div class="container topbar-inner">
+  <a href="#" class="brand"><span class="brand-icon">🚀</span><span>Changa Ya!</span></a>
+  <div class="header-actions">
+   <button id="loginBtn" class="btn btn-light" onclick="openAuth()">Ingresar</button>
+   <button id="publishBtn" class="btn btn-primary" onclick="openPublish()">＋ Publicar</button>
+   <div id="userMenu" style="display:none;align-items:center;gap:8px">
+    <img id="headerAvatar" class="avatar" alt="Mi perfil">
+    <button class="btn btn-light" onclick="openMyProfile()">Mi perfil</button>
+    <button class="btn btn-soft" onclick="openMyPlan()">Mi plan</button>
+    <button class="btn btn-light" onclick="logout()">Salir</button>
+   </div>
   </div>
+ </div>
 </header>
 
 <main>
-  <section class="hero" id="inicio">
-    <div class="container hero-grid">
-      <div>
-        <span class="eyebrow">🇦🇷 CONECTANDO OPORTUNIDADES EN ARGENTINA</span>
-        <h1>Una changa puede ser el comienzo de <span>algo grande.</span></h1>
-        <p class="hero-copy">
-          Encontrá trabajos independientes, changas rápidas y nuevos clientes.
-          ¿Necesitás contratar a alguien? Publicá lo que necesitás y conectá
-          directamente con personas que ofrecen sus servicios.
-        </p>
-        <div class="hero-buttons">
-          <button class="btn btn-primary" onclick="openPublish()">🚀 Publicar una changa</button>
-          <button class="btn btn-yellow" onclick="scrollToJobs()">🔎 Buscar trabajos</button>
-        </div>
-        <div class="hero-note">
-          <span>✓ Fácil de usar</span>
-          <span>✓ Contacto directo</span>
-          <span>✓ En toda Argentina</span>
-        </div>
-      </div>
+<section class="hero" id="inicio">
+ <div class="container hero-grid">
+  <div>
+   <span class="eyebrow">🇦🇷 CONECTANDO OPORTUNIDADES EN ARGENTINA</span>
+   <h1>Una changa puede ser el comienzo de <span>algo grande.</span></h1>
+   <p class="hero-copy">Encontrá trabajos independientes, changas rápidas y nuevos clientes. ¿Necesitás contratar a alguien? Publicá lo que necesitás y conectá directamente con personas que ofrecen sus servicios.</p>
+   <div class="hero-buttons">
+    <button class="btn btn-primary" onclick="openPublish()">🚀 Publicar una changa</button>
+    <button class="btn btn-yellow" onclick="scrollToJobs()">🔎 Buscar trabajos</button>
+   </div>
+   <div class="hero-note"><span>✓ Fácil de usar</span><span>✓ Contacto directo</span><span>✓ En toda Argentina</span></div>
+  </div>
+  <div class="hero-art">
+   <div class="art-circle">🧰</div>
+   <div class="floating-card float-one">💼 ¡Nuevas oportunidades!</div>
+   <div class="floating-card float-two">🤝 Personas conectando</div>
+  </div>
+ </div>
+</section>
 
-      <div class="hero-art">
-        <div class="art-circle">🧰</div>
-        <div class="floating-card float-one">💼 ¡Nuevas oportunidades!</div>
-        <div class="floating-card float-two">🤝 Personas conectando</div>
-      </div>
-    </div>
-  </section>
+<section class="section" id="como-funciona">
+ <div class="container">
+  <div class="section-heading">
+   <span class="section-kicker">TE DAMOS LA BIENVENIDA</span>
+   <h2>¿Qué es Changa Ya?</h2>
+   <p>Un punto de encuentro entre quienes buscan una oportunidad y quienes necesitan contratar un servicio.</p>
+  </div>
+  <div class="intro-box">
+   <strong>Changa Ya! es una plataforma para buscar y ofrecer trabajos independientes, changas rápidas y servicios.</strong>
+   Si sabés hacer algo, podés ofrecer tus servicios y encontrar nuevos clientes. Si necesitás a alguien para un trabajo, podés publicar lo que necesitás y conectar directamente con personas disponibles.
+   <br><br>No importa si buscás un trabajo por día, un servicio para tu casa o una oportunidad para hacer crecer tu actividad: ¡acá podés empezar!
+  </div>
+  <div class="section-heading" style="margin-top:42px;margin-bottom:20px">
+   <span class="section-kicker">ASÍ DE FÁCIL</span><h2>¿Cómo se usa la página?</h2>
+  </div>
+  <div class="steps-grid">
+   <article class="step-card"><div class="step-icon">📝</div><h3>1. Publicá</h3><p>Contá qué trabajo necesitás realizar o qué servicio ofrecés. Completá los datos y publicá.</p></article>
+   <article class="step-card"><div class="step-icon">🔎</div><h3>2. Buscá</h3><p>Explorá las changas disponibles. Podés buscar por provincia, rubro o palabra clave.</p></article>
+   <article class="step-card"><div class="step-icon">📲</div><h3>3. Contactá</h3><p>Encontraste lo que buscabas. Contactá directamente por WhatsApp y conversá los detalles.</p></article>
+  </div>
+  <div class="callout"><span style="font-size:29px">💡</span><span>¡No necesitás ser una empresa! Cualquier persona puede ofrecer un servicio o publicar una changa.</span></div>
+ </div>
+</section>
 
-  <section class="section" id="como-funciona">
-    <div class="container">
-      <div class="section-heading">
-        <span class="section-kicker">TE DAMOS LA BIENVENIDA</span>
-        <h2>¿Qué es Changa Ya?</h2>
-        <p>Un punto de encuentro entre quienes buscan una oportunidad y quienes necesitan contratar un servicio.</p>
-      </div>
+<section class="section" style="background:#f9fcff">
+ <div class="container">
+  <div class="section-heading"><span class="section-kicker">HAY MUCHAS POSIBILIDADES</span><h2>¿Qué tipo de changas podés encontrar?</h2><p>Estos son algunos de los rubros. También podés publicar trabajos de otras actividades.</p></div>
+  <div class="categories-grid">
+   <div class="category-tile"><span class="emoji">🧱</span><strong>Construcción</strong></div>
+   <div class="category-tile"><span class="emoji">⚡</span><strong>Electricidad</strong></div>
+   <div class="category-tile"><span class="emoji">🚰</span><strong>Plomería</strong></div>
+   <div class="category-tile"><span class="emoji">🎨</span><strong>Pintura</strong></div>
+   <div class="category-tile"><span class="emoji">🧹</span><strong>Limpieza</strong></div>
+   <div class="category-tile"><span class="emoji">🌳</span><strong>Jardinería</strong></div>
+   <div class="category-tile"><span class="emoji">🚚</span><strong>Fletes y mudanzas</strong></div>
+   <div class="category-tile"><span class="emoji">🔧</span><strong>Mecánica</strong></div>
+   <div class="category-tile"><span class="emoji">🍔</span><strong>Gastronomía</strong></div>
+   <div class="category-tile"><span class="emoji">💈</span><strong>Barbería</strong></div>
+   <div class="category-tile"><span class="emoji">💇</span><strong>Peluquería</strong></div>
+   <div class="category-tile"><span class="emoji">📦</span><strong>Reparto y ventas</strong></div>
+  </div>
+ </div>
+</section>
 
-      <div class="intro-box">
-        <strong>Changa Ya! es una plataforma para buscar y ofrecer trabajos independientes, changas rápidas y servicios.</strong>
-        Si sabés hacer algo, podés ofrecer tus servicios y encontrar nuevos clientes.
-        Si necesitás a alguien para un trabajo, podés publicar lo que necesitás y
-        conectar directamente con personas disponibles.
-        <br><br>
-        No importa si buscás un trabajo por día, un servicio para tu casa o una
-        oportunidad para hacer crecer tu actividad: ¡acá podés empezar!
-      </div>
-
-      <div class="section-heading" style="margin-top:42px;margin-bottom:20px">
-        <span class="section-kicker">ASÍ DE FÁCIL</span>
-        <h2>¿Cómo se usa la página?</h2>
-      </div>
-
-      <div class="steps-grid">
-        <article class="step-card">
-          <div class="step-icon">📝</div>
-          <h3>1. Publicá</h3>
-          <p>Contá qué trabajo necesitás realizar o qué servicio ofrecés. Completá los datos y publicá.</p>
-        </article>
-        <article class="step-card">
-          <div class="step-icon">🔎</div>
-          <h3>2. Buscá</h3>
-          <p>Explorá las changas disponibles. Podés buscar por provincia, rubro o palabra clave.</p>
-        </article>
-        <article class="step-card">
-          <div class="step-icon">📲</div>
-          <h3>3. Contactá</h3>
-          <p>Encontraste lo que buscabas. Contactá directamente por WhatsApp y conversá los detalles.</p>
-        </article>
-      </div>
-
-      <div class="callout">
-        <span style="font-size:29px">💡</span>
-        <span>¡No necesitás ser una empresa! Cualquier persona puede ofrecer un servicio o publicar una changa.</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" style="background:#f9fcff">
-    <div class="container">
-      <div class="section-heading">
-        <span class="section-kicker">HAY MUCHAS POSIBILIDADES</span>
-        <h2>¿Qué tipo de changas podés encontrar?</h2>
-        <p>Estos son algunos de los rubros. También podés publicar trabajos de otras actividades.</p>
-      </div>
-
-      <div class="categories-grid">
-        <div class="category-tile"><span class="emoji">🧱</span><strong>Construcción</strong></div>
-        <div class="category-tile"><span class="emoji">⚡</span><strong>Electricidad</strong></div>
-        <div class="category-tile"><span class="emoji">🚰</span><strong>Plomería</strong></div>
-        <div class="category-tile"><span class="emoji">🎨</span><strong>Pintura</strong></div>
-        <div class="category-tile"><span class="emoji">🧹</span><strong>Limpieza</strong></div>
-        <div class="category-tile"><span class="emoji">🌳</span><strong>Jardinería</strong></div>
-        <div class="category-tile"><span class="emoji">🚚</span><strong>Fletes y mudanzas</strong></div>
-        <div class="category-tile"><span class="emoji">🔧</span><strong>Mecánica</strong></div>
-        <div class="category-tile"><span class="emoji">🍔</span><strong>Gastronomía</strong></div>
-        <div class="category-tile"><span class="emoji">💈</span><strong>Barbería</strong></div>
-        <div class="category-tile"><span class="emoji">💇</span><strong>Peluquería</strong></div>
-        <div class="category-tile"><span class="emoji">📦</span><strong>Reparto y ventas</strong></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section listing-section" id="listings">
-    <div class="container">
-      <div class="listing-top">
-        <div>
-          <span class="section-kicker">OPORTUNIDADES PARA VOS</span>
-          <h2>Changas disponibles 🔥</h2>
-          <p style="color:var(--muted);margin:5px 0 0">Encontrá una oportunidad cerca tuyo o en cualquier parte del país.</p>
-        </div>
-        <span class="tag" id="jobsCount">Cargando publicaciones...</span>
-      </div>
-
-      <div class="panel search-panel">
-        <div class="filters">
-          <input class="field" id="searchInput" type="search" placeholder="🔎 ¿Qué trabajo estás buscando?">
-          <select class="field" id="provinceFilter">
-            <option value="">Todas las provincias</option>
-          </select>
-          <select class="field" id="categoryFilter">
-            <option value="">Todos los rubros</option>
-          </select>
-          <button class="btn btn-primary" onclick="loadJobs()">Buscar</button>
-        </div>
-      </div>
-
-      <div id="jobsContainer" class="job-grid"></div>
-      <div id="emptyMessage" class="empty" style="display:none">
-        <div class="emoji">🔍</div>
-        <h3 style="color:var(--blue-dark);font-size:21px;font-weight:900">Todavía no encontramos publicaciones</h3>
-        <p>Probá cambiar los filtros o volvé a buscar más tarde.</p>
-        <button class="btn btn-primary" onclick="openPublish()">Publicar una changa</button>
-      </div>
-    </div>
-  </section>
+<section class="section listing-section" id="listings">
+ <div class="container">
+  <div class="listing-top">
+   <div><span class="section-kicker">OPORTUNIDADES PARA VOS</span><h2>Changas disponibles 🔥</h2><p style="color:var(--muted);margin:5px 0 0">Encontrá una oportunidad cerca tuyo o en cualquier parte del país.</p></div>
+   <span class="tag" id="jobsCount">Cargando publicaciones...</span>
+  </div>
+  <div class="panel search-panel">
+   <div class="filters">
+    <input class="field" id="searchInput" type="search" placeholder="🔎 ¿Qué trabajo estás buscando?">
+    <select class="field" id="provinceFilter"><option value="">Todas las provincias</option></select>
+    <select class="field" id="categoryFilter"><option value="">Todos los rubros</option></select>
+    <button class="btn btn-primary" onclick="loadJobs()">Buscar</button>
+   </div>
+  </div>
+  <div id="jobsContainer" class="job-grid"></div>
+  <div id="emptyMessage" class="empty" style="display:none"><div class="emoji">🔍</div><h3 style="color:var(--blue-dark);font-size:21px;font-weight:900">Todavía no encontramos publicaciones</h3><p>Probá cambiar los filtros o volvé a buscar más tarde.</p><button class="btn btn-primary" onclick="openPublish()">Publicar una changa</button></div>
+ </div>
+</section>
 </main>
 
-<footer>
-  <div class="container">
-    <div style="font-size:25px;font-weight:900">🚀 Changa Ya!</div>
-    <p>Conectamos personas, trabajos y oportunidades.</p>
-    <small>Una oportunidad puede empezar acá.</small>
-  </div>
-</footer>
+<footer><div class="container"><div style="font-size:25px;font-weight:900">🚀 Changa Ya!</div><p>Conectamos personas, trabajos y oportunidades.</p><small>Una oportunidad puede empezar acá.</small></div></footer>
 
 <nav class="bottom-nav">
-  <button onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>🏠</span>Inicio</button>
-  <button onclick="scrollToJobs()"><span>🔎</span>Buscar</button>
-  <button onclick="openPublish()"><span>➕</span>Publicar</button>
-  <button onclick="openMyProfile()"><span>👤</span>Mi perfil</button>
+ <button onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>🏠</span>Inicio</button>
+ <button onclick="scrollToJobs()"><span>🔎</span>Buscar</button>
+ <button onclick="openPublish()"><span>➕</span>Publicar</button>
+ <button onclick="openMyProfile()"><span>👤</span>Mi perfil</button>
+ <button onclick="openMyPlan()"><span>⭐</span>Mi plan</button>
 </nav>
 
-<!-- VENTANA DE INGRESO Y REGISTRO -->
-<div class="modal-bg" id="authModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('authModal')">×</button>
-    <h2>¡Hola! 👋</h2>
-    <p class="modal-subtitle">Ingresá a tu cuenta o creá una nueva para empezar.</p>
-
-    <div id="authTabs" style="display:flex;gap:8px;margin-bottom:18px">
-      <button class="btn btn-primary" id="showLoginTab" onclick="showAuthTab('login')">Ingresar</button>
-      <button class="btn btn-light" id="showRegisterTab" onclick="showAuthTab('register')">Crear cuenta</button>
-    </div>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="loginEmail">Correo electrónico</label>
-        <input class="field" id="loginEmail" type="email" autocomplete="email" required placeholder="Tu correo">
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Contraseña</label>
-        <input class="field" id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña">
-      </div>
-      <button class="btn btn-primary" style="width:100%" type="submit">Ingresar a mi cuenta</button>
-      <button class="btn btn-light" style="width:100%;margin-top:9px" type="button" onclick="sendPasswordReset()">Olvidé mi contraseña</button>
-    </form>
-
-    <form id="registerForm" style="display:none">
-      <div class="form-group">
-        <label for="registerName">Nombre y apellido</label>
-        <input class="field" id="registerName" required maxlength="100" placeholder="Cómo te llamás">
-      </div>
-      <div class="form-group">
-        <label for="registerEmail">Correo electrónico</label>
-        <input class="field" id="registerEmail" type="email" autocomplete="email" required placeholder="Tu correo">
-      </div>
-      <div class="form-group">
-        <label for="registerPassword">Crear contraseña</label>
-        <input class="field" id="registerPassword" type="password" minlength="6" autocomplete="new-password" required placeholder="Mínimo 6 caracteres">
-      </div>
-      <button class="btn btn-primary" style="width:100%" type="submit">Crear mi cuenta</button>
-    </form>
-
-    <div id="authMessage" class="message"></div>
-  </div>
-</div>
+<!-- INGRESO Y REGISTRO -->
+<div class="modal-bg" id="authModal"><div class="modal">
+ <button class="modal-close" onclick="closeModal('authModal')">×</button>
+ <h2>¡Hola! 👋</h2><p class="modal-subtitle">Ingresá a tu cuenta o creá una nueva para empezar.</p>
+ <div id="authTabs" style="display:flex;gap:8px;margin-bottom:18px">
+  <button class="btn btn-primary" id="showLoginTab" onclick="showAuthTab('login')">Ingresar</button>
+  <button class="btn btn-light" id="showRegisterTab" onclick="showAuthTab('register')">Crear cuenta</button>
+ </div>
+ <form id="loginForm">
+  <div class="form-group"><label for="loginEmail">Correo electrónico</label><input class="field" id="loginEmail" type="email" autocomplete="email" required placeholder="Tu correo"></div>
+  <div class="form-group"><label for="loginPassword">Contraseña</label><input class="field" id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></div>
+  <button class="btn btn-primary" style="width:100%" type="submit">Ingresar a mi cuenta</button>
+  <button class="btn btn-light" style="width:100%;margin-top:9px" type="button" onclick="openResetModal()">Olvidé mi contraseña</button>
+ </form>
+ <form id="registerForm" style="display:none">
+  <div class="form-group"><label for="registerName">Nombre y apellido</label><input class="field" id="registerName" required maxlength="100" placeholder="Cómo te llamás"></div>
+  <div class="form-group"><label for="registerEmail">Correo electrónico</label><input class="field" id="registerEmail" type="email" autocomplete="email" required placeholder="Tu correo"></div>
+  <div class="form-group"><label for="registerPassword">Crear contraseña</label><input class="field" id="registerPassword" type="password" minlength="6" autocomplete="new-password" required placeholder="Mínimo 6 caracteres"></div>
+  <button class="btn btn-primary" style="width:100%" type="submit">Crear mi cuenta</button>
+ </form>
+ <div id="authMessage" class="message"></div>
+</div></div>
 
 <!-- RECUPERAR CONTRASEÑA -->
-<div class="modal-bg" id="resetModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('resetModal')">×</button>
-    <h2>Recuperar contraseña 🔐</h2>
-    <p class="modal-subtitle">Te enviaremos un enlace a tu correo para crear una contraseña nueva.</p>
-    <form id="resetForm">
-      <div class="form-group">
-        <label for="resetEmail">Tu correo electrónico</label>
-        <input class="field" id="resetEmail" type="email" required placeholder="Tu correo">
-      </div>
-      <button class="btn btn-primary" style="width:100%" type="submit">Enviar enlace</button>
-    </form>
-    <div id="resetMessage" class="message"></div>
-  </div>
-</div>
+<div class="modal-bg" id="resetModal"><div class="modal">
+ <button class="modal-close" onclick="closeModal('resetModal')">×</button>
+ <h2>Recuperar contraseña 🔐</h2><p class="modal-subtitle">Te enviaremos un enlace a tu correo para crear una contraseña nueva.</p>
+ <form id="resetForm"><div class="form-group"><label for="resetEmail">Tu correo electrónico</label><input class="field" id="resetEmail" type="email" required placeholder="Tu correo"></div><button class="btn btn-primary" style="width:100%" type="submit">Enviar enlace</button></form>
+ <div id="resetMessage" class="message"></div>
+</div></div>
 
-<!-- CAMBIAR CONTRASEÑA -->
-<div class="modal-bg" id="newPasswordModal">
-  <div class="modal">
-    <h2>Crear contraseña nueva 🔑</h2>
-    <p class="modal-subtitle">Elegí una contraseña segura para tu cuenta.</p>
-    <form id="newPasswordForm">
-      <div class="form-group">
-        <label for="newPassword">Nueva contraseña</label>
-        <input class="field" id="newPassword" type="password" minlength="6" required>
-      </div>
-      <button class="btn btn-primary" style="width:100%" type="submit">Guardar contraseña</button>
-    </form>
-    <div id="newPasswordMessage" class="message"></div>
-  </div>
-</div>
+<!-- NUEVA CONTRASEÑA -->
+<div class="modal-bg" id="newPasswordModal"><div class="modal">
+ <h2>Crear contraseña nueva 🔑</h2><p class="modal-subtitle">Elegí una contraseña segura para tu cuenta.</p>
+ <form id="newPasswordForm"><div class="form-group"><label for="newPassword">Nueva contraseña</label><input class="field" id="newPassword" type="password" minlength="6" required></div><button class="btn btn-primary" style="width:100%" type="submit">Guardar contraseña</button></form>
+ <div id="newPasswordMessage" class="message"></div>
+</div></div>
 
 <!-- PERFIL -->
-<div class="modal-bg" id="profileModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('profileModal')">×</button>
-    <h2>Tu perfil 👤</h2>
-    <p class="modal-subtitle">Completá tus datos para que las personas sepan con quién están conectando.</p>
-    <form id="profileForm">
-      <div class="form-group">
-        <label for="profileName">Nombre y apellido</label>
-        <input class="field" id="profileName" required maxlength="100">
-      </div>
-      <div class="form-group">
-        <label for="profileProvince">Provincia</label>
-        <select class="field" id="profileProvince" required>
-          <option value="">Seleccioná tu provincia</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="profileCity">Ciudad o localidad</label>
-        <input class="field" id="profileCity" required maxlength="100" placeholder="Tu ciudad">
-      </div>
-      <div class="form-group">
-        <label for="profilePhoto">Foto de perfil</label>
-        <input class="field" id="profilePhoto" type="file" accept="image/*">
-        <small style="color:var(--muted)">Elegí una foto clara. Máximo 5 MB.</small>
-      </div>
-      <img id="profilePreview" class="avatar" alt="Vista previa" style="width:76px;height:76px;display:none;margin:10px 0">
-      <button class="btn btn-primary" style="width:100%" type="submit">Guardar mi perfil</button>
-    </form>
-    <div id="profileMessage" class="message"></div>
-  </div>
-</div>
+<div class="modal-bg" id="profileModal"><div class="modal">
+ <button class="modal-close" onclick="closeModal('profileModal')">×</button>
+ <h2>Tu perfil 👤</h2><p class="modal-subtitle">Completá tus datos para que las personas sepan con quién están conectando.</p>
+ <form id="profileForm">
+  <div class="form-group"><label for="profileName">Nombre y apellido</label><input class="field" id="profileName" required maxlength="100"></div>
+  <div class="form-group"><label for="profileProvince">Provincia</label><select class="field" id="profileProvince" required><option value="">Seleccioná tu provincia</option></select></div>
+  <div class="form-group"><label for="profileCity">Ciudad o localidad</label><input class="field" id="profileCity" required maxlength="100" placeholder="Tu ciudad"></div>
+  <div class="form-group"><label for="profilePhoto">Foto de perfil</label><input class="field" id="profilePhoto" type="file" accept="image/*"><small style="color:var(--muted)">Elegí una foto clara. Máximo 5 MB.</small></div>
+  <img id="profilePreview" class="avatar" alt="Vista previa" style="width:76px;height:76px;display:none;margin:10px 0">
+  <button class="btn btn-primary" style="width:100%" type="submit">Guardar mi perfil</button>
+ </form>
+ <div id="profileMessage" class="message"></div>
+</div></div>
 
 <!-- PUBLICAR -->
-<div class="modal-bg" id="publishModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('publishModal')">×</button>
-    <h2>Publicá tu changa 📣</h2>
-    <p class="modal-subtitle">Contanos qué trabajo necesitás o qué servicio ofrecés.</p>
+<div class="modal-bg" id="publishModal"><div class="modal">
+ <button class="modal-close" onclick="closeModal('publishModal')">×</button>
+ <h2>Publicá tu changa 📣</h2><p class="modal-subtitle">Contanos qué trabajo necesitás o qué servicio ofrecés.</p>
+ <form id="publishForm">
+  <div class="form-group"><label for="jobTitle">¿Qué trabajo es?</label><input class="field" id="jobTitle" required maxlength="100" placeholder="Ej. Busco pintor para una casa"></div>
+  <div class="form-group"><label for="jobCategory">Rubro</label><select class="field" id="jobCategory" required><option value="">Seleccioná un rubro</option></select></div>
+  <div class="form-group"><label for="jobDescription">Descripción</label><textarea class="field" id="jobDescription" rows="4" maxlength="1500" required placeholder="Contá los detalles del trabajo..."></textarea></div>
+  <div class="form-group"><label for="jobBudget">Pago o presupuesto (opcional)</label><input class="field" id="jobBudget" maxlength="80" placeholder="Ej. A convenir o $30.000"></div>
+  <div class="form-group"><label for="jobPhone">WhatsApp de contacto</label><input class="field" id="jobPhone" type="tel" required maxlength="25" placeholder="Código de área + número"></div>
+  <div class="form-group"><label for="jobProvince">Provincia</label><select class="field" id="jobProvince" required></select></div>
+  <div class="form-group"><label for="jobCity">Ciudad o localidad</label><input class="field" id="jobCity" required maxlength="100" placeholder="Ciudad"></div>
+  <div class="form-group"><label for="jobDuration">¿Cuánto tiempo querés que esté publicada?</label><select class="field" id="jobDuration" required><option value="24">24 horas</option><option value="48">48 horas</option><option value="72" selected>72 horas</option><option value="96">96 horas</option></select></div>
+  <button id="publishSubmit" class="btn btn-primary" style="width:100%" type="submit">Publicar changa</button>
+ </form>
+ <div id="publishMessage" class="message"></div>
+</div></div>
 
-    <form id="publishForm">
-      <div class="form-group">
-        <label for="jobTitle">¿Qué trabajo es?</label>
-        <input class="field" id="jobTitle" required maxlength="100" placeholder="Ej. Busco pintor para una casa">
-      </div>
-      <div class="form-group">
-        <label for="jobCategory">Rubro</label>
-        <select class="field" id="jobCategory" required>
-          <option value="">Seleccioná un rubro</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="jobDescription">Descripción</label>
-        <textarea class="field" id="jobDescription" rows="4" maxlength="1500" required placeholder="Contá los detalles del trabajo..."></textarea>
-      </div>
-      <div class="form-group">
-        <label for="jobBudget">Pago o presupuesto (opcional)</label>
-        <input class="field" id="jobBudget" maxlength="80" placeholder="Ej. A convenir o $30.000">
-      </div>
-      <div class="form-group">
-        <label for="jobPhone">WhatsApp de contacto</label>
-        <input class="field" id="jobPhone" type="tel" required maxlength="25" placeholder="Código de área + número">
-      </div>
-      <div class="form-group">
-        <label for="jobProvince">Provincia</label>
-        <select class="field" id="jobProvince" required></select>
-      </div>
-      <div class="form-group">
-        <label for="jobCity">Ciudad o localidad</label>
-        <input class="field" id="jobCity" required maxlength="100" placeholder="Ciudad">
-      </div>
-      <div class="form-group">
-        <label for="jobDuration">¿Cuánto tiempo querés que esté publicada?</label>
-        <select class="field" id="jobDuration" required>
-          <option value="24">24 horas</option>
-          <option value="48">48 horas</option>
-          <option value="72" selected>72 horas</option>
-          <option value="96">96 horas</option>
-        </select>
-      </div>
-      <button id="publishSubmit" class="btn btn-primary" style="width:100%" type="submit">Publicar changa</button>
-    </form>
-    <div id="publishMessage" class="message"></div>
-  </div>
-</div>
+<!-- MI PLAN -->
+<div class="modal-bg" id="planModal"><div class="modal">
+ <button class="modal-close" onclick="closeModal('planModal')">×</button>
+ <h2>Mi plan ⭐</h2>
+ <p class="modal-subtitle">Consultá tu plan, tus publicaciones del mes y los beneficios disponibles.</p>
+ <div id="planMessage" class="message"></div>
+ <div id="planContent">
+  <div class="plan-summary"><div class="plan-name">Cargando tu plan...</div><p>Estamos consultando tu suscripción.</p></div>
+ </div>
+ <h3 style="color:var(--blue-dark);margin:22px 0 5px">Planes disponibles</h3>
+ <div id="availablePlans" class="plan-list">Cargando planes...</div>
+ <p class="plan-note">Los planes se muestran para que puedas conocer sus características. Los pagos y cambios de plan todavía no están habilitados.</p>
+ <button class="btn btn-light" style="width:100%;margin-top:14px" onclick="loadMyPlan()">↻ Actualizar información</button>
+</div></div>
 
 <script>
+const SUPABASE_URL="https://yyfldvialbkozrclylxg.supabase.co";
+const SUPABASE_KEY="sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ";
+const {createClient}=supabase;
+const db=createClient(SUPABASE_URL,SUPABASE_KEY);
 
-// =============================================
-// CONFIGURACIÓN DE SUPABASE
-// =============================================
+let currentUser=null,currentProfile=null,allJobs=[];
+let loadingJobs=false,refreshRequested=false,recoveryMode=false;
 
-const SUPABASE_URL = "https://yyfldvialbkozrclylxg.supabase.co";
-const SUPABASE_KEY = "sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ";
-
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
-let currentProfile = null;
-let allJobs = [];
-let loadingJobs = false;
-let refreshRequested = false;
-let recoveryMode = false;
-
-const categories = [
-  "Construcción",
-  "Albañilería",
-  "Ayudante de albañil",
-  "Pintura",
-  "Electricidad",
-  "Plomería",
-  "Gasista",
-  "Jardinería",
-  "Limpieza",
-  "Mecánica",
-  "Gomería",
-  "Fletes y mudanzas",
-  "Reparto",
-  "Gastronomía",
-  "Cocina",
-  "Ventas",
-  "Barbería",
-  "Peluquería",
-  "Técnicos",
-  "Reparaciones",
-  "Eventos",
-  "Educación",
-  "Cuidados",
-  "Trabajo rural",
-  "Costura",
-  "Trabajos por día",
-  "Tareas generales",
-  "Otros"
+const categories=[
+"Construcción","Albañilería","Ayudante de albañil","Pintura","Electricidad",
+"Plomería","Gasista","Jardinería","Limpieza","Mecánica","Gomería",
+"Fletes y mudanzas","Reparto","Gastronomía","Cocina","Ventas","Barbería",
+"Peluquería","Técnicos","Reparaciones","Eventos","Educación","Cuidados",
+"Trabajo rural","Costura","Trabajos por día","Tareas generales","Otros"
 ];
 
-const provinces = [
-  "Buenos Aires",
-  "Catamarca",
-  "Chaco",
-  "Chubut",
-  "Ciudad Autónoma de Buenos Aires",
-  "Córdoba",
-  "Corrientes",
-  "Entre Ríos",
-  "Formosa",
-  "Jujuy",
-  "La Pampa",
-  "La Rioja",
-  "Mendoza",
-  "Misiones",
-  "Neuquén",
-  "Río Negro",
-  "Salta",
-  "San Juan",
-  "San Luis",
-  "Santa Cruz",
-  "Santa Fe",
-  "Santiago del Estero",
-  "Tierra del Fuego",
-  "Tucumán"
+const provinces=[
+"Buenos Aires","Catamarca","Chaco","Chubut",
+"Ciudad Autónoma de Buenos Aires","Córdoba","Corrientes","Entre Ríos",
+"Formosa","Jujuy","La Pampa","La Rioja","Mendoza","Misiones","Neuquén",
+"Río Negro","Salta","San Juan","San Luis","Santa Cruz","Santa Fe",
+"Santiago del Estero","Tierra del Fuego","Tucumán"
 ];
 
-// =============================================
-// ELEMENTOS Y UTILIDADES
-// =============================================
-
-function $(id) {
-  return document.getElementById(id);
+function $(id){return document.getElementById(id)}
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ })[c]);
 }
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  })[char]);
+function normalizePhone(phone){return String(phone||"").replace(/\D/g,"")}
+function showMessage(id,message,type="success"){
+ const el=$(id);if(!el)return;
+ el.textContent=message;el.className=`message show ${type}`;
 }
-
-function normalizePhone(phone) {
-  return String(phone || "").replace(/\D/g, "");
+function hideMessage(id){
+ const el=$(id);if(!el)return;
+ el.textContent="";el.className="message";
 }
-
-function showMessage(id, message, type = "success") {
-  const element = $(id);
-  if (!element) return;
-
-  element.textContent = message;
-  element.className = `message show ${type}`;
+function setButtonLoading(button,loading,text){
+ if(!button)return;
+ button.disabled=loading;
+ button.textContent=loading?"Procesando...":text;
 }
-
-function hideMessage(id) {
-  const element = $(id);
-  if (!element) return;
-
-  element.textContent = "";
-  element.className = "message";
-}
-
-function setButtonLoading(button, loading, normalText) {
-  if (!button) return;
-  button.disabled = loading;
-  button.textContent = loading ? "Procesando..." : normalText;
-}
-
-function openModal(id) {
-  $(id)?.classList.add("active");
-}
-
-function closeModal(id) {
-  $(id)?.classList.remove("active");
-}
-
-document.querySelectorAll(".modal-bg").forEach(modal => {
-  modal.addEventListener("click", event => {
-    if (event.target === modal) {
-      modal.classList.remove("active");
-    }
-  });
+function openModal(id){$(id)?.classList.add("active")}
+function closeModal(id){$(id)?.classList.remove("active")}
+document.querySelectorAll(".modal-bg").forEach(modal=>{
+ modal.addEventListener("click",e=>{
+  if(e.target===modal)modal.classList.remove("active");
+ });
 });
+function scrollToJobs(){$("listings").scrollIntoView({behavior:"smooth"})}
 
-function scrollToJobs() {
-  $("listings").scrollIntoView({ behavior: "smooth" });
-}
-
-// =============================================
-// CARGAR PROVINCIAS Y CATEGORÍAS
-// =============================================
-
-function populateCategories() {
-  const filter = $("categoryFilter");
-  const publish = $("jobCategory");
-
-  categories.forEach(category => {
-    const option1 = document.createElement("option");
-    option1.value = category;
-    option1.textContent = category;
-    filter.appendChild(option1);
-
-    const option2 = document.createElement("option");
-    option2.value = category;
-    option2.textContent = category;
-    publish.appendChild(option2);
+function populateCategories(){
+ ["categoryFilter","jobCategory"].forEach(id=>{
+  categories.forEach(category=>{
+   const option=document.createElement("option");
+   option.value=category;option.textContent=category;$(id).appendChild(option);
   });
+ });
 }
-
-function populateProvinces() {
-  const targets = [
-    $("provinceFilter"),
-    $("profileProvince"),
-    $("jobProvince")
-  ];
-
-  targets.forEach((select, index) => {
-    if (!select) return;
-
-    provinces.forEach(province => {
-      const option = document.createElement("option");
-      option.value = province;
-      option.textContent = province;
-      select.appendChild(option);
-    });
+function populateProvinces(){
+ ["provinceFilter","profileProvince","jobProvince"].forEach(id=>{
+  provinces.forEach(province=>{
+   const option=document.createElement("option");
+   option.value=province;option.textContent=province;$(id).appendChild(option);
   });
+ });
 }
 
-// =============================================
 // AUTENTICACIÓN
-// =============================================
-
-function openAuth() {
-  hideMessage("authMessage");
-  showAuthTab("login");
-  openModal("authModal");
+function openAuth(){hideMessage("authMessage");showAuthTab("login");openModal("authModal")}
+function showAuthTab(tab){
+ const login=tab==="login";
+ $("loginForm").style.display=login?"block":"none";
+ $("registerForm").style.display=login?"none":"block";
+ $("showLoginTab").className=login?"btn btn-primary":"btn btn-light";
+ $("showRegisterTab").className=login?"btn btn-light":"btn btn-primary";
+ hideMessage("authMessage");
 }
 
-function showAuthTab(tab) {
-  const login = tab === "login";
-
-  $("loginForm").style.display = login ? "block" : "none";
-  $("registerForm").style.display = login ? "none" : "block";
-
-  $("showLoginTab").className =
-    login ? "btn btn-primary" : "btn btn-light";
-
-  $("showRegisterTab").className =
-    login ? "btn btn-light" : "btn btn-primary";
-
-  hideMessage("authMessage");
-}
-
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("authMessage");
-
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
-
-  const button = $("loginForm").querySelector("button[type=submit]");
-  setButtonLoading(button, true, "Ingresar a mi cuenta");
-
-  try {
-    const { error } = await db.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) throw error;
-
-    closeModal("authModal");
-    $("loginForm").reset();
-
-    showMessage("authMessage", "¡Bienvenido!", "success");
-
-  } catch (error) {
-    showMessage(
-      "authMessage",
-      error.message || "No pudimos iniciar sesión.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Ingresar a mi cuenta");
-  }
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("authMessage");
+ const button=$("loginForm").querySelector("button[type=submit]");
+ setButtonLoading(button,true,"Ingresar a mi cuenta");
+ try{
+  const {error}=await db.auth.signInWithPassword({
+   email:$("loginEmail").value.trim(),
+   password:$("loginPassword").value
+  });
+  if(error)throw error;
+  closeModal("authModal");$("loginForm").reset();
+ }catch(error){
+  showMessage("authMessage",error.message||"No pudimos iniciar sesión.","error");
+ }finally{setButtonLoading(button,false,"Ingresar a mi cuenta")}
 });
 
-$("registerForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("authMessage");
-
-  const name = $("registerName").value.trim();
-  const email = $("registerEmail").value.trim();
-  const password = $("registerPassword").value;
-
-  if (name.length < 3) {
-    return showMessage(
-      "authMessage",
-      "Ingresá tu nombre y apellido.",
-      "error"
-    );
-  }
-
-  if (password.length < 6) {
-    return showMessage(
-      "authMessage",
-      "La contraseña debe tener al menos 6 caracteres.",
-      "error"
-    );
-  }
-
-  const button = $("registerForm").querySelector("button[type=submit]");
-  setButtonLoading(button, true, "Crear mi cuenta");
-
-  try {
-    const { data, error } = await db.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: window.location.origin + window.location.pathname
-      }
-    });
-
-    if (error) throw error;
-
-    if (data.session) {
-      showMessage(
-        "authMessage",
-        "¡Cuenta creada! Ahora completá tu perfil.",
-        "success"
-      );
-    } else {
-      showMessage(
-        "authMessage",
-        "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.",
-        "success"
-      );
-    }
-
-    $("registerForm").reset();
-
-  } catch (error) {
-    showMessage(
-      "authMessage",
-      error.message || "No pudimos crear tu cuenta.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Crear mi cuenta");
-  }
+$("registerForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("authMessage");
+ const name=$("registerName").value.trim();
+ const email=$("registerEmail").value.trim();
+ const password=$("registerPassword").value;
+ if(name.length<3)return showMessage("authMessage","Ingresá tu nombre y apellido.","error");
+ if(password.length<6)return showMessage("authMessage","La contraseña debe tener al menos 6 caracteres.","error");
+ const button=$("registerForm").querySelector("button[type=submit]");
+ setButtonLoading(button,true,"Crear mi cuenta");
+ try{
+  const {data,error}=await db.auth.signUp({
+   email,password,
+   options:{
+    data:{full_name:name},
+    emailRedirectTo:window.location.origin+window.location.pathname
+   }
+  });
+  if(error)throw error;
+  showMessage("authMessage",data.session?
+   "¡Cuenta creada! Ahora completá tu perfil.":
+   "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.","success");
+  $("registerForm").reset();
+ }catch(error){
+  showMessage("authMessage",error.message||"No pudimos crear tu cuenta.","error");
+ }finally{setButtonLoading(button,false,"Crear mi cuenta")}
 });
 
-// =============================================
 // RECUPERACIÓN DE CONTRASEÑA
+function openResetModal(){
+ $("resetEmail").value=$("loginEmail").value.trim();
+ hideMessage("resetMessage");closeModal("authModal");openModal("resetModal");
+}
+$("resetForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("resetMessage");
+ const button=$("resetForm").querySelector("button");
+ setButtonLoading(button,true,"Enviar enlace");
+ try{
+  const {error}=await db.auth.resetPasswordForEmail($("resetEmail").value.trim(),{
+   redirectTo:window.location.origin+window.location.pathname
+  });
+  if(error)throw error;
+  showMessage("resetMessage","¡Listo! Revisá tu correo y también la carpeta de spam.","success");
+ }catch(error){
+  showMessage("resetMessage",error.message||"No pudimos enviar el enlace.","error");
+ }finally{setButtonLoading(button,false,"Enviar enlace")}
+});
+
+$("newPasswordForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("newPasswordMessage");
+ const password=$("newPassword").value;
+ if(password.length<6)return showMessage("newPasswordMessage","Usá al menos 6 caracteres.","error");
+ const button=$("newPasswordForm").querySelector("button");
+ setButtonLoading(button,true,"Guardar contraseña");
+ try{
+  const {error}=await db.auth.updateUser({password});
+  if(error)throw error;
+  recoveryMode=false;$("newPasswordForm").reset();closeModal("newPasswordModal");
+  alert("¡Contraseña actualizada correctamente!");
+ }catch(error){
+  showMessage("newPasswordMessage",error.message||"No pudimos cambiar tu contraseña.","error");
+ }finally{setButtonLoading(button,false,"Guardar contraseña")}
+});
+
+// PERFIL Y SESIÓN
+async function handleUser(user){
+ currentUser=user;
+ if(!user){
+  currentProfile=null;
+  $("loginBtn").style.display="inline-flex";
+  $("publishBtn").style.display="inline-flex";
+  $("userMenu").style.display="none";
+  return;
+ }
+ $("loginBtn").style.display="none";
+ $("publishBtn").style.display="none";
+ $("userMenu").style.display="flex";
+ await loadProfile();
+}
+async function loadProfile(){
+ if(!currentUser)return;
+ try{
+  const {data,error}=await db.from("profiles").select("*")
+   .eq("id",currentUser.id).maybeSingle();
+  if(error)throw error;
+  currentProfile=data;
+  if(data){
+   $("headerAvatar").src=data.avatar_url;
+  }else{
+   $("headerAvatar").src="https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
+   openProfile(true);
+  }
+ }catch(error){
+  console.error("Error cargando perfil:",error);
+  alert("No pudimos cargar tu perfil. Intentá nuevamente.");
+ }
+}
+function openProfile(required=false){
+ if(!currentUser)return openAuth();
+ hideMessage("profileMessage");
+ $("profileName").value=currentProfile?.full_name||currentUser.user_metadata?.full_name||"";
+ $("profileProvince").value=currentProfile?.province||"";
+ $("profileCity").value=currentProfile?.city||"";
+ $("profilePhoto").value="";$("profilePreview").style.display="none";
+ if(currentProfile?.avatar_url){
+  $("profilePreview").src=currentProfile.avatar_url;
+  $("profilePreview").style.display="block";
+ }
+ openModal("profileModal");
+ $("profileModal").querySelector(".modal-close").style.display=required?"none":"block";
+}
+function openMyProfile(){if(!currentUser)return openAuth();openProfile(false)}
+
+$("profilePhoto").addEventListener("change",e=>{
+ const file=e.target.files[0];if(!file)return;
+ if(!file.type.startsWith("image/")){
+  e.target.value="";return showMessage("profileMessage","Elegí una imagen válida.","error");
+ }
+ if(file.size>5*1024*1024){
+  e.target.value="";return showMessage("profileMessage","La foto no puede superar los 5 MB.","error");
+ }
+ $("profilePreview").src=URL.createObjectURL(file);
+ $("profilePreview").style.display="block";
+});
+
+$("profileForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("profileMessage");
+ if(!currentUser)return openAuth();
+ const fullName=$("profileName").value.trim();
+ const province=$("profileProvince").value;
+ const city=$("profileCity").value.trim();
+ const photo=$("profilePhoto").files[0];
+ if(!fullName||!province||!city)return showMessage("profileMessage","Completá todos los datos.","error");
+ const button=$("profileForm").querySelector("button[type=submit]");
+ setButtonLoading(button,true,"Guardar mi perfil");
+ try{
+  let avatarUrl=currentProfile?.avatar_url||"";
+  if(photo){
+   const extension=(photo.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+   const path=`${currentUser.id}/${Date.now()}.${extension}`;
+   const {error:uploadError}=await db.storage.from("profile-photos")
+    .upload(path,photo,{upsert:true,contentType:photo.type});
+   if(uploadError)throw uploadError;
+   avatarUrl=db.storage.from("profile-photos").getPublicUrl(path).data.publicUrl;
+  }
+  if(!avatarUrl)throw new Error("Tenés que subir una foto de perfil.");
+  const profileData={id:currentUser.id,full_name:fullName,province,city,avatar_url:avatarUrl};
+  const {error}=await db.from("profiles").upsert(profileData,{onConflict:"id"});
+  if(error)throw error;
+  currentProfile=profileData;$("headerAvatar").src=avatarUrl;
+  closeModal("profileModal");
+  $("profileModal").querySelector(".modal-close").style.display="block";
+  await loadJobs();alert("¡Tu perfil quedó guardado! 🎉");
+ }catch(error){
+  showMessage("profileMessage",error.message||"No pudimos guardar tu perfil.","error");
+ }finally{setButtonLoading(button,false,"Guardar mi perfil")}
+});
+
+async function logout(){
+ if(!confirm("¿Querés cerrar sesión?"))return;
+ const {error}=await db.auth.signOut();
+ if(error)alert("No pudimos cerrar la sesión: "+error.message);
+}
+
+// =============================================
+// MI PLAN
 // =============================================
 
-async function sendPasswordReset() {
-  const email = $("loginEmail").value.trim();
-
-  if (!email) {
-    return showMessage(
-      "authMessage",
-      "Primero ingresá tu correo electrónico.",
-      "error"
-    );
-  }
-
-  try {
-    const { error } = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
-    });
-
-    if (error) throw error;
-
-    $("resetEmail").value = email;
-    closeModal("authModal");
-    hideMessage("resetMessage");
-    openModal("resetModal");
-
-    showMessage(
-      "resetMessage",
-      "Te enviamos un enlace. Revisá tu correo y también la carpeta de spam.",
-      "success"
-    );
-
-  } catch (error) {
-    showMessage(
-      "authMessage",
-      error.message || "No pudimos enviar el enlace.",
-      "error"
-    );
-  }
+function formatARS(value){
+ return new Intl.NumberFormat("es-AR",{
+  style:"currency",currency:"ARS",maximumFractionDigits:0
+ }).format(Number(value)||0);
+}
+function formatDate(value){
+ if(!value)return "Sin fecha";
+ const date=new Date(value);
+ return isNaN(date)?"Sin fecha":date.toLocaleDateString("es-AR");
+}
+function planBenefits(plan){
+ const benefits=[];
+ const unlimited=plan.publicaciones_ilimitadas===true;
+ benefits.push(unlimited?"Publicaciones mensuales ilimitadas":
+  `${Number(plan.publicaciones_mensuales)||0} publicaciones por mes`);
+ benefits.push(plan.permite_destacados?"Permite destacar publicaciones":"Sin publicaciones destacadas");
+ benefits.push(plan.perfil_comercial?"Incluye perfil comercial":"Sin perfil comercial");
+ return benefits;
 }
 
-$("resetForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("resetMessage");
-
-  const email = $("resetEmail").value.trim();
-  const button = $("resetForm").querySelector("button");
-
-  setButtonLoading(button, true, "Enviar enlace");
-
-  try {
-    const { error } = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
-    });
-
-    if (error) throw error;
-
-    showMessage(
-      "resetMessage",
-      "¡Listo! Revisá tu correo para recuperar tu contraseña.",
-      "success"
-    );
-
-  } catch (error) {
-    showMessage(
-      "resetMessage",
-      error.message || "No pudimos enviar el enlace.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Enviar enlace");
-  }
-});
-
-$("newPasswordForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("newPasswordMessage");
-
-  const password = $("newPassword").value;
-
-  if (password.length < 6) {
-    return showMessage(
-      "newPasswordMessage",
-      "Usá al menos 6 caracteres.",
-      "error"
-    );
-  }
-
-  const button = $("newPasswordForm").querySelector("button");
-  setButtonLoading(button, true, "Guardar contraseña");
-
-  try {
-    const { error } = await db.auth.updateUser({
-      password
-    });
-
-    if (error) throw error;
-
-    recoveryMode = false;
-    $("newPasswordForm").reset();
-    closeModal("newPasswordModal");
-
-    alert("¡Contraseña actualizada correctamente!");
-
-  } catch (error) {
-    showMessage(
-      "newPasswordMessage",
-      error.message || "No pudimos cambiar tu contraseña.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Guardar contraseña");
-  }
-});
-
-// =============================================
-// SESIÓN Y PERFIL
-// =============================================
-
-async function handleUser(user) {
-  currentUser = user;
-
-  if (!user) {
-    currentProfile = null;
-    $("loginBtn").style.display = "inline-flex";
-    $("publishBtn").style.display = "inline-flex";
-    $("userMenu").style.display = "none";
-    return;
-  }
-
-  $("loginBtn").style.display = "none";
-  $("publishBtn").style.display = "none";
-  $("userMenu").style.display = "flex";
-
-  await loadProfile();
+async function openMyPlan(){
+ if(!currentUser)return openAuth();
+ hideMessage("planMessage");
+ openModal("planModal");
+ await loadMyPlan();
 }
 
-async function loadProfile() {
-  if (!currentUser) return;
+async function loadMyPlan(){
+ if(!currentUser){
+  $("planContent").innerHTML='<p>Ingresá a tu cuenta para consultar tu plan.</p>';
+  return;
+ }
+ $("planContent").innerHTML='<div class="plan-summary">Consultando tu suscripción...</div>';
+ $("availablePlans").textContent="Cargando planes...";
+ hideMessage("planMessage");
 
-  try {
-    const { data, error } = await db
-      .from("profiles")
-      .select("*")
-      .eq("id", currentUser.id)
-      .maybeSingle();
+ try{
+  // Consultar planes activos.
+  const {data:plans,error:plansError}=await db.from("planes")
+   .select("id,nombre,precio_ars,publicaciones_mensuales,publicaciones_ilimitadas,permite_destacados,perfil_comercial,prioridad,activo")
+   .eq("activo",true)
+   .order("prioridad",{ascending:true});
+  if(plansError)throw plansError;
 
-    if (error) throw error;
+  // Obtener suscripciones del usuario, de la más reciente a la más antigua.
+  const {data:subscriptions,error:subError}=await db.from("suscripciones")
+   .select("id,user_id,plan_id,estado,fecha_inicio,fecha_vencimiento,created_at")
+   .eq("user_id",currentUser.id)
+   .order("created_at",{ascending:false});
+  if(subError)throw subError;
 
-    currentProfile = data;
+  const now=new Date();
+  const validStates=["activo","activa","active","trialing"];
+  const subscription=(subscriptions||[]).find(s=>
+   validStates.includes(String(s.estado||"").toLowerCase())&&
+   (!s.fecha_vencimiento||new Date(s.fecha_vencimiento)>now)
+  );
 
-    if (data) {
-      $("headerAvatar").src = data.avatar_url;
-    } else {
-      $("headerAvatar").src =
-        "https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
+  const currentPlan=subscription?
+   (plans||[]).find(p=>p.id===subscription.plan_id):null;
 
-      openProfile(true);
-    }
+  // Contar publicaciones del mes calendario actual.
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  const nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1).toISOString();
 
-  } catch (error) {
-    console.error("Error cargando perfil:", error);
-    alert("No pudimos cargar tu perfil. Intentá nuevamente.");
-  }
+  const {count:usageCount,error:usageError}=await db.from("registro_publicaciones")
+   .select("id",{count:"exact",head:true})
+   .eq("user_id",currentUser.id)
+   .gte("fecha_publicacion",monthStart)
+   .lt("fecha_publicacion",nextMonth);
+  if(usageError)throw usageError;
+
+  const used=usageCount||0;
+  renderMyPlan(currentPlan,subscription,plans||[],used);
+
+ }catch(error){
+  console.error("Error consultando el plan:",error);
+  $("planContent").innerHTML="";
+  showMessage("planMessage",
+   "No pudimos consultar tu plan. Revisá que las políticas RLS permitan leer tus suscripciones y registros.","error");
+  $("availablePlans").textContent="No se pudieron cargar los planes.";
+ }
 }
 
-function openProfile(required = false) {
-  if (!currentUser) return openAuth();
+function renderMyPlan(plan,subscription,plans,used){
+ const container=$("planContent");
 
-  hideMessage("profileMessage");
+ if(!plan){
+  container.innerHTML=`
+   <div class="plan-summary">
+    <div class="plan-name">Plan Gratis</div>
+    <div class="plan-price">${formatARS(0)}</div>
+    <p>Tu cuenta todavía no tiene una suscripción paga activa.</p>
+    <div class="plan-benefit">Podés consultar los planes disponibles más abajo.</div>
+   </div>`;
+ }else{
+  const unlimited=plan.publicaciones_ilimitadas===true;
+  const limit=Number(plan.publicaciones_mensuales)||0;
+  const remaining=unlimited?null:Math.max(0,limit-used);
+  const percent=unlimited?0:limit>0?Math.min(100,used/limit*100):100;
 
-  $("profileName").value =
-    currentProfile?.full_name ||
-    currentUser.user_metadata?.full_name ||
-    "";
+  container.innerHTML=`
+   <div class="plan-summary">
+    <div class="plan-name">${escapeHTML(plan.nombre)}</div>
+    <div class="plan-price">${formatARS(plan.precio_ars)} <small style="font-size:13px;color:#647b8d">/ mes</small></div>
+    <p>Estado: <strong>${escapeHTML(subscription.estado)}</strong></p>
+    <p>Inicio: ${formatDate(subscription.fecha_inicio)}</p>
+    <p>Vencimiento: ${subscription.fecha_vencimiento?formatDate(subscription.fecha_vencimiento):"Sin fecha informada"}</p>
+   </div>
+   <h3 style="color:var(--blue-dark);margin:18px 0 5px">Tus publicaciones este mes</h3>
+   <div style="font-size:23px;font-weight:900;color:var(--blue-dark)">
+    ${used}${unlimited?" publicaciones":` / ${limit}`}
+   </div>
+   ${unlimited?
+    '<p class="plan-benefit">¡Tenés publicaciones ilimitadas!</p>':
+    `<div class="usage-track"><div class="usage-fill" style="width:${percent}%"></div></div>
+     <p>${remaining} publicaciones disponibles según tu plan.</p>`
+   }
+   <div class="plan-benefit">${plan.permite_destacados?"⭐ Podés destacar publicaciones":"Sin beneficio de publicaciones destacadas"}</div>
+   <div class="plan-benefit">${plan.perfil_comercial?"🏢 Tenés perfil comercial":"No incluye perfil comercial"}</div>`;
+ }
 
-  $("profileProvince").value = currentProfile?.province || "";
-  $("profileCity").value = currentProfile?.city || "";
+ if(!plans.length){
+  $("availablePlans").textContent="No hay planes activos para mostrar.";
+  return;
+ }
 
-  $("profilePhoto").value = "";
-  $("profilePreview").style.display = "none";
-
-  if (currentProfile?.avatar_url) {
-    $("profilePreview").src = currentProfile.avatar_url;
-    $("profilePreview").style.display = "block";
-  }
-
-  openModal("profileModal");
-
-  const closeButton = $("profileModal").querySelector(".modal-close");
-  closeButton.style.display = required ? "none" : "block";
-}
-
-function openMyProfile() {
-  if (!currentUser) return openAuth();
-  openProfile(false);
-}
-
-$("profilePhoto").addEventListener("change", event => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  if (!file.type.startsWith("image/")) {
-    event.target.value = "";
-    return showMessage(
-      "profileMessage",
-      "Elegí un archivo de imagen válido.",
-      "error"
-    );
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    event.target.value = "";
-    return showMessage(
-      "profileMessage",
-      "La foto no puede superar los 5 MB.",
-      "error"
-    );
-  }
-
-  $("profilePreview").src = URL.createObjectURL(file);
-  $("profilePreview").style.display = "block";
-});
-
-$("profileForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("profileMessage");
-
-  if (!currentUser) return openAuth();
-
-  const fullName = $("profileName").value.trim();
-  const province = $("profileProvince").value;
-  const city = $("profileCity").value.trim();
-  const photo = $("profilePhoto").files[0];
-
-  if (!fullName || !province || !city) {
-    return showMessage(
-      "profileMessage",
-      "Completá todos los datos del perfil.",
-      "error"
-    );
-  }
-
-  const button = $("profileForm").querySelector("button[type=submit]");
-  setButtonLoading(button, true, "Guardar mi perfil");
-
-  try {
-    let avatarUrl = currentProfile?.avatar_url || "";
-
-    if (photo) {
-      const extension = photo.name.split(".").pop().toLowerCase();
-      const filePath =
-        `${currentUser.id}/${Date.now()}.${extension}`;
-
-      const { error: uploadError } = await db.storage
-        .from("profile-photos")
-        .upload(filePath, photo, {
-          upsert: true,
-          contentType: photo.type
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = db.storage
-        .from("profile-photos")
-        .getPublicUrl(filePath);
-
-      avatarUrl = publicData.publicUrl;
-    }
-
-    if (!avatarUrl) {
-      throw new Error("Tenés que subir una foto de perfil.");
-    }
-
-    const profileData = {
-      id: currentUser.id,
-      full_name: fullName,
-      province,
-      city,
-      avatar_url: avatarUrl
-    };
-
-    const { error } = await db
-      .from("profiles")
-      .upsert(profileData, { onConflict: "id" });
-
-    if (error) throw error;
-
-    currentProfile = profileData;
-    $("headerAvatar").src = avatarUrl;
-
-    closeModal("profileModal");
-
-    const closeButton = $("profileModal").querySelector(".modal-close");
-    closeButton.style.display = "block";
-
-    await loadJobs();
-
-    alert("¡Tu perfil quedó guardado! 🎉");
-
-  } catch (error) {
-    showMessage(
-      "profileMessage",
-      error.message || "No pudimos guardar tu perfil.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Guardar mi perfil");
-  }
-});
-
-async function logout() {
-  const confirmed = confirm("¿Querés cerrar sesión?");
-  if (!confirmed) return;
-
-  const { error } = await db.auth.signOut();
-
-  if (error) {
-    alert("No pudimos cerrar la sesión: " + error.message);
-  }
+ $("availablePlans").innerHTML=plans.map(p=>{
+  const benefits=planBenefits(p);
+  return `<article class="plan-option">
+   <h3>${escapeHTML(p.nombre)}</h3>
+   <strong style="font-size:21px;color:var(--blue)">${formatARS(p.precio_ars)}</strong>
+   <p>${benefits.map(escapeHTML).join(" · ")}</p>
+   ${plan&&plan.id===p.id?'<span class="tag">Tu plan actual</span>':""}
+  </article>`;
+ }).join("");
 }
 
 // =============================================
 // PUBLICAR CHANGAS
 // =============================================
 
-async function openPublish() {
-  if (!currentUser) {
-    openAuth();
-    return;
-  }
-
-  if (!currentProfile) {
-    alert("Primero completá tu perfil para poder publicar.");
-    openProfile(true);
-    return;
-  }
-
-  hideMessage("publishMessage");
-
-  $("jobProvince").value = currentProfile.province;
-  $("jobCity").value = currentProfile.city;
-  $("jobTitle").value = "";
-  $("jobCategory").value = "";
-  $("jobDescription").value = "";
-  $("jobBudget").value = "";
-  $("jobPhone").value = "";
-  $("jobDuration").value = "72";
-
-  openModal("publishModal");
+async function openPublish(){
+ if(!currentUser){openAuth();return}
+ if(!currentProfile){
+  alert("Primero completá tu perfil para poder publicar.");
+  openProfile(true);return;
+ }
+ hideMessage("publishMessage");
+ $("jobProvince").value=currentProfile.province;
+ $("jobCity").value=currentProfile.city;
+ $("jobTitle").value="";$("jobCategory").value="";
+ $("jobDescription").value="";$("jobBudget").value="";
+ $("jobPhone").value="";$("jobDuration").value="72";
+ openModal("publishModal");
 }
 
-$("publishForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  hideMessage("publishMessage");
+$("publishForm").addEventListener("submit",async e=>{
+ e.preventDefault();hideMessage("publishMessage");
+ if(!currentUser||!currentProfile)return openAuth();
 
-  if (!currentUser || !currentProfile) {
-    return openAuth();
-  }
+ const title=$("jobTitle").value.trim();
+ const category=$("jobCategory").value;
+ const description=$("jobDescription").value.trim();
+ const budget=$("jobBudget").value.trim();
+ const phone=normalizePhone($("jobPhone").value);
+ const province=$("jobProvince").value;
+ const city=$("jobCity").value.trim();
+ const duration=Number($("jobDuration").value);
 
-  const title = $("jobTitle").value.trim();
-  const category = $("jobCategory").value;
-  const description = $("jobDescription").value.trim();
-  const budget = $("jobBudget").value.trim();
-  const phone = normalizePhone($("jobPhone").value);
-  const province = $("jobProvince").value;
-  const city = $("jobCity").value.trim();
-  const duration = Number($("jobDuration").value);
+ if(!title||!category||!description||!province||!city)
+  return showMessage("publishMessage","Completá todos los campos obligatorios.","error");
+ if(phone.length<10||phone.length>15)
+  return showMessage("publishMessage","Revisá el número de WhatsApp. Debe incluir código de área.","error");
+ if(![24,48,72,96].includes(duration))
+  return showMessage("publishMessage","Elegí una duración válida.","error");
 
-  if (!title || !category || !description || !province || !city) {
-    return showMessage(
-      "publishMessage",
-      "Completá todos los campos obligatorios.",
-      "error"
-    );
-  }
+ const button=$("publishSubmit");
+ setButtonLoading(button,true,"Publicar changa");
 
-  if (phone.length < 10 || phone.length > 15) {
-    return showMessage(
-      "publishMessage",
-      "Revisá el número de WhatsApp. Debe incluir código de área.",
-      "error"
-    );
-  }
-
-  if (![24, 48, 72, 96].includes(duration)) {
-    return showMessage(
-      "publishMessage",
-      "Elegí una duración válida.",
-      "error"
-    );
-  }
-
-  const button = $("publishSubmit");
-  setButtonLoading(button, true, "Publicar changa");
-
-  try {
-    const now = new Date();
-    const expiresAt = new Date(
-      now.getTime() + duration * 60 * 60 * 1000
-    );
-
-    const { error } = await db
-      .from("changas")
-      .insert({
-        title,
-        category,
-        description,
-        budget: budget || null,
-        province,
-        city,
-        client_name: currentProfile.full_name,
-        client_phone: phone,
-        owner_id: currentUser.id,
-        status: "disponible",
-        created_at: now.toISOString(),
-        expires_at: expiresAt.toISOString()
-      });
-
-    if (error) throw error;
-
-    $("publishForm").reset();
-    closeModal("publishModal");
-
-    alert("¡Tu changa se publicó correctamente! 🚀");
-
-    await loadJobs();
-    scrollToJobs();
-
-  } catch (error) {
-    showMessage(
-      "publishMessage",
-      error.message || "No pudimos publicar tu changa.",
-      "error"
-    );
-  } finally {
-    setButtonLoading(button, false, "Publicar changa");
-  }
+ try{
+  const now=new Date();
+  const expiresAt=new Date(now.getTime()+duration*60*60*1000);
+  const {error}=await db.from("changas").insert({
+   title,category,description,budget:budget||null,province,city,
+   client_name:currentProfile.full_name,client_phone:phone,
+   owner_id:currentUser.id,status:"disponible",
+   created_at:now.toISOString(),expires_at:expiresAt.toISOString()
+  });
+  if(error)throw error;
+  $("publishForm").reset();closeModal("publishModal");
+  alert("¡Tu changa se publicó correctamente! 🚀");
+  await loadJobs();scrollToJobs();
+ }catch(error){
+  showMessage("publishMessage",error.message||"No pudimos publicar tu changa.","error");
+ }finally{setButtonLoading(button,false,"Publicar changa")}
 });
 
 // =============================================
 // CARGAR PUBLICACIONES
 // =============================================
 
-async function loadJobs() {
-  if (loadingJobs) {
-    refreshRequested = true;
-    return;
-  }
-
-  loadingJobs = true;
-
-  try {
-    const { data, error } = await db
-      .from("changas")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    const now = Date.now();
-
-    allJobs = (data || []).filter(job => {
-      if (job.status !== "disponible") return false;
-
-      if (job.expires_at &&
-          new Date(job.expires_at).getTime() <= now) {
-        return false;
-      }
-
-      return true;
-    });
-
-    await renderJobs();
-
-  } catch (error) {
-    console.error("Error cargando publicaciones:", error);
-
-    $("jobsContainer").innerHTML = `
-      <div class="empty" style="grid-column:1/-1">
-        <div class="emoji">⚠️</div>
-        <h3>No pudimos cargar las publicaciones</h3>
-        <p>Revisá tu conexión e intentá nuevamente.</p>
-        <button class="btn btn-primary" onclick="loadJobs()">Volver a intentar</button>
-      </div>
-    `;
-
-    $("jobsCount").textContent = "Error al cargar";
-
-  } finally {
-    loadingJobs = false;
-
-    if (refreshRequested) {
-      refreshRequested = false;
-      loadJobs();
-    }
-  }
+async function loadJobs(){
+ if(loadingJobs){refreshRequested=true;return}
+ loadingJobs=true;
+ try{
+  const {data,error}=await db.from("changas").select("*").order("created_at",{ascending:false});
+  if(error)throw error;
+  const now=Date.now();
+  allJobs=(data||[]).filter(job=>
+   job.status==="disponible"&&
+   (!job.expires_at||new Date(job.expires_at).getTime()>now)
+  );
+  await renderJobs();
+ }catch(error){
+  console.error("Error cargando publicaciones:",error);
+  $("jobsContainer").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="emoji">⚠️</div><h3>No pudimos cargar las publicaciones</h3><p>Revisá tu conexión e intentá nuevamente.</p><button class="btn btn-primary" onclick="loadJobs()">Volver a intentar</button></div>`;
+  $("jobsCount").textContent="Error al cargar";
+ }finally{
+  loadingJobs=false;
+  if(refreshRequested){refreshRequested=false;loadJobs()}
+ }
 }
 
 // =============================================
 // MOSTRAR PUBLICACIONES
 // =============================================
 
-async function renderJobs() {
-  const search = $("searchInput").value.trim().toLowerCase();
-  const province = $("provinceFilter").value;
-  const category = $("categoryFilter").value;
+async function renderJobs(){
+ const search=$("searchInput").value.trim().toLowerCase();
+ const province=$("provinceFilter").value;
+ const category=$("categoryFilter").value;
 
-  const filtered = allJobs.filter(job => {
-    const text = [
-      job.title,
-      job.description,
-      job.category,
-      job.city,
-      job.province
-    ].join(" ").toLowerCase();
+ const filtered=allJobs.filter(job=>{
+  const text=[job.title,job.description,job.category,job.city,job.province].join(" ").toLowerCase();
+  return(!search||text.includes(search))&&
+   (!province||job.province===province)&&
+   (!category||job.category===category);
+ });
 
-    return (
-      (!search || text.includes(search)) &&
-      (!province || job.province === province) &&
-      (!category || job.category === category)
-    );
-  });
+ $("jobsCount").textContent=`${filtered.length} ${filtered.length===1?"oportunidad":"oportunidades"}`;
+ $("emptyMessage").style.display=filtered.length?"none":"block";
+ $("jobsContainer").innerHTML="";
+ if(!filtered.length)return;
 
-  $("jobsCount").textContent =
-    `${filtered.length} ${filtered.length === 1 ? "oportunidad" : "oportunidades"}`;
+ const ownerIds=[...new Set(filtered.map(job=>job.owner_id).filter(Boolean))];
+ let profiles={};
+ if(ownerIds.length){
+  const {data,error}=await db.from("profiles")
+   .select("id,full_name,province,city,avatar_url").in("id",ownerIds);
+  if(!error)(data||[]).forEach(profile=>profiles[profile.id]=profile);
+ }
 
-  $("emptyMessage").style.display =
-    filtered.length ? "none" : "block";
+ filtered.forEach(job=>{
+  const profile=profiles[job.owner_id]||{};
+  const name=profile.full_name||job.client_name||"Usuario";
+  const avatar=profile.avatar_url||"https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
+  const date=job.created_at?new Date(job.created_at).toLocaleDateString("es-AR"):"";
+  const phone=normalizePhone(job.client_phone);
+  const whatsappText=encodeURIComponent(`Hola ${name}, vi tu publicación "${job.title}" en Changa Ya! y me interesa.`);
+  const whatsappLink=phone?`https://wa.me/${phone}?text=${whatsappText}`:"";
+  const isOwner=currentUser&&currentUser.id===job.owner_id;
 
-  $("jobsContainer").innerHTML = "";
+  const card=document.createElement("article");
+  card.className="job-card";
+  card.innerHTML=`
+   <span class="tag">${escapeHTML(job.category)}</span>
+   <h3>${escapeHTML(job.title)}</h3>
+   <p>${escapeHTML(job.description)}</p>
+   <div class="job-meta">
+    <span>📍 ${escapeHTML(job.city)}, ${escapeHTML(job.province)}</span>
+    <span>💰 ${escapeHTML(job.budget||"A convenir")}</span>
+    ${date?`<span>📅 ${date}</span>`:""}
+   </div>
+   <div class="job-owner">
+    <img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de ${escapeHTML(name)}" onerror="this.src='https://placehold.co/100x100/e8f7ff/1267a5?text=YA'">
+    <div><strong>${escapeHTML(name)}</strong><small>Persona que publicó</small></div>
+   </div>
+   <div class="job-actions">
+    ${whatsappLink?`<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`:'<span class="tag">Contacto no disponible</span>'}
+    ${isOwner?`<button class="btn btn-light" data-finish="${escapeHTML(job.id)}">✓ Trabajo conseguido</button>`:""}
+   </div>`;
+  $("jobsContainer").appendChild(card);
+ });
 
-  if (!filtered.length) return;
-
-  // Buscar los perfiles de quienes publicaron.
-  const ownerIds = [
-    ...new Set(filtered.map(job => job.owner_id).filter(Boolean))
-  ];
-
-  let profiles = {};
-
-  if (ownerIds.length) {
-    const { data, error } = await db
-      .from("profiles")
-      .select("id,full_name,province,city,avatar_url")
-      .in("id", ownerIds);
-
-    if (!error) {
-      (data || []).forEach(profile => {
-        profiles[profile.id] = profile;
-      });
-    }
-  }
-
-  filtered.forEach(job => {
-    const profile = profiles[job.owner_id] || {};
-    const name = profile.full_name || job.client_name || "Usuario";
-    const avatar = profile.avatar_url ||
-      "https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
-
-    const date = job.created_at
-      ? new Date(job.created_at).toLocaleDateString("es-AR")
-      : "";
-
-    const card = document.createElement("article");
-    card.className = "job-card";
-
-    const safeTitle = escapeHTML(job.title);
-    const safeDescription = escapeHTML(job.description);
-    const safeCategory = escapeHTML(job.category);
-    const safeCity = escapeHTML(job.city);
-    const safeProvince = escapeHTML(job.province);
-    const safeBudget = escapeHTML(job.budget || "A convenir");
-    const safeName = escapeHTML(name);
-    const safeAvatar = escapeHTML(avatar);
-
-    const phone = normalizePhone(job.client_phone);
-    const whatsappText = encodeURIComponent(
-      `Hola ${name}, vi tu publicación "${job.title}" en Changa Ya! y me interesa.`
-    );
-
-    const whatsappLink = phone
-      ? `https://wa.me/${phone}?text=${whatsappText}`
-      : "";
-
-    const isOwner =
-      currentUser && currentUser.id === job.owner_id;
-
-    card.innerHTML = `
-      <span class="tag">${safeCategory}</span>
-
-      <h3>${safeTitle}</h3>
-
-      <p>${safeDescription}</p>
-
-      <div class="job-meta">
-        <span>📍 ${safeCity}, ${safeProvince}</span>
-        <span>💰 ${safeBudget}</span>
-        ${date ? `<span>📅 ${date}</span>` : ""}
-      </div>
-
-      <div class="job-owner">
-        <img
-          class="avatar"
-          src="${safeAvatar}"
-          alt="Foto de ${safeName}"
-          onerror="this.src='https://placehold.co/100x100/e8f7ff/1267a5?text=YA'"
-        >
-        <div>
-          <strong>${safeName}</strong>
-          <small>Persona que publicó</small>
-        </div>
-      </div>
-
-      <div class="job-actions">
-        ${
-          whatsappLink
-            ? `<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`
-            : `<span class="tag">Contacto no disponible</span>`
-        }
-
-        ${
-          isOwner
-            ? `<button class="btn btn-light" data-finish="${escapeHTML(job.id)}">✓ Trabajo conseguido</button>`
-            : ""
-        }
-      </div>
-    `;
-
-    $("jobsContainer").appendChild(card);
-  });
-
-  $("jobsContainer").querySelectorAll("[data-finish]").forEach(button => {
-    button.addEventListener("click", () => {
-      markAsFinished(button.dataset.finish);
-    });
-  });
+ $("jobsContainer").querySelectorAll("[data-finish]").forEach(button=>{
+  button.addEventListener("click",()=>markAsFinished(button.dataset.finish));
+ });
 }
 
-// =============================================
-// MARCAR TRABAJO COMO CONSEGUIDO
-// =============================================
-
-async function markAsFinished(id) {
-  if (!currentUser) return;
-
-  const confirmed = confirm(
-    "¿Confirmás que este trabajo ya fue conseguido? La publicación dejará de aparecer entre las disponibles."
-  );
-
-  if (!confirmed) return;
-
-  try {
-    const { error } = await db
-      .from("changas")
-      .update({
-        status: "conseguida",
-        finished_at: new Date().toISOString()
-      })
-      .eq("id", id)
-      .eq("owner_id", currentUser.id);
-
-    if (error) throw error;
-
-    alert("¡Perfecto! La publicación fue marcada como conseguida.");
-
-    await loadJobs();
-
-  } catch (error) {
-    alert("No pudimos actualizar la publicación: " + error.message);
-  }
-}
-
-// =============================================
-// FILTROS EN VIVO
-// =============================================
-
-$("searchInput").addEventListener("input", renderJobs);
-$("provinceFilter").addEventListener("change", renderJobs);
-$("categoryFilter").addEventListener("change", renderJobs);
-
-// =============================================
-// ACTUALIZACIONES EN TIEMPO REAL
-// =============================================
-
-db.channel("changas-en-vivo")
-  .on(
-    "postgres_changes",
-    {
-      event: "*",
-      schema: "public",
-      table: "changas"
-    },
-    () => {
-      loadJobs();
-    }
-  )
-  .subscribe();
-
-// =============================================
-// INICIO DE LA APLICACIÓN
-// =============================================
-
-async function startApp() {
-  populateCategories();
-  populateProvinces();
-
-  const { data, error } = await db.auth.getSession();
-
-  if (error) {
-    console.error("Error recuperando sesión:", error);
-  }
-
-  await handleUser(data?.session?.user || null);
-
+// MARCAR COMO CONSEGUIDO
+async function markAsFinished(id){
+ if(!currentUser)return;
+ if(!confirm("¿Confirmás que este trabajo ya fue conseguido? La publicación dejará de aparecer entre las disponibles."))return;
+ try{
+  const {error}=await db.from("changas").update({
+   status:"conseguida",finished_at:new Date().toISOString()
+  }).eq("id",id).eq("owner_id",currentUser.id);
+  if(error)throw error;
+  alert("¡Perfecto! La publicación fue marcada como conseguida.");
   await loadJobs();
-
-  // Detectar enlaces de recuperación de contraseña.
-  const hash = window.location.hash;
-
-  if (
-    hash.includes("type=recovery") ||
-    hash.includes("access_token")
-  ) {
-    recoveryMode = true;
-    openModal("newPasswordModal");
-  }
+ }catch(error){alert("No pudimos actualizar la publicación: "+error.message)}
 }
 
-// Escuchar cambios de sesión.
-db.auth.onAuthStateChange(async (event, session) => {
-  if (event === "PASSWORD_RECOVERY") {
-    recoveryMode = true;
-    openModal("newPasswordModal");
-    return;
-  }
+// FILTROS
+$("searchInput").addEventListener("input",renderJobs);
+$("provinceFilter").addEventListener("change",renderJobs);
+$("categoryFilter").addEventListener("change",renderJobs);
 
-  if (event === "SIGNED_IN") {
-    closeModal("authModal");
-    await handleUser(session?.user || null);
-    await loadJobs();
-  }
+// ACTUALIZACIONES EN TIEMPO REAL
+db.channel("changas-en-vivo")
+ .on("postgres_changes",{event:"*",schema:"public",table:"changas"},()=>loadJobs())
+ .subscribe();
 
-  if (event === "SIGNED_OUT") {
-    await handleUser(null);
-    await loadJobs();
-  }
+// INICIO
+async function startApp(){
+ populateCategories();populateProvinces();
+ const {data,error}=await db.auth.getSession();
+ if(error)console.error("Error recuperando sesión:",error);
+ await handleUser(data?.session?.user||null);
+ await loadJobs();
+ const hash=window.location.hash;
+ if(hash.includes("type=recovery")||hash.includes("access_token")){
+  recoveryMode=true;openModal("newPasswordModal");
+ }
+}
 
-  if (event === "USER_UPDATED") {
-    currentUser = session?.user || currentUser;
-  }
+db.auth.onAuthStateChange((event,session)=>{
+ if(event==="PASSWORD_RECOVERY"){
+  recoveryMode=true;openModal("newPasswordModal");return;
+ }
+ if(event==="SIGNED_IN"){
+  closeModal("authModal");
+  setTimeout(async()=>{
+   await handleUser(session?.user||null);
+   await loadJobs();
+  },0);
+ }
+ if(event==="SIGNED_OUT"){
+  setTimeout(async()=>{await handleUser(null);await loadJobs()},0);
+ }
+ if(event==="USER_UPDATED")currentUser=session?.user||currentUser;
 });
 
 startApp();
-
 </script>
 </body>
 </html>
