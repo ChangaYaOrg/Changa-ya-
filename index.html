@@ -14,28 +14,28 @@
     * { box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: #f5f6fa;
+      background: #f3f8fc;
       color: #18202b;
       margin: 0;
     }
-    .brand { color: #16a36a; }
-    .bg-brand { background: #16a36a; }
+    .brand { color: #168bd2; }
+    .bg-brand { background: #168bd2; }
     .panel {
       background: white;
-      border: 1px solid #e8ebef;
+      border: 1px solid #e3edf5;
       border-radius: 16px;
-      box-shadow: 0 5px 20px rgba(20,30,40,.04);
+      box-shadow: 0 5px 20px rgba(20,50,80,.05);
     }
     .field {
       width: 100%;
-      border: 1px solid #dce1e7;
+      border: 1px solid #dce5ed;
       border-radius: 10px;
       padding: 12px;
       background: white;
       outline: none;
       font-size: 14px;
     }
-    .field:focus { border-color: #16a36a; }
+    .field:focus { border-color: #168bd2; }
     .btn {
       border-radius: 10px;
       padding: 12px 17px;
@@ -43,33 +43,28 @@
       cursor: pointer;
       transition: .2s;
     }
-    .btn-primary {
-      background: #16a36a;
-      color: white;
-    }
-    .btn-primary:hover { background: #128653; }
-    .btn-light {
-      background: #edf8f2;
-      color: #128653;
-    }
+    .btn-primary { background: #168bd2; color: white; }
+    .btn-primary:hover { background: #0875b9; }
+    .btn-light { background: #e8f5ff; color: #0875b9; }
     .hidden { display: none !important; }
     .avatar {
       width: 42px;
       height: 42px;
       border-radius: 50%;
       object-fit: cover;
-      background: #e7eee9;
+      background: #e7f1f8;
     }
     .job-card {
       background: white;
-      border: 1px solid #e8ebef;
+      border: 1px solid #e3edf5;
       border-radius: 15px;
       padding: 17px;
+      box-shadow: 0 4px 15px rgba(20,50,80,.04);
     }
     .tag {
       display: inline-block;
-      background: #edf8f2;
-      color: #128653;
+      background: #e8f5ff;
+      color: #0875b9;
       padding: 5px 9px;
       border-radius: 20px;
       font-size: 11px;
@@ -111,333 +106,280 @@
 
 <body>
 
-  <!-- ENCABEZADO -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <a href="#" class="text-2xl font-extrabold tracking-tight">
-        Changa <span class="brand">Ya</span> 🚀
-      </a>
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <a href="#" class="text-2xl font-extrabold tracking-tight">
+      Changa <span class="brand">Ya</span> 🚀
+    </a>
 
-      <div class="flex items-center gap-2">
-        <button id="loginBtn" class="btn btn-light text-sm" onclick="openAuth()">
-          Ingresar
-        </button>
-        <button id="publishBtn" class="btn btn-primary text-sm" onclick="openPublish()">
-          + Publicar
-        </button>
+    <div class="flex items-center gap-2">
+      <button id="loginBtn" class="btn btn-light text-sm" onclick="openAuth()">Ingresar</button>
+      <button id="publishBtn" class="btn btn-primary text-sm" onclick="openPublish()">+ Publicar</button>
 
-        <div id="userMenu" class="hidden flex items-center gap-2">
-          <img id="headerAvatar" class="avatar" src="" alt="Foto de perfil">
-          <button onclick="logout()" class="text-sm font-semibold text-gray-600">
-            Salir
-          </button>
-        </div>
+      <div id="userMenu" class="hidden flex items-center gap-2">
+        <img id="headerAvatar" class="avatar" src="" alt="Foto de perfil">
+        <button onclick="logout()" class="text-sm font-semibold text-gray-600">Salir</button>
       </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- PRESENTACIÓN -->
-  <section class="bg-white">
-    <div class="max-w-6xl mx-auto px-4 py-10 md:py-14">
-      <div class="max-w-2xl">
-        <span class="tag">EN TODA ARGENTINA 🇦🇷</span>
-        <h1 class="text-3xl md:text-5xl font-extrabold mt-4 leading-tight">
-          Encontrá una changa.
-          <span class="brand">Conseguí trabajo.</span>
-        </h1>
-        <p class="text-gray-500 mt-4 leading-relaxed">
-          Publicá lo que necesitás o encontrá personas que buscan trabajar.
-          Fácil, rápido y sin intermediarios.
-        </p>
-        <div class="flex flex-wrap gap-3 mt-6">
-          <button class="btn btn-primary" onclick="openPublish()">
-            Publicar una changa
-          </button>
-          <button class="btn btn-light" onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">
-            Buscar trabajos
-          </button>
-        </div>
+<section class="bg-white">
+  <div class="max-w-6xl mx-auto px-4 py-10 md:py-14">
+    <div class="max-w-2xl">
+      <span class="tag">EN TODA ARGENTINA 🇦🇷</span>
+      <h1 class="text-3xl md:text-5xl font-extrabold mt-4 leading-tight">
+        Encontrá una changa.
+        <span class="brand">Conseguí trabajo.</span>
+      </h1>
+      <p class="text-gray-500 mt-4 leading-relaxed">
+        Publicá lo que necesitás o encontrá personas que buscan trabajar.
+        Fácil, rápido y sin intermediarios.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-6">
+        <button class="btn btn-primary" onclick="openPublish()">Publicar una changa</button>
+        <button class="btn btn-light" onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">
+          Buscar trabajos
+        </button>
       </div>
+    </div>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+  <section id="listings">
+    <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+      <div>
+        <h2 class="text-2xl font-extrabold">Changas disponibles</h2>
+        <p class="text-sm text-gray-500 mt-1">Encontrá oportunidades cerca tuyo.</p>
+      </div>
+      <span id="jobsCount" class="text-sm text-gray-500">Cargando publicaciones...</span>
+    </div>
+
+    <div class="panel p-4 mb-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <input id="searchInput" class="field" type="search"
+          placeholder="¿Qué trabajo estás buscando?">
+
+        <select id="provinceFilter" class="field">
+          <option value="">Todas las provincias</option>
+          <option>Buenos Aires</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Ciudad Autónoma de Buenos Aires</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+
+        <select id="categoryFilter" class="field">
+          <option value="">Todos los rubros</option>
+        </select>
+      </div>
+
+      <button onclick="loadJobs()" class="btn btn-primary w-full mt-3">
+        Buscar changas
+      </button>
+    </div>
+
+    <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="panel p-6 text-center text-gray-500">Cargando publicaciones...</div>
+    </div>
+
+    <div id="emptyMessage" class="hidden panel p-8 text-center mt-4">
+      <div class="text-4xl mb-3">🔎</div>
+      <h3 class="font-bold text-lg">No encontramos publicaciones</h3>
+      <p class="text-gray-500 text-sm mt-2">
+        Probá cambiar los filtros o volvé a buscar más tarde.
+      </p>
     </div>
   </section>
+</main>
 
-  <!-- BUSCADOR -->
-  <main class="max-w-6xl mx-auto px-4 py-8">
+<footer class="bg-white border-t mt-12">
+  <div class="max-w-6xl mx-auto px-4 py-7 text-center">
+    <p class="font-extrabold text-xl">Changa <span class="brand">Ya</span> 🚀</p>
+    <p class="text-sm text-gray-500 mt-2">
+      Conectamos personas con oportunidades de trabajo en Argentina.
+    </p>
+    <p class="text-xs text-gray-400 mt-3">© 2026 Changa Ya</p>
+  </div>
+</footer>
 
-    <section id="listings">
-      <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
-        <div>
-          <h2 class="text-2xl font-extrabold">Changas disponibles</h2>
-          <p class="text-sm text-gray-500 mt-1">Encontrá oportunidades cerca tuyo.</p>
-        </div>
-        <span id="jobsCount" class="text-sm text-gray-500">Cargando publicaciones...</span>
-      </div>
+<!-- INGRESO Y REGISTRO -->
+<div id="authModal" class="modal-bg hidden">
+  <div class="modal">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-xl font-extrabold">Tu cuenta</h2>
+      <button onclick="closeModal('authModal')" class="text-2xl text-gray-400">×</button>
+    </div>
 
-      <div class="panel p-4 mb-5">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <input id="searchInput" class="field" type="search"
-            placeholder="¿Qué trabajo estás buscando?">
+    <div class="flex gap-2 mb-5">
+      <button id="loginTab" onclick="showAuthTab('login')" class="btn btn-primary flex-1">Ingresar</button>
+      <button id="registerTab" onclick="showAuthTab('register')" class="btn btn-light flex-1">Crear cuenta</button>
+    </div>
 
-          <select id="provinceFilter" class="field">
-            <option value="">Todas las provincias</option>
-            <option>Buenos Aires</option>
-            <option>Catamarca</option>
-            <option>Chaco</option>
-            <option>Chubut</option>
-            <option>Ciudad Autónoma de Buenos Aires</option>
-            <option>Córdoba</option>
-            <option>Corrientes</option>
-            <option>Entre Ríos</option>
-            <option>Formosa</option>
-            <option>Jujuy</option>
-            <option>La Pampa</option>
-            <option>La Rioja</option>
-            <option>Mendoza</option>
-            <option>Misiones</option>
-            <option>Neuquén</option>
-            <option>Río Negro</option>
-            <option>Salta</option>
-            <option>San Juan</option>
-            <option>San Luis</option>
-            <option>Santa Cruz</option>
-            <option>Santa Fe</option>
-            <option>Santiago del Estero</option>
-            <option>Tierra del Fuego</option>
-            <option>Tucumán</option>
-          </select>
+    <form id="loginForm" class="space-y-3">
+      <input id="loginEmail" class="field" type="email" placeholder="Correo electrónico" required>
+      <input id="loginPassword" class="field" type="password" placeholder="Contraseña" required>
+      <button class="btn btn-primary w-full" type="submit">Ingresar</button>
+    </form>
 
-          <select id="categoryFilter" class="field">
-            <option value="">Todos los rubros</option>
-            <option>Albañilería</option>
-            <option>Construcción</option>
-            <option>Electricidad</option>
-            <option>Plomería</option>
-            <option>Jardinería</option>
-            <option>Limpieza</option>
-            <option>Fletes y mudanzas</option>
-            <option>Muebles y carpintería</option>
-            <option>Gastronomía</option>
-            <option>Comercio</option>
-            <option>Reparaciones</option>
-            <option>Otros</option>
-          </select>
-        </div>
-
-        <button onclick="loadJobs()" class="btn btn-primary w-full mt-3">
-          Buscar changas
-        </button>
-      </div>
-
-      <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="panel p-6 text-center text-gray-500">
-          Cargando publicaciones...
-        </div>
-      </div>
-
-      <div id="emptyMessage" class="hidden panel p-8 text-center mt-4">
-        <div class="text-4xl mb-3">🔎</div>
-        <h3 class="font-bold text-lg">No encontramos publicaciones</h3>
-        <p class="text-gray-500 text-sm mt-2">
-          Probá cambiar los filtros o volvé a buscar más tarde.
-        </p>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- PIE -->
-  <footer class="bg-white border-t mt-12">
-    <div class="max-w-6xl mx-auto px-4 py-7 text-center">
-      <p class="font-extrabold text-xl">Changa <span class="brand">Ya</span> 🚀</p>
-      <p class="text-sm text-gray-500 mt-2">
-        Conectamos personas con oportunidades de trabajo en Argentina.
+    <form id="registerForm" class="hidden space-y-3">
+      <input id="registerName" class="field" type="text" placeholder="Nombre y apellido" required>
+      <input id="registerEmail" class="field" type="email" placeholder="Correo electrónico" required>
+      <input id="registerPassword" class="field" type="password"
+        placeholder="Crear contraseña (mínimo 6 caracteres)" minlength="6" required>
+      <button class="btn btn-primary w-full" type="submit">Crear mi cuenta</button>
+      <p class="text-xs text-gray-500">
+        Después de registrarte, confirmá tu correo electrónico para poder ingresar.
       </p>
-      <p class="text-xs text-gray-400 mt-3">© 2026 Changa Ya</p>
-    </div>
-  </footer>
+    </form>
 
-  <!-- VENTANA DE INGRESO Y REGISTRO -->
-  <div id="authModal" class="modal-bg hidden">
-    <div class="modal">
-      <div class="flex justify-between items-center mb-5">
-        <h2 class="text-xl font-extrabold">Tu cuenta</h2>
-        <button onclick="closeModal('authModal')" class="text-2xl text-gray-400">×</button>
-      </div>
-
-      <div class="flex gap-2 mb-5">
-        <button id="loginTab" onclick="showAuthTab('login')"
-          class="btn btn-primary flex-1">Ingresar</button>
-        <button id="registerTab" onclick="showAuthTab('register')"
-          class="btn btn-light flex-1">Crear cuenta</button>
-      </div>
-
-      <form id="loginForm" class="space-y-3">
-        <input id="loginEmail" class="field" type="email"
-          placeholder="Correo electrónico" required>
-        <input id="loginPassword" class="field" type="password"
-          placeholder="Contraseña" required>
-        <button class="btn btn-primary w-full" type="submit">Ingresar</button>
-      </form>
-
-      <form id="registerForm" class="hidden space-y-3">
-        <input id="registerName" class="field" type="text"
-          placeholder="Nombre y apellido" required>
-        <input id="registerEmail" class="field" type="email"
-          placeholder="Correo electrónico" required>
-        <input id="registerPassword" class="field" type="password"
-          placeholder="Crear contraseña (mínimo 6 caracteres)" minlength="6" required>
-        <button class="btn btn-primary w-full" type="submit">Crear mi cuenta</button>
-        <p class="text-xs text-gray-500">
-          Después de registrarte, confirmá tu correo electrónico para poder ingresar.
-        </p>
-      </form>
-
-      <p id="authMessage" class="text-sm mt-4 text-center"></p>
-    </div>
+    <p id="authMessage" class="text-sm mt-4 text-center"></p>
   </div>
+</div>
 
-  <!-- COMPLETAR PERFIL -->
-  <div id="profileModal" class="modal-bg hidden">
-    <div class="modal">
-      <h2 class="text-xl font-extrabold mb-2">Completá tu perfil</h2>
-      <p class="text-sm text-gray-500 mb-5">
-        Necesitamos estos datos para que puedas publicar y contactar trabajos.
-      </p>
+<!-- COMPLETAR PERFIL -->
+<div id="profileModal" class="modal-bg hidden">
+  <div class="modal">
+    <h2 class="text-xl font-extrabold mb-2">Completá tu perfil</h2>
+    <p class="text-sm text-gray-500 mb-5">
+      Necesitamos estos datos para que puedas publicar y contactar trabajos.
+    </p>
 
-      <form id="profileForm" class="space-y-3">
-        <input id="profileName" class="field" type="text"
-          placeholder="Nombre y apellido" required>
+    <form id="profileForm" class="space-y-3">
+      <input id="profileName" class="field" type="text" placeholder="Nombre y apellido" required>
 
-        <select id="profileProvince" class="field" required>
-          <option value="">Seleccioná tu provincia</option>
-          <option>Buenos Aires</option>
-          <option>Catamarca</option>
-          <option>Chaco</option>
-          <option>Chubut</option>
-          <option>Ciudad Autónoma de Buenos Aires</option>
-          <option>Córdoba</option>
-          <option>Corrientes</option>
-          <option>Entre Ríos</option>
-          <option>Formosa</option>
-          <option>Jujuy</option>
-          <option>La Pampa</option>
-          <option>La Rioja</option>
-          <option>Mendoza</option>
-          <option>Misiones</option>
-          <option>Neuquén</option>
-          <option>Río Negro</option>
-          <option>Salta</option>
-          <option>San Juan</option>
-          <option>San Luis</option>
-          <option>Santa Cruz</option>
-          <option>Santa Fe</option>
-          <option>Santiago del Estero</option>
-          <option>Tierra del Fuego</option>
-          <option>Tucumán</option>
-        </select>
+      <select id="profileProvince" class="field" required>
+        <option value="">Seleccioná tu provincia</option>
+        <option>Buenos Aires</option>
+        <option>Catamarca</option>
+        <option>Chaco</option>
+        <option>Chubut</option>
+        <option>Ciudad Autónoma de Buenos Aires</option>
+        <option>Córdoba</option>
+        <option>Corrientes</option>
+        <option>Entre Ríos</option>
+        <option>Formosa</option>
+        <option>Jujuy</option>
+        <option>La Pampa</option>
+        <option>La Rioja</option>
+        <option>Mendoza</option>
+        <option>Misiones</option>
+        <option>Neuquén</option>
+        <option>Río Negro</option>
+        <option>Salta</option>
+        <option>San Juan</option>
+        <option>San Luis</option>
+        <option>Santa Cruz</option>
+        <option>Santa Fe</option>
+        <option>Santiago del Estero</option>
+        <option>Tierra del Fuego</option>
+        <option>Tucumán</option>
+      </select>
 
-        <input id="profileCity" class="field" type="text"
-          placeholder="Tu ciudad" required>
+      <input id="profileCity" class="field" type="text" placeholder="Tu ciudad" required>
 
-        <label class="block text-sm font-semibold">Foto de perfil (obligatoria)</label>
-        <input id="profilePhoto" class="field" type="file"
-          accept="image/*" required>
+      <label class="block text-sm font-semibold">Foto de perfil (obligatoria)</label>
+      <input id="profilePhoto" class="field" type="file" accept="image/*" required>
 
-        <button class="btn btn-primary w-full" type="submit">
-          Guardar mi perfil
-        </button>
-        <p id="profileMessage" class="text-sm text-center"></p>
-      </form>
-    </div>
+      <button class="btn btn-primary w-full" type="submit">Guardar mi perfil</button>
+      <p id="profileMessage" class="text-sm text-center"></p>
+    </form>
   </div>
+</div>
 
-  <!-- PUBLICAR CHANGA -->
-  <div id="publishModal" class="modal-bg hidden">
-    <div class="modal">
-      <div class="flex justify-between items-center mb-5">
-        <h2 class="text-xl font-extrabold">Publicar una changa</h2>
-        <button onclick="closeModal('publishModal')" class="text-2xl text-gray-400">×</button>
-      </div>
-
-      <form id="publishForm" class="space-y-3">
-        <input id="jobTitle" class="field" type="text"
-          placeholder="¿Qué trabajo necesitás?" required>
-
-        <select id="jobCategory" class="field" required>
-          <option value="">Seleccioná el rubro</option>
-          <option>Albañilería</option>
-          <option>Construcción</option>
-          <option>Electricidad</option>
-          <option>Plomería</option>
-          <option>Jardinería</option>
-          <option>Limpieza</option>
-          <option>Fletes y mudanzas</option>
-          <option>Muebles y carpintería</option>
-          <option>Gastronomía</option>
-          <option>Comercio</option>
-          <option>Reparaciones</option>
-          <option>Otros</option>
-        </select>
-
-        <input id="jobBudget" class="field" type="text"
-          placeholder="Pago ofrecido (opcional)">
-
-        <textarea id="jobDescription" class="field" rows="4"
-          placeholder="Contá un poco más sobre el trabajo..." required></textarea>
-
-        <input id="jobPhone" class="field" type="tel"
-          placeholder="Tu WhatsApp (ej: 5493411234567)" required>
-
-        <label class="block text-sm font-semibold">Provincia</label>
-        <select id="jobProvince" class="field" required>
-          <option value="">Seleccioná una provincia</option>
-          <option>Buenos Aires</option>
-          <option>Catamarca</option>
-          <option>Chaco</option>
-          <option>Chubut</option>
-          <option>Ciudad Autónoma de Buenos Aires</option>
-          <option>Córdoba</option>
-          <option>Corrientes</option>
-          <option>Entre Ríos</option>
-          <option>Formosa</option>
-          <option>Jujuy</option>
-          <option>La Pampa</option>
-          <option>La Rioja</option>
-          <option>Mendoza</option>
-          <option>Misiones</option>
-          <option>Neuquén</option>
-          <option>Río Negro</option>
-          <option>Salta</option>
-          <option>San Juan</option>
-          <option>San Luis</option>
-          <option>Santa Cruz</option>
-          <option>Santa Fe</option>
-          <option>Santiago del Estero</option>
-          <option>Tierra del Fuego</option>
-          <option>Tucumán</option>
-        </select>
-
-        <input id="jobCity" class="field" type="text"
-          placeholder="Ciudad o localidad" required>
-
-        <label class="block text-sm font-semibold">¿Cuánto tiempo querés que esté publicada?</label>
-        <select id="jobDuration" class="field" required>
-          <option value="24">24 horas</option>
-          <option value="48">48 horas</option>
-          <option value="72">72 horas</option>
-          <option value="96">96 horas (4 días)</option>
-        </select>
-
-        <button class="btn btn-primary w-full" type="submit">
-          Publicar changa
-        </button>
-        <p id="publishMessage" class="text-sm text-center"></p>
-      </form>
+<!-- PUBLICAR CHANGA -->
+<div id="publishModal" class="modal-bg hidden">
+  <div class="modal">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-xl font-extrabold">Publicar una changa</h2>
+      <button onclick="closeModal('publishModal')" class="text-2xl text-gray-400">×</button>
     </div>
-  </div>
 
-  <!-- AQUÍ COMIENZA EL CÓDIGO DE FUNCIONAMIENTO -->
-  <script> // ==========================================
+    <form id="publishForm" class="space-y-3">
+      <input id="jobTitle" class="field" type="text"
+        placeholder="¿Qué trabajo necesitás?" maxlength="100" required>
+
+      <select id="jobCategory" class="field" required>
+        <option value="">Seleccioná el rubro</option>
+      </select>
+
+      <input id="jobBudget" class="field" type="text"
+        placeholder="Pago ofrecido (opcional)" maxlength="80">
+
+      <textarea id="jobDescription" class="field" rows="4"
+        placeholder="Contá un poco más sobre el trabajo..." maxlength="1500" required></textarea>
+
+      <input id="jobPhone" class="field" type="tel"
+        placeholder="Tu WhatsApp (ej: 5493411234567)" required>
+
+      <label class="block text-sm font-semibold">Provincia</label>
+      <select id="jobProvince" class="field" required>
+        <option value="">Seleccioná una provincia</option>
+        <option>Buenos Aires</option>
+        <option>Catamarca</option>
+        <option>Chaco</option>
+        <option>Chubut</option>
+        <option>Ciudad Autónoma de Buenos Aires</option>
+        <option>Córdoba</option>
+        <option>Corrientes</option>
+        <option>Entre Ríos</option>
+        <option>Formosa</option>
+        <option>Jujuy</option>
+        <option>La Pampa</option>
+        <option>La Rioja</option>
+        <option>Mendoza</option>
+        <option>Misiones</option>
+        <option>Neuquén</option>
+        <option>Río Negro</option>
+        <option>Salta</option>
+        <option>San Juan</option>
+        <option>San Luis</option>
+        <option>Santa Cruz</option>
+        <option>Santa Fe</option>
+        <option>Santiago del Estero</option>
+        <option>Tierra del Fuego</option>
+        <option>Tucumán</option>
+      </select>
+
+      <input id="jobCity" class="field" type="text"
+        placeholder="Ciudad o localidad" maxlength="80" required>
+
+      <label class="block text-sm font-semibold">¿Cuánto tiempo querés que esté publicada?</label>
+      <select id="jobDuration" class="field" required>
+        <option value="24">24 horas</option>
+        <option value="48">48 horas</option>
+        <option value="72">72 horas</option>
+        <option value="96">96 horas (4 días)</option>
+      </select>
+
+      <button class="btn btn-primary w-full" type="submit">Publicar changa</button>
+      <p id="publishMessage" class="text-sm text-center"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+// ==========================================
 // CONEXIÓN CON SUPABASE
 // ==========================================
 
@@ -452,6 +394,142 @@ const supabaseClient = window.supabase.createClient(
 let currentUser = null;
 let currentProfile = null;
 let allJobs = [];
+let loadingJobs = false;
+
+// ==========================================
+// LISTA COMPLETA DE RUBROS
+// ==========================================
+
+const categories = [
+  'Albañilería',
+  'Ayudante de albañil',
+  'Construcción',
+  'Durlock',
+  'Yesería',
+  'Pintura',
+  'Techista',
+  'Colocación de cerámicos',
+  'Colocación de pisos',
+  'Electricidad',
+  'Plomería',
+  'Gasista',
+  'Herrería',
+  'Soldadura',
+  'Carpintería',
+  'Impermeabilización',
+  'Instalación de aire acondicionado',
+  'Reparaciones del hogar',
+
+  'Limpieza de casas',
+  'Limpieza de oficinas',
+  'Limpieza de terrenos',
+  'Jardinería',
+  'Parquero',
+  'Fumigación',
+  'Lavado de muebles',
+
+  'Mecánico de autos',
+  'Mecánico de motos',
+  'Reparación de bicicletas',
+  'Chapista',
+  'Pintura automotor',
+  'Gomería',
+  'Gomería a domicilio',
+  'Cambio de cubiertas a domicilio',
+  'Reparación de pinchaduras',
+  'Cambio de rueda',
+  'Vulcanizado',
+  'Auxilio por problemas de neumáticos',
+
+  'Fletes',
+  'Mudanzas',
+  'Chofer',
+  'Repartidor',
+  'Cadetería',
+  'Carga y descarga',
+
+  'Cocinero',
+  'Ayudante de cocina',
+  'Mozo',
+  'Bachero',
+  'Panadero',
+  'Pastelero',
+  'Repostero',
+  'Barista',
+  'Atención al público',
+
+  'Vendedor',
+  'Cajero',
+  'Repositor',
+  'Atención al cliente',
+  'Administrativo',
+  'Trabajo en depósito',
+
+  'Barbero',
+  'Peluquero',
+  'Manicura',
+  'Pedicura',
+  'Maquillador',
+  'Depilación',
+  'Masajista',
+
+  'Técnico en celulares',
+  'Técnico en PC',
+  'Reparación de electrodomésticos',
+  'Diseño gráfico',
+  'Fotografía',
+  'Community manager',
+
+  'DJ',
+  'Animador',
+  'Decoración de eventos',
+  'Seguridad',
+  'Camarero para eventos',
+
+  'Profesor particular',
+  'Apoyo escolar',
+  'Clases de idiomas',
+  'Clases de música',
+  'Entrenador personal',
+  'Niñera',
+  'Cuidador de adultos mayores',
+  'Paseador de perros',
+  'Cuidado de mascotas',
+
+  'Peón rural',
+  'Tractorista',
+  'Cosecha',
+  'Alambrador',
+
+  'Costura',
+  'Modista',
+  'Tapicería',
+  'Zapatería',
+  'Restauración',
+
+  'Trabajo por día',
+  'Trabajo temporal',
+  'Tareas generales',
+  'Otros'
+];
+
+// Completa ambos selectores con exactamente los mismos rubros.
+function populateCategories() {
+  const filter = document.getElementById('categoryFilter');
+  const publish = document.getElementById('jobCategory');
+
+  categories.forEach(category => {
+    const option1 = document.createElement('option');
+    option1.value = category;
+    option1.textContent = category;
+    filter.appendChild(option1);
+
+    const option2 = document.createElement('option');
+    option2.value = category;
+    option2.textContent = category;
+    publish.appendChild(option2);
+  });
+}
 
 // ==========================================
 // FUNCIONES GENERALES
@@ -514,15 +592,18 @@ document.getElementById('registerForm').addEventListener('submit', async functio
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value;
 
+  if (name.length < 3) {
+    showMessage('authMessage', 'Ingresá tu nombre y apellido.', true);
+    return;
+  }
+
   showMessage('authMessage', 'Creando tu cuenta...');
 
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
     options: {
-      data: {
-        full_name: name
-      }
+      data: { full_name: name }
     }
   });
 
@@ -531,7 +612,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     return;
   }
 
-  if (data.session) {
+  if (data.session && data.user) {
     closeModal('authModal');
     await handleUser(data.user);
   } else {
@@ -573,6 +654,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 // ==========================================
 
 async function handleUser(user) {
+  if (!user) return;
+
   currentUser = user;
 
   document.getElementById('loginBtn').classList.add('hidden');
@@ -596,6 +679,7 @@ async function handleUser(user) {
       user.user_metadata?.full_name || '';
 
     document.getElementById('profileModal').classList.remove('hidden');
+    document.getElementById('headerAvatar').src = '';
   } else {
     document.getElementById('headerAvatar').src = profile.avatar_url;
   }
@@ -607,7 +691,7 @@ async function logout() {
   const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
-    alert(error.message);
+    alert('No se pudo cerrar la sesión: ' + error.message);
     return;
   }
 
@@ -616,6 +700,7 @@ async function logout() {
 
   document.getElementById('loginBtn').classList.remove('hidden');
   document.getElementById('userMenu').classList.add('hidden');
+  document.getElementById('headerAvatar').src = '';
 
   await loadJobs();
 }
@@ -636,6 +721,11 @@ document.getElementById('profileForm').addEventListener('submit', async function
   const province = document.getElementById('profileProvince').value;
   const city = document.getElementById('profileCity').value.trim();
   const photo = document.getElementById('profilePhoto').files[0];
+
+  if (name.length < 3 || !province || city.length < 2) {
+    showMessage('profileMessage', 'Completá correctamente todos los datos.', true);
+    return;
+  }
 
   if (!photo) {
     showMessage('profileMessage', 'La foto de perfil es obligatoria.', true);
@@ -708,7 +798,6 @@ document.getElementById('profileForm').addEventListener('submit', async function
 function openPublish() {
   if (!currentUser) {
     openAuth();
-    showAuthTab('login');
     showMessage('authMessage', 'Ingresá o creá una cuenta para publicar.');
     return;
   }
@@ -720,7 +809,6 @@ function openPublish() {
 
   document.getElementById('jobProvince').value = currentProfile.province;
   document.getElementById('jobCity').value = currentProfile.city;
-
   document.getElementById('publishModal').classList.remove('hidden');
 }
 
@@ -736,36 +824,57 @@ document.getElementById('publishForm').addEventListener('submit', async function
     return;
   }
 
+  const title = document.getElementById('jobTitle').value.trim();
+  const category = document.getElementById('jobCategory').value;
+  const province = document.getElementById('jobProvince').value;
+  const city = document.getElementById('jobCity').value.trim();
+  const description = document.getElementById('jobDescription').value.trim();
+  const phone = normalizePhone(document.getElementById('jobPhone').value);
   const duration = Number(document.getElementById('jobDuration').value);
+
+  if (!title || !category || !province || !city || !description) {
+    showMessage('publishMessage', 'Completá todos los campos obligatorios.', true);
+    return;
+  }
+
+  if (phone.length < 10 || phone.length > 15) {
+    showMessage('publishMessage', 'Ingresá un número de WhatsApp válido con código de país y área.', true);
+    return;
+  }
+
+  if (![24, 48, 72, 96].includes(duration)) {
+    showMessage('publishMessage', 'Seleccioná una duración válida.', true);
+    return;
+  }
 
   const expiresAt = new Date(
     Date.now() + duration * 60 * 60 * 1000
   ).toISOString();
 
   const newJob = {
-    title: document.getElementById('jobTitle').value.trim(),
-    category: document.getElementById('jobCategory').value,
-    province: document.getElementById('jobProvince').value,
-    city: document.getElementById('jobCity').value.trim(),
+    title,
+    category,
+    province,
+    city,
     budget: document.getElementById('jobBudget').value.trim(),
-    description: document.getElementById('jobDescription').value.trim(),
+    description,
     client_name: currentProfile.full_name,
-    client_phone: normalizePhone(document.getElementById('jobPhone').value),
+    client_phone: phone,
     owner_id: currentUser.id,
     status: 'disponible',
     expires_at: expiresAt
   };
 
-  if (!newJob.client_phone) {
-    showMessage('publishMessage', 'Ingresá un WhatsApp válido.', true);
-    return;
-  }
-
-  showMessage('publishMessage', 'Publicando...');
+  const submitButton = document.querySelector('#publishForm button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = 'Publicando...';
 
   const { error } = await supabaseClient
     .from('changas')
     .insert(newJob);
+
+  submitButton.disabled = false;
+  submitButton.textContent = 'Publicar changa';
 
   if (error) {
     showMessage('publishMessage', 'No se pudo publicar: ' + error.message, true);
@@ -785,6 +894,9 @@ document.getElementById('publishForm').addEventListener('submit', async function
 // ==========================================
 
 async function loadJobs() {
+  if (loadingJobs) return;
+  loadingJobs = true;
+
   const container = document.getElementById('jobsContainer');
 
   container.innerHTML = `
@@ -798,6 +910,8 @@ async function loadJobs() {
     .select('*')
     .order('created_at', { ascending: false });
 
+  loadingJobs = false;
+
   if (error) {
     container.innerHTML = `
       <div class="panel p-6 text-center text-red-600">
@@ -805,6 +919,7 @@ async function loadJobs() {
         <p class="text-xs mt-2">${escapeHTML(error.message)}</p>
       </div>
     `;
+    document.getElementById('jobsCount').textContent = 'Error al cargar';
     return;
   }
 
@@ -834,6 +949,7 @@ async function renderJobs() {
       job.title,
       job.description,
       job.city,
+      job.province,
       job.category
     ].join(' ').toLowerCase();
 
@@ -857,18 +973,19 @@ async function renderJobs() {
   empty.classList.add('hidden');
 
   const ownerIds = [...new Set(filtered.map(job => job.owner_id).filter(Boolean))];
-
   let profiles = {};
 
   if (ownerIds.length) {
-    const { data } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from('profiles')
       .select('id,full_name,province,city,avatar_url')
       .in('id', ownerIds);
 
-    (data || []).forEach(profile => {
-      profiles[profile.id] = profile;
-    });
+    if (!error) {
+      (data || []).forEach(profile => {
+        profiles[profile.id] = profile;
+      });
+    }
   }
 
   container.innerHTML = filtered.map(job => {
@@ -905,7 +1022,7 @@ async function renderJobs() {
         <div class="flex items-center gap-2 mt-4 pt-3 border-t">
           ${
             avatar
-              ? `<img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de ${escapeHTML(ownerName)}">`
+              ? `<img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de perfil">`
               : `<div class="avatar flex items-center justify-center">👤</div>`
           }
           <div>
@@ -919,13 +1036,20 @@ async function renderJobs() {
         <div class="flex flex-wrap gap-2 mt-4">
           ${
             phone
-              ? `<a class="btn btn-primary text-sm flex-1 text-center" target="_blank" rel="noopener noreferrer" href="https://wa.me/${phone}?text=${whatsappText}">Contactar por WhatsApp</a>`
+              ? `<a class="btn btn-primary text-sm flex-1 text-center"
+                   target="_blank" rel="noopener noreferrer"
+                   href="https://wa.me/${phone}?text=${whatsappText}">
+                   Contactar por WhatsApp
+                 </a>`
               : ''
           }
 
           ${
             isOwner
-              ? `<button class="btn btn-light text-sm" onclick="markAsFinished('${job.id}')">Trabajo conseguido</button>`
+              ? `<button class="btn btn-light text-sm"
+                   onclick="markAsFinished('${escapeHTML(job.id)}')">
+                   Trabajo conseguido
+                 </button>`
               : ''
           }
         </div>
@@ -997,9 +1121,15 @@ supabaseClient
 // ==========================================
 
 async function startApp() {
-  const { data } = await supabaseClient.auth.getSession();
+  populateCategories();
 
-  if (data.session?.user) {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error('Error al recuperar la sesión:', error.message);
+  }
+
+  if (data?.session?.user) {
     await handleUser(data.session.user);
   } else {
     await loadJobs();
@@ -1012,12 +1142,13 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     currentProfile = null;
     document.getElementById('loginBtn').classList.remove('hidden');
     document.getElementById('userMenu').classList.add('hidden');
+    document.getElementById('headerAvatar').src = '';
     loadJobs();
   }
 });
 
 startApp();
 
-  </script>
+</script>
 </body>
-</html>
+</html> <!-- PARTE 2: PEGAR AQUÍ EL SCRIPT -->
