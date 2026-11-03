@@ -107,6 +107,16 @@ footer p{color:#d6ebf8}
 .plan-option p{margin:4px 0;color:var(--muted)}
 .plan-note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:14px}
 
+/* BOTÓN PARA MOSTRAR U OCULTAR CONTRASEÑAS */
+.password-wrap{display:flex;align-items:center;gap:8px}
+.password-wrap .field{flex:1;min-width:0}
+.password-toggle{
+ min-width:49px;height:49px;border:1.5px solid #dce9f1;
+ border-radius:13px;background:#e8f8ff;color:#1267a5;
+ font-size:21px;cursor:pointer
+}
+.password-toggle:hover{background:#d8f2ff}
+
 @media(max-width:850px){
 .hero-grid{grid-template-columns:1fr}.hero-art{min-height:280px}.art-circle{width:250px;font-size:95px}
 .categories-grid{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:1fr 1fr}
@@ -354,87 +364,179 @@ const provinces=[
 ];
 
 function $(id){return document.getElementById(id)}
+
 function escapeHTML(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
  })[c]);
 }
+
 function normalizePhone(phone){return String(phone||"").replace(/\D/g,"")}
+
 function showMessage(id,message,type="success"){
  const el=$(id);if(!el)return;
  el.textContent=message;el.className=`message show ${type}`;
 }
+
 function hideMessage(id){
  const el=$(id);if(!el)return;
  el.textContent="";el.className="message";
 }
+
 function setButtonLoading(button,loading,text){
  if(!button)return;
  button.disabled=loading;
  button.textContent=loading?"Procesando...":text;
 }
+
 function openModal(id){$(id)?.classList.add("active")}
 function closeModal(id){$(id)?.classList.remove("active")}
+
 document.querySelectorAll(".modal-bg").forEach(modal=>{
  modal.addEventListener("click",e=>{
   if(e.target===modal)modal.classList.remove("active");
  });
 });
-function scrollToJobs(){$("listings").scrollIntoView({behavior:"smooth"})}
+
+function scrollToJobs(){
+ $("listings").scrollIntoView({behavior:"smooth"});
+}
+
+// =============================================
+// MOSTRAR Y OCULTAR CONTRASEÑAS
+// =============================================
+
+function setupPasswordToggles(){
+ document.querySelectorAll('input[type="password"]').forEach(input=>{
+  if(input.dataset.toggleReady)return;
+
+  input.dataset.toggleReady="true";
+
+  const wrapper=document.createElement("div");
+  wrapper.className="password-wrap";
+
+  input.parentNode.insertBefore(wrapper,input);
+  wrapper.appendChild(input);
+
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="password-toggle";
+  button.textContent="👁️";
+  button.setAttribute("aria-label","Mostrar contraseña");
+  button.title="Mostrar contraseña";
+
+  button.addEventListener("click",()=>{
+   const showing=input.type==="text";
+
+   input.type=showing?"password":"text";
+   button.textContent=showing?"👁️":"🙈";
+   button.setAttribute(
+    "aria-label",
+    showing?"Mostrar contraseña":"Ocultar contraseña"
+   );
+   button.title=showing?"Mostrar contraseña":"Ocultar contraseña";
+  });
+
+  wrapper.appendChild(button);
+ });
+}
+
+setupPasswordToggles();
+
+// =============================================
+// CARGAR CATEGORÍAS Y PROVINCIAS
+// =============================================
 
 function populateCategories(){
  ["categoryFilter","jobCategory"].forEach(id=>{
   categories.forEach(category=>{
    const option=document.createElement("option");
-   option.value=category;option.textContent=category;$(id).appendChild(option);
+   option.value=category;
+   option.textContent=category;
+   $(id).appendChild(option);
   });
  });
 }
+
 function populateProvinces(){
  ["provinceFilter","profileProvince","jobProvince"].forEach(id=>{
   provinces.forEach(province=>{
    const option=document.createElement("option");
-   option.value=province;option.textContent=province;$(id).appendChild(option);
+   option.value=province;
+   option.textContent=province;
+   $(id).appendChild(option);
   });
  });
 }
 
+// =============================================
 // AUTENTICACIÓN
-function openAuth(){hideMessage("authMessage");showAuthTab("login");openModal("authModal")}
+// =============================================
+
+function openAuth(){
+ hideMessage("authMessage");
+ showAuthTab("login");
+ openModal("authModal");
+}
+
 function showAuthTab(tab){
  const login=tab==="login";
+
  $("loginForm").style.display=login?"block":"none";
  $("registerForm").style.display=login?"none":"block";
+
  $("showLoginTab").className=login?"btn btn-primary":"btn btn-light";
  $("showRegisterTab").className=login?"btn btn-light":"btn btn-primary";
+
  hideMessage("authMessage");
 }
 
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("authMessage");
+ e.preventDefault();
+ hideMessage("authMessage");
+
  const button=$("loginForm").querySelector("button[type=submit]");
  setButtonLoading(button,true,"Ingresar a mi cuenta");
+
  try{
   const {error}=await db.auth.signInWithPassword({
    email:$("loginEmail").value.trim(),
    password:$("loginPassword").value
   });
+
   if(error)throw error;
-  closeModal("authModal");$("loginForm").reset();
+
+  closeModal("authModal");
+  $("loginForm").reset();
+
  }catch(error){
-  showMessage("authMessage",error.message||"No pudimos iniciar sesión.","error");
- }finally{setButtonLoading(button,false,"Ingresar a mi cuenta")}
+  showMessage(
+   "authMessage",
+   error.message||"No pudimos iniciar sesión.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Ingresar a mi cuenta");
+ }
 });
 
 $("registerForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("authMessage");
+ e.preventDefault();
+ hideMessage("authMessage");
+
  const name=$("registerName").value.trim();
  const email=$("registerEmail").value.trim();
  const password=$("registerPassword").value;
- if(name.length<3)return showMessage("authMessage","Ingresá tu nombre y apellido.","error");
- if(password.length<6)return showMessage("authMessage","La contraseña debe tener al menos 6 caracteres.","error");
+
+ if(name.length<3)
+  return showMessage("authMessage","Ingresá tu nombre y apellido.","error");
+
+ if(password.length<6)
+  return showMessage("authMessage","La contraseña debe tener al menos 6 caracteres.","error");
+
  const button=$("registerForm").querySelector("button[type=submit]");
  setButtonLoading(button,true,"Crear mi cuenta");
+
  try{
   const {data,error}=await db.auth.signUp({
    email,password,
@@ -443,55 +545,115 @@ $("registerForm").addEventListener("submit",async e=>{
     emailRedirectTo:window.location.origin+window.location.pathname
    }
   });
+
   if(error)throw error;
-  showMessage("authMessage",data.session?
+
+  showMessage(
+   "authMessage",
+   data.session?
    "¡Cuenta creada! Ahora completá tu perfil.":
-   "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.","success");
+   "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.",
+   "success"
+  );
+
   $("registerForm").reset();
+
  }catch(error){
-  showMessage("authMessage",error.message||"No pudimos crear tu cuenta.","error");
- }finally{setButtonLoading(button,false,"Crear mi cuenta")}
+  showMessage(
+   "authMessage",
+   error.message||"No pudimos crear tu cuenta.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Crear mi cuenta");
+ }
 });
 
+// =============================================
 // RECUPERACIÓN DE CONTRASEÑA
+// =============================================
+
 function openResetModal(){
  $("resetEmail").value=$("loginEmail").value.trim();
- hideMessage("resetMessage");closeModal("authModal");openModal("resetModal");
+ hideMessage("resetMessage");
+ closeModal("authModal");
+ openModal("resetModal");
 }
+
 $("resetForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("resetMessage");
+ e.preventDefault();
+ hideMessage("resetMessage");
+
  const button=$("resetForm").querySelector("button");
  setButtonLoading(button,true,"Enviar enlace");
+
  try{
-  const {error}=await db.auth.resetPasswordForEmail($("resetEmail").value.trim(),{
-   redirectTo:window.location.origin+window.location.pathname
-  });
+  const {error}=await db.auth.resetPasswordForEmail(
+   $("resetEmail").value.trim(),
+   {
+    redirectTo:window.location.origin+window.location.pathname
+   }
+  );
+
   if(error)throw error;
-  showMessage("resetMessage","¡Listo! Revisá tu correo y también la carpeta de spam.","success");
+
+  showMessage(
+   "resetMessage",
+   "¡Listo! Revisá tu correo y también la carpeta de spam.",
+   "success"
+  );
+
  }catch(error){
-  showMessage("resetMessage",error.message||"No pudimos enviar el enlace.","error");
- }finally{setButtonLoading(button,false,"Enviar enlace")}
+  showMessage(
+   "resetMessage",
+   error.message||"No pudimos enviar el enlace.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Enviar enlace");
+ }
 });
 
 $("newPasswordForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("newPasswordMessage");
+ e.preventDefault();
+ hideMessage("newPasswordMessage");
+
  const password=$("newPassword").value;
- if(password.length<6)return showMessage("newPasswordMessage","Usá al menos 6 caracteres.","error");
+
+ if(password.length<6)
+  return showMessage("newPasswordMessage","Usá al menos 6 caracteres.","error");
+
  const button=$("newPasswordForm").querySelector("button");
  setButtonLoading(button,true,"Guardar contraseña");
+
  try{
   const {error}=await db.auth.updateUser({password});
   if(error)throw error;
-  recoveryMode=false;$("newPasswordForm").reset();closeModal("newPasswordModal");
+
+  recoveryMode=false;
+  $("newPasswordForm").reset();
+  closeModal("newPasswordModal");
+
   alert("¡Contraseña actualizada correctamente!");
+
  }catch(error){
-  showMessage("newPasswordMessage",error.message||"No pudimos cambiar tu contraseña.","error");
- }finally{setButtonLoading(button,false,"Guardar contraseña")}
+  showMessage(
+   "newPasswordMessage",
+   error.message||"No pudimos cambiar tu contraseña.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Guardar contraseña");
+ }
 });
 
+// =============================================
 // PERFIL Y SESIÓN
+// =============================================
+
 async function handleUser(user){
  currentUser=user;
+
  if(!user){
   currentProfile=null;
   $("loginBtn").style.display="inline-flex";
@@ -499,93 +661,166 @@ async function handleUser(user){
   $("userMenu").style.display="none";
   return;
  }
+
  $("loginBtn").style.display="none";
  $("publishBtn").style.display="none";
  $("userMenu").style.display="flex";
+
  await loadProfile();
 }
+
 async function loadProfile(){
  if(!currentUser)return;
+
  try{
-  const {data,error}=await db.from("profiles").select("*")
-   .eq("id",currentUser.id).maybeSingle();
+  const {data,error}=await db.from("profiles")
+   .select("*")
+   .eq("id",currentUser.id)
+   .maybeSingle();
+
   if(error)throw error;
+
   currentProfile=data;
+
   if(data){
    $("headerAvatar").src=data.avatar_url;
   }else{
    $("headerAvatar").src="https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
    openProfile(true);
   }
+
  }catch(error){
   console.error("Error cargando perfil:",error);
   alert("No pudimos cargar tu perfil. Intentá nuevamente.");
  }
 }
+
 function openProfile(required=false){
  if(!currentUser)return openAuth();
+
  hideMessage("profileMessage");
- $("profileName").value=currentProfile?.full_name||currentUser.user_metadata?.full_name||"";
+
+ $("profileName").value=
+  currentProfile?.full_name||currentUser.user_metadata?.full_name||"";
+
  $("profileProvince").value=currentProfile?.province||"";
  $("profileCity").value=currentProfile?.city||"";
- $("profilePhoto").value="";$("profilePreview").style.display="none";
+
+ $("profilePhoto").value="";
+ $("profilePreview").style.display="none";
+
  if(currentProfile?.avatar_url){
   $("profilePreview").src=currentProfile.avatar_url;
   $("profilePreview").style.display="block";
  }
+
  openModal("profileModal");
- $("profileModal").querySelector(".modal-close").style.display=required?"none":"block";
+
+ $("profileModal").querySelector(".modal-close").style.display=
+  required?"none":"block";
 }
-function openMyProfile(){if(!currentUser)return openAuth();openProfile(false)}
+
+function openMyProfile(){
+ if(!currentUser)return openAuth();
+ openProfile(false);
+}
 
 $("profilePhoto").addEventListener("change",e=>{
- const file=e.target.files[0];if(!file)return;
+ const file=e.target.files[0];
+ if(!file)return;
+
  if(!file.type.startsWith("image/")){
-  e.target.value="";return showMessage("profileMessage","Elegí una imagen válida.","error");
+  e.target.value="";
+  return showMessage("profileMessage","Elegí una imagen válida.","error");
  }
+
  if(file.size>5*1024*1024){
-  e.target.value="";return showMessage("profileMessage","La foto no puede superar los 5 MB.","error");
+  e.target.value="";
+  return showMessage("profileMessage","La foto no puede superar los 5 MB.","error");
  }
+
  $("profilePreview").src=URL.createObjectURL(file);
  $("profilePreview").style.display="block";
 });
 
 $("profileForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("profileMessage");
+ e.preventDefault();
+ hideMessage("profileMessage");
+
  if(!currentUser)return openAuth();
+
  const fullName=$("profileName").value.trim();
  const province=$("profileProvince").value;
  const city=$("profileCity").value.trim();
  const photo=$("profilePhoto").files[0];
- if(!fullName||!province||!city)return showMessage("profileMessage","Completá todos los datos.","error");
+
+ if(!fullName||!province||!city)
+  return showMessage("profileMessage","Completá todos los datos.","error");
+
  const button=$("profileForm").querySelector("button[type=submit]");
  setButtonLoading(button,true,"Guardar mi perfil");
+
  try{
   let avatarUrl=currentProfile?.avatar_url||"";
+
   if(photo){
-   const extension=(photo.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+   const extension=(photo.name.split(".").pop()||"jpg")
+    .toLowerCase().replace(/[^a-z0-9]/g,"");
+
    const path=`${currentUser.id}/${Date.now()}.${extension}`;
-   const {error:uploadError}=await db.storage.from("profile-photos")
+
+   const {error:uploadError}=await db.storage
+    .from("profile-photos")
     .upload(path,photo,{upsert:true,contentType:photo.type});
+
    if(uploadError)throw uploadError;
-   avatarUrl=db.storage.from("profile-photos").getPublicUrl(path).data.publicUrl;
+
+   avatarUrl=db.storage.from("profile-photos")
+    .getPublicUrl(path).data.publicUrl;
   }
-  if(!avatarUrl)throw new Error("Tenés que subir una foto de perfil.");
-  const profileData={id:currentUser.id,full_name:fullName,province,city,avatar_url:avatarUrl};
-  const {error}=await db.from("profiles").upsert(profileData,{onConflict:"id"});
+
+  if(!avatarUrl)
+   throw new Error("Tenés que subir una foto de perfil.");
+
+  const profileData={
+   id:currentUser.id,
+   full_name:fullName,
+   province,
+   city,
+   avatar_url:avatarUrl
+  };
+
+  const {error}=await db.from("profiles")
+   .upsert(profileData,{onConflict:"id"});
+
   if(error)throw error;
-  currentProfile=profileData;$("headerAvatar").src=avatarUrl;
+
+  currentProfile=profileData;
+  $("headerAvatar").src=avatarUrl;
+
   closeModal("profileModal");
   $("profileModal").querySelector(".modal-close").style.display="block";
-  await loadJobs();alert("¡Tu perfil quedó guardado! 🎉");
+
+  await loadJobs();
+
+  alert("¡Tu perfil quedó guardado! 🎉");
+
  }catch(error){
-  showMessage("profileMessage",error.message||"No pudimos guardar tu perfil.","error");
- }finally{setButtonLoading(button,false,"Guardar mi perfil")}
+  showMessage(
+   "profileMessage",
+   error.message||"No pudimos guardar tu perfil.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Guardar mi perfil");
+ }
 });
 
 async function logout(){
  if(!confirm("¿Querés cerrar sesión?"))return;
+
  const {error}=await db.auth.signOut();
+
  if(error)alert("No pudimos cerrar la sesión: "+error.message);
 }
 
@@ -595,28 +830,51 @@ async function logout(){
 
 function formatARS(value){
  return new Intl.NumberFormat("es-AR",{
-  style:"currency",currency:"ARS",maximumFractionDigits:0
+  style:"currency",
+  currency:"ARS",
+  maximumFractionDigits:0
  }).format(Number(value)||0);
 }
+
 function formatDate(value){
  if(!value)return "Sin fecha";
+
  const date=new Date(value);
+
  return isNaN(date)?"Sin fecha":date.toLocaleDateString("es-AR");
 }
+
 function planBenefits(plan){
  const benefits=[];
  const unlimited=plan.publicaciones_ilimitadas===true;
- benefits.push(unlimited?"Publicaciones mensuales ilimitadas":
-  `${Number(plan.publicaciones_mensuales)||0} publicaciones por mes`);
- benefits.push(plan.permite_destacados?"Permite destacar publicaciones":"Sin publicaciones destacadas");
- benefits.push(plan.perfil_comercial?"Incluye perfil comercial":"Sin perfil comercial");
+
+ benefits.push(
+  unlimited?
+  "Publicaciones mensuales ilimitadas":
+  `${Number(plan.publicaciones_mensuales)||0} publicaciones por mes`
+ );
+
+ benefits.push(
+  plan.permite_destacados?
+  "Permite destacar publicaciones":
+  "Sin publicaciones destacadas"
+ );
+
+ benefits.push(
+  plan.perfil_comercial?
+  "Incluye perfil comercial":
+  "Sin perfil comercial"
+ );
+
  return benefits;
 }
 
 async function openMyPlan(){
  if(!currentUser)return openAuth();
+
  hideMessage("planMessage");
  openModal("planModal");
+
  await loadMyPlan();
 }
 
@@ -625,27 +883,32 @@ async function loadMyPlan(){
   $("planContent").innerHTML='<p>Ingresá a tu cuenta para consultar tu plan.</p>';
   return;
  }
- $("planContent").innerHTML='<div class="plan-summary">Consultando tu suscripción...</div>';
+
+ $("planContent").innerHTML=
+  '<div class="plan-summary">Consultando tu suscripción...</div>';
+
  $("availablePlans").textContent="Cargando planes...";
  hideMessage("planMessage");
 
  try{
-  // Consultar planes activos.
   const {data:plans,error:plansError}=await db.from("planes")
    .select("id,nombre,precio_ars,publicaciones_mensuales,publicaciones_ilimitadas,permite_destacados,perfil_comercial,prioridad,activo")
    .eq("activo",true)
    .order("prioridad",{ascending:true});
+
   if(plansError)throw plansError;
 
-  // Obtener suscripciones del usuario, de la más reciente a la más antigua.
   const {data:subscriptions,error:subError}=await db.from("suscripciones")
    .select("id,user_id,plan_id,estado,fecha_inicio,fecha_vencimiento,created_at")
    .eq("user_id",currentUser.id)
    .order("created_at",{ascending:false});
+
   if(subError)throw subError;
 
   const now=new Date();
+
   const validStates=["activo","activa","active","trialing"];
+
   const subscription=(subscriptions||[]).find(s=>
    validStates.includes(String(s.estado||"").toLowerCase())&&
    (!s.fecha_vencimiento||new Date(s.fecha_vencimiento)>now)
@@ -654,25 +917,38 @@ async function loadMyPlan(){
   const currentPlan=subscription?
    (plans||[]).find(p=>p.id===subscription.plan_id):null;
 
-  // Contar publicaciones del mes calendario actual.
-  const monthStart=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
-  const nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1).toISOString();
+  const monthStart=new Date(
+   now.getFullYear(),now.getMonth(),1
+  ).toISOString();
 
-  const {count:usageCount,error:usageError}=await db.from("registro_publicaciones")
+  const nextMonth=new Date(
+   now.getFullYear(),now.getMonth()+1,1
+  ).toISOString();
+
+  const {count:usageCount,error:usageError}=await db
+   .from("registro_publicaciones")
    .select("id",{count:"exact",head:true})
    .eq("user_id",currentUser.id)
    .gte("fecha_publicacion",monthStart)
    .lt("fecha_publicacion",nextMonth);
+
   if(usageError)throw usageError;
 
   const used=usageCount||0;
+
   renderMyPlan(currentPlan,subscription,plans||[],used);
 
  }catch(error){
   console.error("Error consultando el plan:",error);
+
   $("planContent").innerHTML="";
-  showMessage("planMessage",
-   "No pudimos consultar tu plan. Revisá que las políticas RLS permitan leer tus suscripciones y registros.","error");
+
+  showMessage(
+   "planMessage",
+   "No pudimos consultar tu plan. Revisá que las políticas RLS permitan leer tus suscripciones y registros.",
+   "error"
+  );
+
   $("availablePlans").textContent="No se pudieron cargar los planes.";
  }
 }
@@ -722,6 +998,7 @@ function renderMyPlan(plan,subscription,plans,used){
 
  $("availablePlans").innerHTML=plans.map(p=>{
   const benefits=planBenefits(p);
+
   return `<article class="plan-option">
    <h3>${escapeHTML(p.nombre)}</h3>
    <strong style="font-size:21px;color:var(--blue)">${formatARS(p.precio_ars)}</strong>
@@ -736,22 +1013,36 @@ function renderMyPlan(plan,subscription,plans,used){
 // =============================================
 
 async function openPublish(){
- if(!currentUser){openAuth();return}
+ if(!currentUser){
+  openAuth();
+  return;
+ }
+
  if(!currentProfile){
   alert("Primero completá tu perfil para poder publicar.");
-  openProfile(true);return;
+  openProfile(true);
+  return;
  }
+
  hideMessage("publishMessage");
+
  $("jobProvince").value=currentProfile.province;
  $("jobCity").value=currentProfile.city;
- $("jobTitle").value="";$("jobCategory").value="";
- $("jobDescription").value="";$("jobBudget").value="";
- $("jobPhone").value="";$("jobDuration").value="72";
+
+ $("jobTitle").value="";
+ $("jobCategory").value="";
+ $("jobDescription").value="";
+ $("jobBudget").value="";
+ $("jobPhone").value="";
+ $("jobDuration").value="72";
+
  openModal("publishModal");
 }
 
 $("publishForm").addEventListener("submit",async e=>{
- e.preventDefault();hideMessage("publishMessage");
+ e.preventDefault();
+ hideMessage("publishMessage");
+
  if(!currentUser||!currentProfile)return openAuth();
 
  const title=$("jobTitle").value.trim();
@@ -765,8 +1056,10 @@ $("publishForm").addEventListener("submit",async e=>{
 
  if(!title||!category||!description||!province||!city)
   return showMessage("publishMessage","Completá todos los campos obligatorios.","error");
+
  if(phone.length<10||phone.length>15)
   return showMessage("publishMessage","Revisá el número de WhatsApp. Debe incluir código de área.","error");
+
  if(![24,48,72,96].includes(duration))
   return showMessage("publishMessage","Elegí una duración válida.","error");
 
@@ -775,20 +1068,45 @@ $("publishForm").addEventListener("submit",async e=>{
 
  try{
   const now=new Date();
-  const expiresAt=new Date(now.getTime()+duration*60*60*1000);
+
+  const expiresAt=new Date(
+   now.getTime()+duration*60*60*1000
+  );
+
   const {error}=await db.from("changas").insert({
-   title,category,description,budget:budget||null,province,city,
-   client_name:currentProfile.full_name,client_phone:phone,
-   owner_id:currentUser.id,status:"disponible",
-   created_at:now.toISOString(),expires_at:expiresAt.toISOString()
+   title,
+   category,
+   description,
+   budget:budget||null,
+   province,
+   city,
+   client_name:currentProfile.full_name,
+   client_phone:phone,
+   owner_id:currentUser.id,
+   status:"disponible",
+   created_at:now.toISOString(),
+   expires_at:expiresAt.toISOString()
   });
+
   if(error)throw error;
-  $("publishForm").reset();closeModal("publishModal");
+
+  $("publishForm").reset();
+  closeModal("publishModal");
+
   alert("¡Tu changa se publicó correctamente! 🚀");
-  await loadJobs();scrollToJobs();
+
+  await loadJobs();
+  scrollToJobs();
+
  }catch(error){
-  showMessage("publishMessage",error.message||"No pudimos publicar tu changa.","error");
- }finally{setButtonLoading(button,false,"Publicar changa")}
+  showMessage(
+   "publishMessage",
+   error.message||"No pudimos publicar tu changa.",
+   "error"
+  );
+ }finally{
+  setButtonLoading(button,false,"Publicar changa");
+ }
 });
 
 // =============================================
@@ -796,24 +1114,49 @@ $("publishForm").addEventListener("submit",async e=>{
 // =============================================
 
 async function loadJobs(){
- if(loadingJobs){refreshRequested=true;return}
+ if(loadingJobs){
+  refreshRequested=true;
+  return;
+ }
+
  loadingJobs=true;
+
  try{
-  const {data,error}=await db.from("changas").select("*").order("created_at",{ascending:false});
+  const {data,error}=await db.from("changas")
+   .select("*")
+   .order("created_at",{ascending:false});
+
   if(error)throw error;
+
   const now=Date.now();
+
   allJobs=(data||[]).filter(job=>
    job.status==="disponible"&&
    (!job.expires_at||new Date(job.expires_at).getTime()>now)
   );
+
   await renderJobs();
+
  }catch(error){
   console.error("Error cargando publicaciones:",error);
-  $("jobsContainer").innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="emoji">⚠️</div><h3>No pudimos cargar las publicaciones</h3><p>Revisá tu conexión e intentá nuevamente.</p><button class="btn btn-primary" onclick="loadJobs()">Volver a intentar</button></div>`;
+
+  $("jobsContainer").innerHTML=`
+   <div class="empty" style="grid-column:1/-1">
+    <div class="emoji">⚠️</div>
+    <h3>No pudimos cargar las publicaciones</h3>
+    <p>Revisá tu conexión e intentá nuevamente.</p>
+    <button class="btn btn-primary" onclick="loadJobs()">Volver a intentar</button>
+   </div>`;
+
   $("jobsCount").textContent="Error al cargar";
+
  }finally{
   loadingJobs=false;
-  if(refreshRequested){refreshRequested=false;loadJobs()}
+
+  if(refreshRequested){
+   refreshRequested=false;
+   loadJobs();
+  }
  }
 }
 
@@ -827,114 +1170,214 @@ async function renderJobs(){
  const category=$("categoryFilter").value;
 
  const filtered=allJobs.filter(job=>{
-  const text=[job.title,job.description,job.category,job.city,job.province].join(" ").toLowerCase();
+  const text=[
+   job.title,
+   job.description,
+   job.category,
+   job.city,
+   job.province
+  ].join(" ").toLowerCase();
+
   return(!search||text.includes(search))&&
    (!province||job.province===province)&&
    (!category||job.category===category);
  });
 
- $("jobsCount").textContent=`${filtered.length} ${filtered.length===1?"oportunidad":"oportunidades"}`;
+ $("jobsCount").textContent=
+  `${filtered.length} ${filtered.length===1?"oportunidad":"oportunidades"}`;
+
  $("emptyMessage").style.display=filtered.length?"none":"block";
  $("jobsContainer").innerHTML="";
+
  if(!filtered.length)return;
 
- const ownerIds=[...new Set(filtered.map(job=>job.owner_id).filter(Boolean))];
+ const ownerIds=[
+  ...new Set(filtered.map(job=>job.owner_id).filter(Boolean))
+ ];
+
  let profiles={};
+
  if(ownerIds.length){
   const {data,error}=await db.from("profiles")
-   .select("id,full_name,province,city,avatar_url").in("id",ownerIds);
-  if(!error)(data||[]).forEach(profile=>profiles[profile.id]=profile);
+   .select("id,full_name,province,city,avatar_url")
+   .in("id",ownerIds);
+
+  if(!error){
+   (data||[]).forEach(profile=>{
+    profiles[profile.id]=profile;
+   });
+  }
  }
 
  filtered.forEach(job=>{
   const profile=profiles[job.owner_id]||{};
+
   const name=profile.full_name||job.client_name||"Usuario";
-  const avatar=profile.avatar_url||"https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
-  const date=job.created_at?new Date(job.created_at).toLocaleDateString("es-AR"):"";
+
+  const avatar=profile.avatar_url||
+   "https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
+
+  const date=job.created_at?
+   new Date(job.created_at).toLocaleDateString("es-AR"):"";
+
   const phone=normalizePhone(job.client_phone);
-  const whatsappText=encodeURIComponent(`Hola ${name}, vi tu publicación "${job.title}" en Changa Ya! y me interesa.`);
-  const whatsappLink=phone?`https://wa.me/${phone}?text=${whatsappText}`:"";
+
+  const whatsappText=encodeURIComponent(
+   `Hola ${name}, vi tu publicación "${job.title}" en Changa Ya! y me interesa.`
+  );
+
+  const whatsappLink=phone?
+   `https://wa.me/${phone}?text=${whatsappText}`:"";
+
   const isOwner=currentUser&&currentUser.id===job.owner_id;
 
   const card=document.createElement("article");
   card.className="job-card";
+
   card.innerHTML=`
    <span class="tag">${escapeHTML(job.category)}</span>
    <h3>${escapeHTML(job.title)}</h3>
    <p>${escapeHTML(job.description)}</p>
+
    <div class="job-meta">
     <span>📍 ${escapeHTML(job.city)}, ${escapeHTML(job.province)}</span>
     <span>💰 ${escapeHTML(job.budget||"A convenir")}</span>
     ${date?`<span>📅 ${date}</span>`:""}
    </div>
+
    <div class="job-owner">
-    <img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de ${escapeHTML(name)}" onerror="this.src='https://placehold.co/100x100/e8f7ff/1267a5?text=YA'">
-    <div><strong>${escapeHTML(name)}</strong><small>Persona que publicó</small></div>
+    <img class="avatar"
+     src="${escapeHTML(avatar)}"
+     alt="Foto de ${escapeHTML(name)}"
+     onerror="this.src='https://placehold.co/100x100/e8f7ff/1267a5?text=YA'">
+
+    <div>
+     <strong>${escapeHTML(name)}</strong>
+     <small>Persona que publicó</small>
+    </div>
    </div>
+
    <div class="job-actions">
-    ${whatsappLink?`<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`:'<span class="tag">Contacto no disponible</span>'}
-    ${isOwner?`<button class="btn btn-light" data-finish="${escapeHTML(job.id)}">✓ Trabajo conseguido</button>`:""}
+    ${whatsappLink?
+     `<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`:
+     '<span class="tag">Contacto no disponible</span>'}
+
+    ${isOwner?
+     `<button class="btn btn-light" data-finish="${escapeHTML(job.id)}">🤝 Ya encontré a alguien</button>`:
+     ""}
    </div>`;
+
   $("jobsContainer").appendChild(card);
  });
 
  $("jobsContainer").querySelectorAll("[data-finish]").forEach(button=>{
-  button.addEventListener("click",()=>markAsFinished(button.dataset.finish));
+  button.addEventListener("click",()=>{
+   markAsFinished(button.dataset.finish);
+  });
  });
 }
 
-// MARCAR COMO CONSEGUIDO
+// =============================================
+// MARCAR COMO CONSEGUIDA
+// =============================================
+
 async function markAsFinished(id){
  if(!currentUser)return;
- if(!confirm("¿Confirmás que este trabajo ya fue conseguido? La publicación dejará de aparecer entre las disponibles."))return;
+
+ const confirmed=confirm(
+  "¿Ya encontraste a alguien para realizar este trabajo? Al confirmar, la publicación dejará de aparecer entre las changas disponibles."
+ );
+
+ if(!confirmed)return;
+
  try{
   const {error}=await db.from("changas").update({
-   status:"conseguida",finished_at:new Date().toISOString()
-  }).eq("id",id).eq("owner_id",currentUser.id);
+   status:"conseguida",
+   finished_at:new Date().toISOString()
+  })
+  .eq("id",id)
+  .eq("owner_id",currentUser.id);
+
   if(error)throw error;
-  alert("¡Perfecto! La publicación fue marcada como conseguida.");
+
+  alert("¡Perfecto! Ya no aparecerá entre las changas disponibles.");
+
   await loadJobs();
- }catch(error){alert("No pudimos actualizar la publicación: "+error.message)}
+
+ }catch(error){
+  alert("No pudimos actualizar la publicación: "+error.message);
+ }
 }
 
+// =============================================
 // FILTROS
+// =============================================
+
 $("searchInput").addEventListener("input",renderJobs);
 $("provinceFilter").addEventListener("change",renderJobs);
 $("categoryFilter").addEventListener("change",renderJobs);
 
+// =============================================
 // ACTUALIZACIONES EN TIEMPO REAL
+// =============================================
+
 db.channel("changas-en-vivo")
- .on("postgres_changes",{event:"*",schema:"public",table:"changas"},()=>loadJobs())
+ .on(
+  "postgres_changes",
+  {event:"*",schema:"public",table:"changas"},
+  ()=>loadJobs()
+ )
  .subscribe();
 
+// =============================================
 // INICIO
+// =============================================
+
 async function startApp(){
- populateCategories();populateProvinces();
+ populateCategories();
+ populateProvinces();
+
  const {data,error}=await db.auth.getSession();
+
  if(error)console.error("Error recuperando sesión:",error);
+
  await handleUser(data?.session?.user||null);
  await loadJobs();
+
  const hash=window.location.hash;
+
  if(hash.includes("type=recovery")||hash.includes("access_token")){
-  recoveryMode=true;openModal("newPasswordModal");
+  recoveryMode=true;
+  openModal("newPasswordModal");
  }
 }
 
 db.auth.onAuthStateChange((event,session)=>{
  if(event==="PASSWORD_RECOVERY"){
-  recoveryMode=true;openModal("newPasswordModal");return;
+  recoveryMode=true;
+  openModal("newPasswordModal");
+  return;
  }
+
  if(event==="SIGNED_IN"){
   closeModal("authModal");
+
   setTimeout(async()=>{
    await handleUser(session?.user||null);
    await loadJobs();
   },0);
  }
+
  if(event==="SIGNED_OUT"){
-  setTimeout(async()=>{await handleUser(null);await loadJobs()},0);
+  setTimeout(async()=>{
+   await handleUser(null);
+   await loadJobs();
+  },0);
  }
- if(event==="USER_UPDATED")currentUser=session?.user||currentUser;
+
+ if(event==="USER_UPDATED"){
+  currentUser=session?.user||currentUser;
+ }
 });
 
 startApp();
