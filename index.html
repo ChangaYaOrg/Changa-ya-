@@ -85,7 +85,7 @@
 <section class="bg-gradient-to-b from-celeste-600 to-sky-700 text-white py-6 sm:py-8 px-4 shadow-inner">
     <div class="max-w-4xl mx-auto text-center space-y-3">
         <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-celeste-100">
-            🇦🇷 Plataforma 100% Gratuita y Libre
+            🇦🇷 Plataforma 100% Gratuita y en Tiempo Real
         </span>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
             Encontrá laburo o contratá al toque
@@ -199,16 +199,22 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
         <div>
             <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
-                <span>Changas de Ejemplo y Disponibles</span>
+                <span>Changas en la Nube y Disponibles</span>
                 <span id="badgeCount" class="bg-celeste-100 text-celeste-700 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>
             </h2>
-            <p class="text-xs text-slate-500">Publicaciones reales y de ejemplo actualizadas en tiempo real.</p>
+            <p class="text-xs text-slate-500">Publicaciones sincronizadas al instante en tiempo real.</p>
         </div>
         
         <div class="flex items-center space-x-2 text-xs font-medium text-slate-500">
             <span>Estado:</span>
-            <span class="text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">🟢 Activo</span>
+            <span class="text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">🟢 Nube Activa</span>
         </div>
+    </div>
+
+    <!-- Indicador de Carga -->
+    <div id="loadingIndicator" class="text-center py-10 text-slate-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i>
+        <p>Cargando publicaciones desde la nube...</p>
     </div>
 
     <!-- Grid Container de Tarjetas -->
@@ -433,57 +439,61 @@
     </div>
 </div>
 
-<!-- JAVASCRIPT LOGIC -->
+<!-- JAVASCRIPT LOGIC CONECTADO A MOCKAPI -->
 <script>
+    const API_URL = 'https://6ae93d7b1a7b15aaa50fe708.mockapi.io/publicaciones';
     let currentUser = JSON.parse(localStorage.getItem('changa_user')) || null;
-
-    // Ejemplos con números ficticios seguros
-    let defaultChangas = [
-        {
-            id: 1,
-            title: "Armado de placard 4 puertas con cajonera",
-            category: "Muebles y Carpintería",
-            province: "Santa Fe",
-            city: "Rosario (Zona Centro)",
-            budget: 50000,
-            description: "Ejemplo: Compré un ropero desarmado de melamina. Necesito a alguien con sus herramientas (atornilladora) para armarlo en mi casa el sábado.",
-            clientName: "Martín R. (Ejemplo)",
-            clientPhone: "+54 9 341 000-0000",
-            date: "Ejemplo destacado"
-        },
-        {
-            id: 2,
-            title: "Pintura de cocina y pasillo (aprox 35m²)",
-            category: "Pintura",
-            province: "Formosa",
-            city: "Formosa Capital",
-            budget: 85000,
-            description: "Ejemplo: Tengo la pintura latex blanca comprada. Solo necesito la mano de obra para enduir pequeñas grietas y dar dos manos.",
-            clientName: "Valeria G. (Ejemplo)",
-            clientPhone: "+54 9 370 000-0000",
-            date: "Ejemplo destacado"
-        },
-        {
-            id: 3,
-            title: "Corte de pasto y poda de ligustro chico",
-            category: "Jardinería y Poda",
-            province: "Chubut",
-            city: "Puerto Madryn",
-            budget: 35000,
-            description: "Ejemplo: Terreno de 10x20m. El pasto está alto. Busco alguien que tenga bordeadora. Trabajo para hacer en el día.",
-            clientName: "Roberto M. (Ejemplo)",
-            clientPhone: "+54 9 280 000-0000",
-            date: "Ejemplo destacado"
-        }
-    ];
-
-    let userChangas = JSON.parse(localStorage.getItem('changa_list')) || [];
-    let changas = [...userChangas, ...defaultChangas];
+    let changas = [];
 
     window.addEventListener('DOMContentLoaded', () => {
         updateAuthUI();
-        renderChangas(changas);
+        fetchChangas();
     });
+
+    async function fetchChangas() {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Error al conectar con la nube');
+            changas = await response.json();
+            
+            // Si está vacío, le inyectamos unos ejemplos por defecto para que no quede totalmente vacío la primera vez
+            if (changas.length === 0) {
+                changas = [
+                    {
+                        id: "1",
+                        title: "Armado de placard 4 puertas con cajonera",
+                        category: "Muebles y Carpintería",
+                        province: "Santa Fe",
+                        city: "Rosario (Zona Centro)",
+                        budget: 50000,
+                        description: "Ejemplo: Compré un ropero desarmado de melamina. Necesito a alguien con sus herramientas (atornilladora) para armarlo en mi casa el sábado.",
+                        clientName: "Martín R. (Ejemplo)",
+                        clientPhone: "+54 9 341 000-0000",
+                        date: "Ejemplo destacado"
+                    },
+                    {
+                        id: "2",
+                        title: "Pintura de cocina y pasillo (aprox 35m²)",
+                        category: "Pintura",
+                        province: "Formosa",
+                        city: "Formosa Capital",
+                        budget: 85000,
+                        description: "Ejemplo: Tengo la pintura latex blanca comprada. Solo necesito la mano de obra para enduir pequeñas grietas y dar dos manos.",
+                        clientName: "Valeria G. (Ejemplo)",
+                        clientPhone: "+54 9 370 000-0000",
+                        date: "Ejemplo destacado"
+                    }
+                ];
+            }
+            
+            loadingIndicator.classList.add('hidden');
+            renderChangas(changas);
+        } catch (error) {
+            console.error(error);
+            loadingIndicator.innerHTML = '<p class="text-rose-500">Error al cargar las publicaciones de la nube. Verificá tu conexión.</p>';
+        }
+    }
 
     function updateAuthUI() {
         const txtAuth = document.getElementById('txtUserAuth');
@@ -547,7 +557,7 @@
             const card = document.createElement('div');
             card.className = "bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all border border-slate-200/80 flex flex-col justify-between animate-fade-in";
             
-            const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(item.budget);
+            const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(item.budget || 0);
 
             card.innerHTML = `
                 <div>
@@ -558,11 +568,11 @@
                         </span>
                         <span class="text-[11px] font-medium text-slate-400 flex items-center space-x-1">
                             <i class="fa-regular fa-clock"></i>
-                            <span>${item.date}</span>
+                            <span>${item.date || 'Reciente'}</span>
                         </span>
                     </div>
 
-                    <h3 class="font-extrabold text-slate-900 text-base leading-snug mb-2 hover:text-celeste-600 transition cursor-pointer" onclick="postulateToChanga(${item.id})">
+                    <h3 class="font-extrabold text-slate-900 text-base leading-snug mb-2 hover:text-celeste-600 transition cursor-pointer" onclick="postulateToChanga('${item.id}')">
                         ${item.title}
                     </h3>
 
@@ -581,7 +591,7 @@
                         <span class="text-[10px] uppercase font-bold text-slate-400 block leading-tight">Presupuesto</span>
                         <span class="text-lg font-black text-slate-900">${formattedBudget}</span>
                     </div>
-                    <button onclick="postulateToChanga(${item.id})" class="bg-celeste-600 hover:bg-celeste-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-1.5 active:scale-95">
+                    <button onclick="postulateToChanga('${item.id}')" class="bg-celeste-600 hover:bg-celeste-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-1.5 active:scale-95">
                         <i class="fa-solid fa-handshake"></i>
                         <span>Ver Contacto</span>
                     </button>
@@ -597,9 +607,9 @@
         const category = document.getElementById('filterCategory').value;
 
         const filtered = changas.filter(item => {
-            const matchesKeyword = item.title.toLowerCase().includes(keyword) || 
-                                   item.description.toLowerCase().includes(keyword) || 
-                                   item.city.toLowerCase().includes(keyword);
+            const matchesKeyword = (item.title && item.title.toLowerCase().includes(keyword)) || 
+                                   (item.description && item.description.toLowerCase().includes(keyword)) || 
+                                   (item.city && item.city.toLowerCase().includes(keyword));
             
             const matchesProvince = (province === "TODAS") || (item.province === province);
             const matchesCategory = (category === "TODAS") || (item.category === category);
@@ -618,10 +628,10 @@
     }
 
     function postulateToChanga(changaId) {
-        const changa = changas.find(c => c.id === changaId);
+        const changa = changas.find(c => String(c.id) === String(changaId));
         if (!changa) return;
 
-        const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(changa.budget);
+        const formattedBudget = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(changa.budget || 0);
 
         const content = document.getElementById('contactModalContent');
         content.innerHTML = `
@@ -646,7 +656,7 @@
             </div>
 
             <div class="space-y-2 pt-1">
-                <a href="https://wa.me/${changa.clientPhone.replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(changa.clientName)},%20vi%20tu%20publicación%20en%20Changa%20Ya:%20'${encodeURIComponent(changa.title)}'%20y%20me%20interesa%20hacer%20el%20trabajo." target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow">
+                <a href="https://wa.me/${(changa.clientPhone || '').replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(changa.clientName || '')},%20vi%20tu%20publicación%20en%20Changa%20Ya:%20'${encodeURIComponent(changa.title || '')}'%20y%20me%20interesa%20hacer%20el%20trabajo." target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-sm transition flex items-center justify-center space-x-2 shadow">
                     <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span>Contactar por WhatsApp</span>
                 </a>
@@ -661,11 +671,10 @@
         openModal('modalContact');
     }
 
-    function handlePublishSubmit(e) {
+    async function handlePublishSubmit(e) {
         e.preventDefault();
 
         const newChanga = {
-            id: Date.now(),
             title: document.getElementById('pubTitle').value,
             category: document.getElementById('pubCategory').value,
             province: document.getElementById('pubProvince').value,
@@ -677,15 +686,25 @@
             date: "Recién publicado"
         };
 
-        userChangas.unshift(newChanga);
-        localStorage.setItem('changa_list', JSON.stringify(userChangas));
-        changas = [...userChangas, ...defaultChangas];
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newChanga)
+            });
 
-        resetFilters();
-        closeModal('modalPublish');
-        document.getElementById('formPublish').reset();
+            if (!response.ok) throw new Error('No se pudo guardar en la nube');
 
-        alert(`¡Excelente! Tu changa "${newChanga.title}" se publicó correctamente.`);
+            closeModal('modalPublish');
+            document.getElementById('formPublish').reset();
+            alert(`¡Excelente! Tu changa "${newChanga.title}" se publicó en la nube correctamente.`);
+            
+            // Recargamos las changas para que aparezca la nueva al instante
+            fetchChangas();
+        } catch (error) {
+            console.error(error);
+            alert("Hubo un error al guardar la changa en la nube. Intentá de nuevo.");
+        }
     }
 
     function openModal(modalId) {
@@ -698,6 +717,7 @@
 </script>
 </body>
 </html>
+
 
 
 
