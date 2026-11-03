@@ -1,11 +1,10 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta name="google-site-verification" content="aNuzeayhLHKH9GWJfZW7BxxXed2u9FvvuMmMCyQAZNI" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1267a5">
-<title>Changa Ya! | Buscá trabajo, ofrecé servicios y encontrá changas en Argentina</title>
+<title>Changa Ya! | Encontrá tu próxima oportunidad</title>
 <meta name="description" content="Encontrá changas, trabajos independientes y servicios en toda Argentina. Publicá gratis y conectá directamente.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -128,6 +127,19 @@ footer p{color:#d6ebf8}
 .bottom-nav button{border:0;background:transparent;color:#587083;font-size:10px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:3px}
 .bottom-nav span{font-size:20px}footer{padding-bottom:110px}
 }
+
+.featured-tag {
+ display:inline-block;
+ background:#fff3c4;
+ color:#8a5a00;
+ border:1px solid #f5d675;
+ border-radius:20px;
+ padding:6px 12px;
+ font-size:12px;
+ font-weight:800;
+ margin-bottom:10px;
+}
+
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
@@ -565,15 +577,19 @@ $("registerForm").addEventListener("submit",async e=>{
    }
   });
 
-  if(error)throw error;
-
-  showMessage(
-   "authMessage",
-   data.session?
-   "¡Cuenta creada! Ahora completá tu perfil.":
-   "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.",
-   "success"
+  if(data.session){
+  showSuccessModal(
+    "¡Bienvenido a Changa Ya!",
+    "Tu cuenta fue creada correctamente. ¡Nos alegra tenerte acá! 🎉"
   );
+  openProfile(true);
+}else{
+  showMessage(
+    "authMessage",
+    "¡Ya casi! Revisá tu correo y confirmá tu cuenta para ingresar.",
+    "success"
+  );
+}
 
   $("registerForm").reset();
 
@@ -1022,7 +1038,7 @@ $("publishForm").addEventListener("submit",async e=>{
 
   $("publishForm").reset();
   closeModal("publishModal");
-  alert("¡Tu changa se publicó correctamente! 🚀");
+  showSuccessModal("¡Changa publicada!", "Tu publicación ya está disponible en Changa Ya! 🚀");
 
   await loadJobs();
   scrollToJobs();
@@ -1266,6 +1282,22 @@ async function renderJobs(){
  const province=$("provinceFilter").value;
  const category=$("categoryFilter").value;
 
+ let tieneDestacadoGratis=false;
+
+ if(currentUser){
+  const {data,error}=await db
+   .from("beneficios_destacado")
+   .select("usado")
+   .eq("user_id",currentUser.id)
+   .maybeSingle();
+
+  if(error){
+   console.error("Error consultando destacado:",error);
+  }else{
+   tieneDestacadoGratis=!!data&&!data.usado;
+  }
+ }
+
  const filtered=allJobs.filter(job=>{
   const text=[
    job.title,job.description,job.category,job.city,job.province
@@ -1322,10 +1354,16 @@ async function renderJobs(){
 
   const isOwner=!!currentUser&&currentUser.id===job.owner_id;
 
+  const estaDestacada=job.destacado_hasta&&
+   new Date(job.destacado_hasta).getTime()>Date.now();
+
   const card=document.createElement("article");
   card.className="job-card";
 
   card.innerHTML=`
+   ${estaDestacada?
+    '<span class="featured-tag">⭐ DESTACADA</span>':""}
+
    <span class="tag">${escapeHTML(job.category)}</span>
    <h3>${escapeHTML(job.title)}</h3>
    <p>${escapeHTML(job.description)}</p>
@@ -1353,6 +1391,9 @@ async function renderJobs(){
      '<span class="tag">Contacto no disponible</span>'}
 
     ${isOwner?`
+     ${tieneDestacadoGratis?
+      `<button class="btn btn-primary" data-feature="${escapeHTML(job.id)}">⭐ Usar mi destacado gratis</button>`:""}
+
      <button class="btn btn-light" data-edit="${escapeHTML(job.id)}">✏️ Editar</button>
      <button class="btn btn-light" data-delete="${escapeHTML(job.id)}">🗑️ Eliminar</button>
      <button class="btn btn-soft" data-finish="${escapeHTML(job.id)}">🤝 Ya encontré a alguien</button>
@@ -1377,6 +1418,37 @@ async function renderJobs(){
  $("jobsContainer").querySelectorAll("[data-delete]").forEach(button=>{
   button.addEventListener("click",()=>{
    deleteJob(button.dataset.delete);
+  });
+ });
+
+ $("jobsContainer").querySelectorAll("[data-feature]").forEach(button=>{
+  button.addEventListener("click",async()=>{
+   const confirmed=confirm(
+    "¿Querés utilizar tu destacado gratuito en esta publicación? Se destacará durante un máximo de 7 días y no podrás recuperar el beneficio."
+   );
+
+   if(!confirmed)return;
+
+   button.disabled=true;
+
+   try{
+    const {error}=await db.rpc("usar_destacado_gratis",{
+     p_changa_id:Number(button.dataset.feature)
+    });
+
+    if(error)throw error;
+
+    showSuccessModal(
+     "¡Publicación destacada!",
+     "Tu changa ya tiene su estrella ⭐ durante un máximo de 7 días."
+    );
+
+    await loadJobs();
+
+   }catch(error){
+    alert("No pudimos destacar tu publicación: "+error.message);
+    button.disabled=false;
+   }
   });
  });
 }
@@ -1504,6 +1576,88 @@ db.auth.onAuthStateChange((event,session)=>{
 
 startApp();
 </script>
+
+<!-- VENTANA DE MENSAJES CHANGA YA -->
+<div id="successModal" class="success-overlay" style="display:none;">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <h2 id="successTitle">¡Excelente!</h2>
+    <p id="successText">Tu acción se realizó correctamente.</p>
+    <button type="button" class="btn btn-primary" onclick="closeSuccessModal()">
+      ¡Genial!
+    </button>
+  </div>
+</div>
+
+<style>
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(10, 30, 55, .65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.success-box {
+  width: 100%;
+  max-width: 360px;
+  background: white;
+  border-radius: 22px;
+  padding: 30px 22px;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0,0,0,.2);
+  animation: successAppear .25s ease;
+}
+
+.success-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #e2f8ee;
+  color: #16a36a;
+  font-size: 42px;
+  font-weight: bold;
+  display: grid;
+  place-items: center;
+}
+
+.success-box h2 {
+  color: #173b60;
+  margin: 0 0 10px;
+}
+
+.success-box p {
+  color: #64748b;
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+
+.success-box button {
+  width: 100%;
+}
+
+@keyframes successAppear {
+  from { opacity: 0; transform: translateY(12px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+</style>
+
+<script>
+function showSuccessModal(title, message) {
+  document.getElementById("successTitle").textContent = title;
+  document.getElementById("successText").textContent = message;
+  document.getElementById("successModal").style.display = "flex";
+}
+
+function closeSuccessModal() {
+  document.getElementById("successModal").style.display = "none";
+}
+</script>
+
 </body>
 </html>
   
