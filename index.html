@@ -1,580 +1,1023 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Changa Ya - Trabajos y Servicios en Argentina</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changa Ya | Trabajos y changas</title>
+  <meta name="description" content="Encontrá trabajos y changas en toda Argentina. Publicá gratis y contactá directamente.">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        celeste: {
-                            50: '#f0f9ff', 100: '#e0f2fe', 400: '#38bdf8',
-                            500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1'
-                        },
-                        sol: '#f59e0b'
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f6fa;
+      color: #18202b;
+      margin: 0;
+    }
+    .brand { color: #16a36a; }
+    .bg-brand { background: #16a36a; }
+    .panel {
+      background: white;
+      border: 1px solid #e8ebef;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(20,30,40,.04);
+    }
+    .field {
+      width: 100%;
+      border: 1px solid #dce1e7;
+      border-radius: 10px;
+      padding: 12px;
+      background: white;
+      outline: none;
+      font-size: 14px;
+    }
+    .field:focus { border-color: #16a36a; }
+    .btn {
+      border-radius: 10px;
+      padding: 12px 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .btn-primary {
+      background: #16a36a;
+      color: white;
+    }
+    .btn-primary:hover { background: #128653; }
+    .btn-light {
+      background: #edf8f2;
+      color: #128653;
+    }
+    .hidden { display: none !important; }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #e7eee9;
+    }
+    .job-card {
+      background: white;
+      border: 1px solid #e8ebef;
+      border-radius: 15px;
+      padding: 17px;
+    }
+    .tag {
+      display: inline-block;
+      background: #edf8f2;
+      color: #128653;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,30,.65);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .modal {
+      width: 100%;
+      max-width: 470px;
+      background: white;
+      border-radius: 18px;
+      padding: 23px;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .status {
+      font-size: 11px;
+      font-weight: 700;
+      color: #138653;
+      background: #e8f8ef;
+      padding: 5px 9px;
+      border-radius: 20px;
+    }
+    @media (max-width: 600px) {
+      .desktop-only { display: none !important; }
+    }
+  </style>
 </head>
 
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+<body>
 
-<header class="bg-gradient-to-r from-celeste-600 via-celeste-500 to-sky-600 text-white shadow-md sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="resetFilters()">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">
-                <i class="fa-solid fa-briefcase text-celeste-600 text-lg sm:text-xl"></i>
-            </div>
-            <div>
-                <div class="flex items-center space-x-1">
-                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-white">CHANGA</span>
-                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-sol">YA!</span>
-                </div>
-                <p class="text-[10px] sm:text-xs text-celeste-100 font-medium tracking-wide">Trabajo independiente en Argentina 🇦🇷</p>
-            </div>
-        </div>
+  <!-- ENCABEZADO -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <a href="#" class="text-2xl font-extrabold tracking-tight">
+        Changa <span class="brand">Ya</span> 🚀
+      </a>
 
-        <div class="flex items-center space-x-2">
-            <button onclick="openModal('modalPublish')" class="bg-sol hover:bg-amber-600 text-slate-900 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-1">
-                <i class="fa-solid fa-circle-plus"></i><span>Publicar</span>
-            </button>
-            <button id="btnUserAuth" onclick="handleAuthClick()" class="bg-white/10 hover:bg-white/25 text-white border border-white/30 font-semibold px-2.5 py-2 rounded-xl text-xs sm:text-sm">
-                <i class="fa-solid fa-user-circle"></i>
-                <span id="txtUserAuth">Ingresar</span>
-            </button>
+      <div class="flex items-center gap-2">
+        <button id="loginBtn" class="btn btn-light text-sm" onclick="openAuth()">
+          Ingresar
+        </button>
+        <button id="publishBtn" class="btn btn-primary text-sm" onclick="openPublish()">
+          + Publicar
+        </button>
+
+        <div id="userMenu" class="hidden flex items-center gap-2">
+          <img id="headerAvatar" class="avatar" src="" alt="Foto de perfil">
+          <button onclick="logout()" class="text-sm font-semibold text-gray-600">
+            Salir
+          </button>
         </div>
+      </div>
     </div>
-</header>
+  </header>
 
-<section class="bg-gradient-to-b from-celeste-600 to-sky-700 text-white py-6 sm:py-8 px-4 shadow-inner">
-    <div class="max-w-4xl mx-auto text-center space-y-3">
-        <span class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">🇦🇷 Sincronizado en la Nube</span>
-        <h1 class="text-2xl sm:text-4xl font-extrabold">Encontrá laburo o contratá al toque</h1>
-        <p class="text-xs sm:text-sm text-celeste-100 max-w-xl mx-auto">
-            Conectamos personas que necesitan resolver un trabajo rápido con trabajadores independientes de todo el país.
+  <!-- PRESENTACIÓN -->
+  <section class="bg-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 md:py-14">
+      <div class="max-w-2xl">
+        <span class="tag">EN TODA ARGENTINA 🇦🇷</span>
+        <h1 class="text-3xl md:text-5xl font-extrabold mt-4 leading-tight">
+          Encontrá una changa.
+          <span class="brand">Conseguí trabajo.</span>
+        </h1>
+        <p class="text-gray-500 mt-4 leading-relaxed">
+          Publicá lo que necesitás o encontrá personas que buscan trabajar.
+          Fácil, rápido y sin intermediarios.
         </p>
-    </div>
-</section>
-
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 z-20 relative">
-    <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-5 border border-slate-200">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">¿Qué buscás?</label>
-                <input type="text" id="searchKeyword" oninput="applyFilters()" placeholder="Ej. Armar mueble, pintura..." class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Provincia</label>
-                <select id="filterProvince" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
-                    <option value="TODAS">Todas las Provincias</option>
-                    <option value="Buenos Aires">Buenos Aires</option>
-                    <option value="CABA">CABA</option>
-                    <option value="Catamarca">Catamarca</option>
-                    <option value="Chaco">Chaco</option>
-                    <option value="Chubut">Chubut</option>
-                    <option value="Córdoba">Córdoba</option>
-                    <option value="Corrientes">Corrientes</option>
-                    <option value="Entre Ríos">Entre Ríos</option>
-                    <option value="Formosa">Formosa</option>
-                    <option value="Jujuy">Jujuy</option>
-                    <option value="La Pampa">La Pampa</option>
-                    <option value="La Rioja">La Rioja</option>
-                    <option value="Mendoza">Mendoza</option>
-                    <option value="Misiones">Misiones</option>
-                    <option value="Neuquén">Neuquén</option>
-                    <option value="Río Negro">Río Negro</option>
-                    <option value="Salta">Salta</option>
-                    <option value="San Juan">San Juan</option>
-                    <option value="San Luis">San Luis</option>
-                    <option value="Santa Cruz">Santa Cruz</option>
-                    <option value="Santa Fe">Santa Fe</option>
-                    <option value="Santiago del Estero">Santiago del Estero</option>
-                    <option value="Tierra del Fuego">Tierra del Fuego</option>
-                    <option value="Tucumán">Tucumán</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Categoría</label>
-                <select id="filterCategory" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
-                    <option value="TODAS">Todas las Categorías</option>
-                    <option value="Muebles y Carpintería">Muebles y Carpintería</option>
-                    <option value="Construcción y Albañilería">Construcción y Albañilería</option>
-                    <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
-                    <option value="Jardinería y Poda">Jardinería y Poda</option>
-                    <option value="Electricidad y Plomería">Electricidad y Plomería</option>
-                    <option value="Pintura">Pintura</option>
-                    <option value="Fletes y Traslados">Fletes y Traslados</option>
-                    <option value="Reparaciones / Varios">Reparaciones / Varios</option>
-                </select>
-            </div>
-
-            <div class="flex items-end">
-                <button onclick="resetFilters()" class="w-full py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-xl text-sm border">
-                    Limpiar Filtros
-                </button>
-            </div>
+        <div class="flex flex-wrap gap-3 mt-6">
+          <button class="btn btn-primary" onclick="openPublish()">
+            Publicar una changa
+          </button>
+          <button class="btn btn-light" onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">
+            Buscar trabajos
+          </button>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-    <div class="flex items-center justify-between mb-6">
+  <!-- BUSCADOR -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <section id="listings">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-900">
-                Changas en la Nube
-                <span id="badgeCount" class="bg-celeste-100 text-celeste-700 text-xs px-2.5 py-0.5 rounded-full">0</span>
-            </h2>
-            <p class="text-xs text-slate-500">Sincronizadas en tiempo real para cualquier dispositivo.</p>
+          <h2 class="text-2xl font-extrabold">Changas disponibles</h2>
+          <p class="text-sm text-gray-500 mt-1">Encontrá oportunidades cerca tuyo.</p>
         </div>
-        <span class="text-emerald-700 font-semibold bg-emerald-50 text-xs px-2.5 py-1 rounded-lg">🟢 Nube Activa</span>
-    </div>
+        <span id="jobsCount" class="text-sm text-gray-500">Cargando publicaciones...</span>
+      </div>
 
-    <div id="loadingIndicator" class="text-center py-10 text-slate-400 text-sm">
-        <i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i>
-        <p>Conectando con la base de datos...</p>
-    </div>
+      <div class="panel p-4 mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input id="searchInput" class="field" type="search"
+            placeholder="¿Qué trabajo estás buscando?">
 
-    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+          <select id="provinceFilter" class="field">
+            <option value="">Todas las provincias</option>
+            <option>Buenos Aires</option>
+            <option>Catamarca</option>
+            <option>Chaco</option>
+            <option>Chubut</option>
+            <option>Ciudad Autónoma de Buenos Aires</option>
+            <option>Córdoba</option>
+            <option>Corrientes</option>
+            <option>Entre Ríos</option>
+            <option>Formosa</option>
+            <option>Jujuy</option>
+            <option>La Pampa</option>
+            <option>La Rioja</option>
+            <option>Mendoza</option>
+            <option>Misiones</option>
+            <option>Neuquén</option>
+            <option>Río Negro</option>
+            <option>Salta</option>
+            <option>San Juan</option>
+            <option>San Luis</option>
+            <option>Santa Cruz</option>
+            <option>Santa Fe</option>
+            <option>Santiago del Estero</option>
+            <option>Tierra del Fuego</option>
+            <option>Tucumán</option>
+          </select>
 
-    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border shadow-sm">
-        <h3 class="text-lg font-bold text-slate-800 mb-1">No hay changas publicadas</h3>
-        <p class="text-sm text-slate-500">Sé el primero en publicar una changa.</p>
-    </div>
-</main>
-
-<footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-auto text-center">
-    <span class="font-black text-white text-base">CHANGA <span class="text-sol">YA!</span></span>
-    <p class="mt-2">© 2026 Changa Ya Argentina - Red de Trabajo Independiente.</p>
-</footer>
-
-<div id="modalAuth" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
-        <div class="flex justify-between items-center">
-            <h3 class="font-bold text-lg">Ingresar</h3>
-            <button onclick="closeModal('modalAuth')">✕</button>
+          <select id="categoryFilter" class="field">
+            <option value="">Todos los rubros</option>
+            <option>Albañilería</option>
+            <option>Construcción</option>
+            <option>Electricidad</option>
+            <option>Plomería</option>
+            <option>Jardinería</option>
+            <option>Limpieza</option>
+            <option>Fletes y mudanzas</option>
+            <option>Muebles y carpintería</option>
+            <option>Gastronomía</option>
+            <option>Comercio</option>
+            <option>Reparaciones</option>
+            <option>Otros</option>
+          </select>
         </div>
-        <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
-            <input type="email" id="authEmail" required placeholder="Tu correo" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <button type="submit" class="w-full bg-celeste-600 text-white font-bold py-2 rounded-xl text-sm">Entrar</button>
-        </form>
-    </div>
-</div>
 
-<div id="modalPublish" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
-        <div class="flex justify-between items-center bg-sol p-3 rounded-xl">
-            <h3 class="font-extrabold text-slate-900">Publicar Changa</h3>
-            <button onclick="closeModal('modalPublish')">✕</button>
+        <button onclick="loadJobs()" class="btn btn-primary w-full mt-3">
+          Buscar changas
+        </button>
+      </div>
+
+      <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="panel p-6 text-center text-gray-500">
+          Cargando publicaciones...
         </div>
+      </div>
 
-        <form id="formPublish" onsubmit="handlePublishSubmit(event)" class="space-y-3">
-            <input type="text" id="pubTitle" required maxlength="120" placeholder="Título del trabajo" class="w-full px-3 py-2 border rounded-xl text-sm">
+      <div id="emptyMessage" class="hidden panel p-8 text-center mt-4">
+        <div class="text-4xl mb-3">🔎</div>
+        <h3 class="font-bold text-lg">No encontramos publicaciones</h3>
+        <p class="text-gray-500 text-sm mt-2">
+          Probá cambiar los filtros o volvé a buscar más tarde.
+        </p>
+      </div>
+    </section>
 
-            <select id="pubCategory" required class="w-full px-3 py-2 border rounded-xl text-sm">
-                <option value="Muebles y Carpintería">Muebles y Carpintería</option>
-                <option value="Construcción y Albañilería">Construcción y Albañilería</option>
-                <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
-                <option value="Jardinería y Poda">Jardinería y Poda</option>
-                <option value="Electricidad y Plomería">Electricidad y Plomería</option>
-                <option value="Pintura">Pintura</option>
-                <option value="Fletes y Traslados">Fletes y Traslados</option>
-                <option value="Reparaciones / Varios">Reparaciones / Varios</option>
-            </select>
+  </main>
 
-            <select id="pubProvince" required class="w-full px-3 py-2 border rounded-xl text-sm">
-                <option value="Santa Fe">Santa Fe</option>
-                <option value="Buenos Aires">Buenos Aires</option>
-                <option value="CABA">CABA</option>
-                <option value="Córdoba">Córdoba</option>
-                <option value="Mendoza">Mendoza</option>
-                <option value="Formosa">Formosa</option>
-                <option value="Tucumán">Tucumán</option>
-            </select>
-
-            <input type="text" id="pubCity" required maxlength="100" placeholder="Ciudad / Barrio" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <input type="number" id="pubBudget" required min="0" step="1" placeholder="Monto en $ARS" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <textarea id="pubDescription" required maxlength="2000" placeholder="Descripción" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm"></textarea>
-            <input type="text" id="pubName" required maxlength="100" placeholder="Tu Nombre" class="w-full px-3 py-2 border rounded-xl text-sm">
-            <input type="tel" id="pubPhone" required maxlength="30" placeholder="WhatsApp (Ej: 3415551234)" class="w-full px-3 py-2 border rounded-xl text-sm">
-
-            <button type="submit" class="w-full bg-sol text-slate-900 font-extrabold py-2.5 rounded-xl text-sm shadow">
-                Publicar en la Nube
-            </button>
-        </form>
+  <!-- PIE -->
+  <footer class="bg-white border-t mt-12">
+    <div class="max-w-6xl mx-auto px-4 py-7 text-center">
+      <p class="font-extrabold text-xl">Changa <span class="brand">Ya</span> 🚀</p>
+      <p class="text-sm text-gray-500 mt-2">
+        Conectamos personas con oportunidades de trabajo en Argentina.
+      </p>
+      <p class="text-xs text-gray-400 mt-3">© 2026 Changa Ya</p>
     </div>
-</div>
+  </footer>
 
-<div id="modalContact" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
-        <div class="flex justify-between items-center">
-            <h3 class="font-bold text-base text-emerald-700">Contacto Directo</h3>
-            <button onclick="closeModal('modalContact')">✕</button>
-        </div>
-        <div id="contactModalContent" class="space-y-3"></div>
+  <!-- VENTANA DE INGRESO Y REGISTRO -->
+  <div id="authModal" class="modal-bg hidden">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-xl font-extrabold">Tu cuenta</h2>
+        <button onclick="closeModal('authModal')" class="text-2xl text-gray-400">×</button>
+      </div>
+
+      <div class="flex gap-2 mb-5">
+        <button id="loginTab" onclick="showAuthTab('login')"
+          class="btn btn-primary flex-1">Ingresar</button>
+        <button id="registerTab" onclick="showAuthTab('register')"
+          class="btn btn-light flex-1">Crear cuenta</button>
+      </div>
+
+      <form id="loginForm" class="space-y-3">
+        <input id="loginEmail" class="field" type="email"
+          placeholder="Correo electrónico" required>
+        <input id="loginPassword" class="field" type="password"
+          placeholder="Contraseña" required>
+        <button class="btn btn-primary w-full" type="submit">Ingresar</button>
+      </form>
+
+      <form id="registerForm" class="hidden space-y-3">
+        <input id="registerName" class="field" type="text"
+          placeholder="Nombre y apellido" required>
+        <input id="registerEmail" class="field" type="email"
+          placeholder="Correo electrónico" required>
+        <input id="registerPassword" class="field" type="password"
+          placeholder="Crear contraseña (mínimo 6 caracteres)" minlength="6" required>
+        <button class="btn btn-primary w-full" type="submit">Crear mi cuenta</button>
+        <p class="text-xs text-gray-500">
+          Después de registrarte, confirmá tu correo electrónico para poder ingresar.
+        </p>
+      </form>
+
+      <p id="authMessage" class="text-sm mt-4 text-center"></p>
     </div>
-</div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ';
+  </div>
 
-    const supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
+  <!-- COMPLETAR PERFIL -->
+  <div id="profileModal" class="modal-bg hidden">
+    <div class="modal">
+      <h2 class="text-xl font-extrabold mb-2">Completá tu perfil</h2>
+      <p class="text-sm text-gray-500 mb-5">
+        Necesitamos estos datos para que puedas publicar y contactar trabajos.
+      </p>
+
+      <form id="profileForm" class="space-y-3">
+        <input id="profileName" class="field" type="text"
+          placeholder="Nombre y apellido" required>
+
+        <select id="profileProvince" class="field" required>
+          <option value="">Seleccioná tu provincia</option>
+          <option>Buenos Aires</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Ciudad Autónoma de Buenos Aires</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+
+        <input id="profileCity" class="field" type="text"
+          placeholder="Tu ciudad" required>
+
+        <label class="block text-sm font-semibold">Foto de perfil (obligatoria)</label>
+        <input id="profilePhoto" class="field" type="file"
+          accept="image/*" required>
+
+        <button class="btn btn-primary w-full" type="submit">
+          Guardar mi perfil
+        </button>
+        <p id="profileMessage" class="text-sm text-center"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- PUBLICAR CHANGA -->
+  <div id="publishModal" class="modal-bg hidden">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-xl font-extrabold">Publicar una changa</h2>
+        <button onclick="closeModal('publishModal')" class="text-2xl text-gray-400">×</button>
+      </div>
+
+      <form id="publishForm" class="space-y-3">
+        <input id="jobTitle" class="field" type="text"
+          placeholder="¿Qué trabajo necesitás?" required>
+
+        <select id="jobCategory" class="field" required>
+          <option value="">Seleccioná el rubro</option>
+          <option>Albañilería</option>
+          <option>Construcción</option>
+          <option>Electricidad</option>
+          <option>Plomería</option>
+          <option>Jardinería</option>
+          <option>Limpieza</option>
+          <option>Fletes y mudanzas</option>
+          <option>Muebles y carpintería</option>
+          <option>Gastronomía</option>
+          <option>Comercio</option>
+          <option>Reparaciones</option>
+          <option>Otros</option>
+        </select>
+
+        <input id="jobBudget" class="field" type="text"
+          placeholder="Pago ofrecido (opcional)">
+
+        <textarea id="jobDescription" class="field" rows="4"
+          placeholder="Contá un poco más sobre el trabajo..." required></textarea>
+
+        <input id="jobPhone" class="field" type="tel"
+          placeholder="Tu WhatsApp (ej: 5493411234567)" required>
+
+        <label class="block text-sm font-semibold">Provincia</label>
+        <select id="jobProvince" class="field" required>
+          <option value="">Seleccioná una provincia</option>
+          <option>Buenos Aires</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Ciudad Autónoma de Buenos Aires</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+
+        <input id="jobCity" class="field" type="text"
+          placeholder="Ciudad o localidad" required>
+
+        <label class="block text-sm font-semibold">¿Cuánto tiempo querés que esté publicada?</label>
+        <select id="jobDuration" class="field" required>
+          <option value="24">24 horas</option>
+          <option value="48">48 horas</option>
+          <option value="72">72 horas</option>
+          <option value="96">96 horas (4 días)</option>
+        </select>
+
+        <button class="btn btn-primary w-full" type="submit">
+          Publicar changa
+        </button>
+        <p id="publishMessage" class="text-sm text-center"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- AQUÍ COMIENZA EL CÓDIGO DE FUNCIONAMIENTO -->
+  <script> // ==========================================
+// CONEXIÓN CON SUPABASE
+// ==========================================
+
+const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+let currentProfile = null;
+let allJobs = [];
+
+// ==========================================
+// FUNCIONES GENERALES
+// ==========================================
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+function openAuth() {
+  document.getElementById('authModal').classList.remove('hidden');
+  showAuthTab('login');
+}
+
+function showAuthTab(tab) {
+  const login = tab === 'login';
+
+  document.getElementById('loginForm').classList.toggle('hidden', !login);
+  document.getElementById('registerForm').classList.toggle('hidden', login);
+
+  document.getElementById('loginTab').className =
+    login ? 'btn btn-primary flex-1' : 'btn btn-light flex-1';
+
+  document.getElementById('registerTab').className =
+    login ? 'btn btn-light flex-1' : 'btn btn-primary flex-1';
+
+  document.getElementById('authMessage').textContent = '';
+}
+
+function showMessage(id, message, error = false) {
+  const element = document.getElementById(id);
+  element.textContent = message;
+  element.className = error
+    ? 'text-sm mt-3 text-center text-red-600'
+    : 'text-sm mt-3 text-center text-green-700';
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[character]);
+}
+
+function normalizePhone(phone) {
+  return String(phone || '').replace(/\D/g, '');
+}
+
+// ==========================================
+// REGISTRO DE CUENTA
+// ==========================================
+
+document.getElementById('registerForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('registerName').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
+
+  showMessage('authMessage', 'Creando tu cuenta...');
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: name
+      }
+    }
+  });
+
+  if (error) {
+    showMessage('authMessage', error.message, true);
+    return;
+  }
+
+  if (data.session) {
+    closeModal('authModal');
+    await handleUser(data.user);
+  } else {
+    showMessage(
+      'authMessage',
+      '¡Cuenta creada! Revisá tu correo, confirmá tu dirección y después ingresá.'
     );
+  }
+});
 
-    let currentUser = JSON.parse(localStorage.getItem('changa_user')) || null;
-    let changas = [];
-    let realtimeChannel = null;
+// ==========================================
+// INICIO DE SESIÓN
+// ==========================================
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        updateAuthUI();
-        await fetchChangas();
-        subscribeToChangas();
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  showMessage('authMessage', 'Ingresando...');
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showMessage('authMessage', error.message, true);
+    return;
+  }
+
+  closeModal('authModal');
+  await handleUser(data.user);
+});
+
+// ==========================================
+// SESIÓN Y PERFIL
+// ==========================================
+
+async function handleUser(user) {
+  currentUser = user;
+
+  document.getElementById('loginBtn').classList.add('hidden');
+  document.getElementById('userMenu').classList.remove('hidden');
+
+  const { data: profile, error } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    alert('No pudimos consultar tu perfil: ' + error.message);
+    return;
+  }
+
+  currentProfile = profile;
+
+  if (!profile) {
+    document.getElementById('profileName').value =
+      user.user_metadata?.full_name || '';
+
+    document.getElementById('profileModal').classList.remove('hidden');
+  } else {
+    document.getElementById('headerAvatar').src = profile.avatar_url;
+  }
+
+  await loadJobs();
+}
+
+async function logout() {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  currentUser = null;
+  currentProfile = null;
+
+  document.getElementById('loginBtn').classList.remove('hidden');
+  document.getElementById('userMenu').classList.add('hidden');
+
+  await loadJobs();
+}
+
+// ==========================================
+// GUARDAR PERFIL Y FOTO
+// ==========================================
+
+document.getElementById('profileForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  if (!currentUser) {
+    showMessage('profileMessage', 'Primero ingresá a tu cuenta.', true);
+    return;
+  }
+
+  const name = document.getElementById('profileName').value.trim();
+  const province = document.getElementById('profileProvince').value;
+  const city = document.getElementById('profileCity').value.trim();
+  const photo = document.getElementById('profilePhoto').files[0];
+
+  if (!photo) {
+    showMessage('profileMessage', 'La foto de perfil es obligatoria.', true);
+    return;
+  }
+
+  if (!photo.type.startsWith('image/')) {
+    showMessage('profileMessage', 'Elegí un archivo de imagen válido.', true);
+    return;
+  }
+
+  if (photo.size > 5 * 1024 * 1024) {
+    showMessage('profileMessage', 'La foto debe pesar menos de 5 MB.', true);
+    return;
+  }
+
+  showMessage('profileMessage', 'Guardando tu perfil...');
+
+  const extension = photo.name.split('.').pop().replace(/[^a-zA-Z0-9]/g, '');
+  const filePath = `${currentUser.id}/${Date.now()}.${extension || 'jpg'}`;
+
+  const { error: uploadError } = await supabaseClient
+    .storage
+    .from('profile-photos')
+    .upload(filePath, photo, {
+      upsert: false,
+      contentType: photo.type
     });
 
-    function escapeHTML(value) {
-        return String(value ?? '').replace(/[&<>"']/g, char => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        })[char]);
+  if (uploadError) {
+    showMessage('profileMessage', 'Error al subir la foto: ' + uploadError.message, true);
+    return;
+  }
+
+  const { data: photoData } = supabaseClient
+    .storage
+    .from('profile-photos')
+    .getPublicUrl(filePath);
+
+  const avatarUrl = photoData.publicUrl;
+
+  const { data: savedProfile, error: profileError } = await supabaseClient
+    .from('profiles')
+    .upsert({
+      id: currentUser.id,
+      full_name: name,
+      province,
+      city,
+      avatar_url: avatarUrl
+    })
+    .select()
+    .single();
+
+  if (profileError) {
+    showMessage('profileMessage', 'Error al guardar el perfil: ' + profileError.message, true);
+    return;
+  }
+
+  currentProfile = savedProfile;
+  document.getElementById('headerAvatar').src = avatarUrl;
+
+  closeModal('profileModal');
+  await loadJobs();
+});
+
+// ==========================================
+// ABRIR PUBLICACIÓN
+// ==========================================
+
+function openPublish() {
+  if (!currentUser) {
+    openAuth();
+    showAuthTab('login');
+    showMessage('authMessage', 'Ingresá o creá una cuenta para publicar.');
+    return;
+  }
+
+  if (!currentProfile) {
+    document.getElementById('profileModal').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('jobProvince').value = currentProfile.province;
+  document.getElementById('jobCity').value = currentProfile.city;
+
+  document.getElementById('publishModal').classList.remove('hidden');
+}
+
+// ==========================================
+// PUBLICAR CHANGA
+// ==========================================
+
+document.getElementById('publishForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  if (!currentUser || !currentProfile) {
+    alert('Ingresá y completá tu perfil antes de publicar.');
+    return;
+  }
+
+  const duration = Number(document.getElementById('jobDuration').value);
+
+  const expiresAt = new Date(
+    Date.now() + duration * 60 * 60 * 1000
+  ).toISOString();
+
+  const newJob = {
+    title: document.getElementById('jobTitle').value.trim(),
+    category: document.getElementById('jobCategory').value,
+    province: document.getElementById('jobProvince').value,
+    city: document.getElementById('jobCity').value.trim(),
+    budget: document.getElementById('jobBudget').value.trim(),
+    description: document.getElementById('jobDescription').value.trim(),
+    client_name: currentProfile.full_name,
+    client_phone: normalizePhone(document.getElementById('jobPhone').value),
+    owner_id: currentUser.id,
+    status: 'disponible',
+    expires_at: expiresAt
+  };
+
+  if (!newJob.client_phone) {
+    showMessage('publishMessage', 'Ingresá un WhatsApp válido.', true);
+    return;
+  }
+
+  showMessage('publishMessage', 'Publicando...');
+
+  const { error } = await supabaseClient
+    .from('changas')
+    .insert(newJob);
+
+  if (error) {
+    showMessage('publishMessage', 'No se pudo publicar: ' + error.message, true);
+    return;
+  }
+
+  document.getElementById('publishForm').reset();
+  closeModal('publishModal');
+
+  alert('¡Tu changa ya está publicada! 🎉');
+
+  await loadJobs();
+});
+
+// ==========================================
+// CARGAR PUBLICACIONES
+// ==========================================
+
+async function loadJobs() {
+  const container = document.getElementById('jobsContainer');
+
+  container.innerHTML = `
+    <div class="panel p-6 text-center text-gray-500">
+      Cargando publicaciones...
+    </div>
+  `;
+
+  const { data: jobs, error } = await supabaseClient
+    .from('changas')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    container.innerHTML = `
+      <div class="panel p-6 text-center text-red-600">
+        No se pudieron cargar las publicaciones.
+        <p class="text-xs mt-2">${escapeHTML(error.message)}</p>
+      </div>
+    `;
+    return;
+  }
+
+  const now = Date.now();
+
+  allJobs = (jobs || []).filter(job => {
+    return job.status === 'disponible' &&
+      (!job.expires_at || new Date(job.expires_at).getTime() > now);
+  });
+
+  renderJobs();
+}
+
+// ==========================================
+// MOSTRAR Y FILTRAR PUBLICACIONES
+// ==========================================
+
+async function renderJobs() {
+  const search = document.getElementById('searchInput').value
+    .trim().toLowerCase();
+
+  const province = document.getElementById('provinceFilter').value;
+  const category = document.getElementById('categoryFilter').value;
+
+  const filtered = allJobs.filter(job => {
+    const text = [
+      job.title,
+      job.description,
+      job.city,
+      job.category
+    ].join(' ').toLowerCase();
+
+    return text.includes(search) &&
+      (!province || job.province === province) &&
+      (!category || job.category === category);
+  });
+
+  document.getElementById('jobsCount').textContent =
+    `${filtered.length} publicaciones disponibles`;
+
+  const container = document.getElementById('jobsContainer');
+  const empty = document.getElementById('emptyMessage');
+
+  if (!filtered.length) {
+    container.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+
+  const ownerIds = [...new Set(filtered.map(job => job.owner_id).filter(Boolean))];
+
+  let profiles = {};
+
+  if (ownerIds.length) {
+    const { data } = await supabaseClient
+      .from('profiles')
+      .select('id,full_name,province,city,avatar_url')
+      .in('id', ownerIds);
+
+    (data || []).forEach(profile => {
+      profiles[profile.id] = profile;
+    });
+  }
+
+  container.innerHTML = filtered.map(job => {
+    const profile = profiles[job.owner_id];
+    const ownerName = profile?.full_name || job.client_name || 'Usuario';
+    const avatar = profile?.avatar_url || '';
+    const phone = normalizePhone(job.client_phone);
+    const whatsappText = encodeURIComponent(
+      `Hola ${ownerName}, vi tu publicación "${job.title}" en Changa Ya y me interesa.`
+    );
+
+    const isOwner = currentUser && currentUser.id === job.owner_id;
+
+    return `
+      <article class="job-card">
+        <div class="flex justify-between items-start gap-2">
+          <span class="tag">${escapeHTML(job.category)}</span>
+          <span class="status">Disponible</span>
+        </div>
+
+        <h3 class="text-lg font-extrabold mt-3">
+          ${escapeHTML(job.title)}
+        </h3>
+
+        <p class="text-sm text-gray-600 mt-2 whitespace-pre-line">
+          ${escapeHTML(job.description)}
+        </p>
+
+        <div class="mt-4 text-sm text-gray-500 space-y-1">
+          <p>📍 ${escapeHTML(job.city)}, ${escapeHTML(job.province)}</p>
+          <p>💰 ${escapeHTML(job.budget || 'A convenir')}</p>
+        </div>
+
+        <div class="flex items-center gap-2 mt-4 pt-3 border-t">
+          ${
+            avatar
+              ? `<img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de ${escapeHTML(ownerName)}">`
+              : `<div class="avatar flex items-center justify-center">👤</div>`
+          }
+          <div>
+            <p class="font-bold text-sm">${escapeHTML(ownerName)}</p>
+            <p class="text-xs text-gray-500">
+              ${escapeHTML(profile?.city || job.city)}, ${escapeHTML(profile?.province || job.province)}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+          ${
+            phone
+              ? `<a class="btn btn-primary text-sm flex-1 text-center" target="_blank" rel="noopener noreferrer" href="https://wa.me/${phone}?text=${whatsappText}">Contactar por WhatsApp</a>`
+              : ''
+          }
+
+          ${
+            isOwner
+              ? `<button class="btn btn-light text-sm" onclick="markAsFinished('${job.id}')">Trabajo conseguido</button>`
+              : ''
+          }
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// ==========================================
+// MARCAR TRABAJO COMO CONSEGUIDO
+// ==========================================
+
+async function markAsFinished(jobId) {
+  if (!currentUser) return;
+
+  const confirmed = confirm(
+    '¿Ya conseguiste a alguien para este trabajo? La publicación dejará de aparecer entre las disponibles.'
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await supabaseClient
+    .from('changas')
+    .update({
+      status: 'conseguida',
+      finished_at: new Date().toISOString()
+    })
+    .eq('id', jobId)
+    .eq('owner_id', currentUser.id);
+
+  if (error) {
+    alert('No se pudo actualizar: ' + error.message);
+    return;
+  }
+
+  alert('¡Perfecto! La publicación quedó marcada como trabajo conseguido.');
+  await loadJobs();
+}
+
+// ==========================================
+// FILTROS EN VIVO
+// ==========================================
+
+document.getElementById('searchInput').addEventListener('input', renderJobs);
+document.getElementById('provinceFilter').addEventListener('change', renderJobs);
+document.getElementById('categoryFilter').addEventListener('change', renderJobs);
+
+// ==========================================
+// ACTUALIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+supabaseClient
+  .channel('changas-en-vivo')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'changas'
+    },
+    () => {
+      loadJobs();
     }
+  )
+  .subscribe();
 
-    async function fetchChangas() {
-        const loading = document.getElementById('loadingIndicator');
+// ==========================================
+// INICIAR LA PÁGINA
+// ==========================================
 
-        try {
-            const { data, error } = await supabaseClient
-                .from('changas')
-                .select('*')
-                .order('created_at', { ascending: false });
+async function startApp() {
+  const { data } = await supabaseClient.auth.getSession();
 
-            if (error) throw error;
+  if (data.session?.user) {
+    await handleUser(data.session.user);
+  } else {
+    await loadJobs();
+  }
+}
 
-            changas = data.map(item => ({
-                id: item.id,
-                title: item.title,
-                category: item.category,
-                province: item.province,
-                city: item.city,
-                budget: Number(item.budget),
-                description: item.description,
-                clientName: item.client_name,
-                clientPhone: item.client_phone,
-                date: item.created_at
-            }));
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    currentProfile = null;
+    document.getElementById('loginBtn').classList.remove('hidden');
+    document.getElementById('userMenu').classList.add('hidden');
+    loadJobs();
+  }
+});
 
-            loading.classList.add('hidden');
-            applyFilters();
+startApp();
 
-        } catch (error) {
-            console.error('Error cargando changas:', error);
-            loading.innerHTML = `
-                <p class="text-rose-500">
-                    No se pudieron cargar las publicaciones.
-                    Revisá la conexión y los permisos de Supabase.
-                </p>`;
-        }
-    }
-
-    function subscribeToChangas() {
-        if (realtimeChannel) return;
-
-        realtimeChannel = supabaseClient
-            .channel('changas-en-tiempo-real')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'changas'
-                },
-                () => fetchChangas()
-            )
-            .subscribe(status => {
-                console.log('Estado de sincronización:', status);
-            });
-    }
-
-    function updateAuthUI() {
-        const txtAuth = document.getElementById('txtUserAuth');
-
-        if (currentUser) {
-            txtAuth.innerText = currentUser.email.split('@')[0];
-        }
-    }
-
-    function handleAuthClick() {
-        if (!currentUser) {
-            openModal('modalAuth');
-        }
-    }
-
-    function handleAuthSubmit(e) {
-        e.preventDefault();
-
-        currentUser = {
-            email: document.getElementById('authEmail').value
-        };
-
-        localStorage.setItem(
-            'changa_user',
-            JSON.stringify(currentUser)
-        );
-
-        updateAuthUI();
-        closeModal('modalAuth');
-
-        alert('¡Sesión iniciada!');
-    }
-
-    function renderChangas(list) {
-        const grid = document.getElementById('jobsGrid');
-        const emptyState = document.getElementById('emptyState');
-
-        document.getElementById('badgeCount').innerText = list.length;
-        grid.innerHTML = '';
-
-        if (list.length === 0) {
-            emptyState.classList.remove('hidden');
-            grid.classList.add('hidden');
-            return;
-        }
-
-        emptyState.classList.add('hidden');
-        grid.classList.remove('hidden');
-
-        list.forEach(item => {
-            const card = document.createElement('div');
-
-            card.className = `
-                bg-white rounded-2xl p-5 shadow-sm
-                hover:shadow-md transition border border-slate-200
-                flex flex-col justify-between animate-fade-in
-            `;
-
-            const formattedBudget = new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                maximumFractionDigits: 0
-            }).format(item.budget || 0);
-
-            card.innerHTML = `
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border">
-                            ${escapeHTML(item.category)}
-                        </span>
-                        <span class="text-[11px] text-slate-400">Reciente</span>
-                    </div>
-
-                    <h3 class="font-extrabold text-slate-900 text-base mb-2">
-                        ${escapeHTML(item.title)}
-                    </h3>
-
-                    <div class="flex items-center space-x-1.5 text-xs text-slate-600 mb-3">
-                        <i class="fa-solid fa-location-dot text-rose-500"></i>
-                        <span>
-                            ${escapeHTML(item.city)},
-                            <strong>${escapeHTML(item.province)}</strong>
-                        </span>
-                    </div>
-
-                    <p class="text-xs text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">
-                        "${escapeHTML(item.description)}"
-                    </p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
-                    <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 block">
-                            Presupuesto
-                        </span>
-                        <span class="text-lg font-black text-slate-900">
-                            ${formattedBudget}
-                        </span>
-                    </div>
-
-                    <button
-                        onclick="postulateToChanga('${escapeHTML(item.id)}')"
-                        class="bg-celeste-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow">
-                        Ver Contacto
-                    </button>
-                </div>
-            `;
-
-            grid.appendChild(card);
-        });
-    }
-
-    function applyFilters() {
-        const keyword = document
-            .getElementById('searchKeyword')
-            .value.toLowerCase().trim();
-
-        const province = document.getElementById('filterProvince').value;
-        const category = document.getElementById('filterCategory').value;
-
-        const filtered = changas.filter(item => {
-            const matchesKeyword =
-                (item.title || '').toLowerCase().includes(keyword) ||
-                (item.description || '').toLowerCase().includes(keyword) ||
-                (item.city || '').toLowerCase().includes(keyword);
-
-            return matchesKeyword &&
-                (province === 'TODAS' || item.province === province) &&
-                (category === 'TODAS' || item.category === category);
-        });
-
-        renderChangas(filtered);
-    }
-
-    function resetFilters() {
-        document.getElementById('searchKeyword').value = '';
-        document.getElementById('filterProvince').value = 'TODAS';
-        document.getElementById('filterCategory').value = 'TODAS';
-
-        renderChangas(changas);
-    }
-
-    function postulateToChanga(changaId) {
-        const changa = changas.find(
-            item => String(item.id) === String(changaId)
-        );
-
-        if (!changa) return;
-
-        const formattedBudget = new Intl.NumberFormat('es-AR', {
-            style: 'currency',
-            currency: 'ARS',
-            maximumFractionDigits: 0
-        }).format(changa.budget || 0);
-
-        const phone = (changa.clientPhone || '').replace(/[^0-9]/g, '');
-
-        document.getElementById('contactModalContent').innerHTML = `
-            <div class="bg-slate-50 p-3 rounded-xl border">
-                <h4 class="font-bold text-slate-900 text-sm">
-                    ${escapeHTML(changa.title)}
-                </h4>
-                <p class="text-xs text-slate-600">
-                    Presupuesto: ${formattedBudget}
-                </p>
-            </div>
-
-            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="font-bold text-slate-800 text-sm">
-                    ${escapeHTML(changa.clientName)}
-                </div>
-                <div class="text-xs text-slate-500">
-                    Teléfono: ${escapeHTML(changa.clientPhone)}
-                </div>
-            </div>
-
-            <a href="https://wa.me/${phone}?text=${encodeURIComponent(
-                'Hola ' + changa.clientName +
-                ', me interesa tu changa: ' + changa.title
-            )}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm text-center block shadow">
-                <i class="fa-brands fa-whatsapp text-lg"></i>
-                Contactar por WhatsApp
-            </a>
-        `;
-
-        openModal('modalContact');
-    }
-
-    async function handlePublishSubmit(e) {
-        e.preventDefault();
-
-        const button = e.submitter;
-        button.disabled = true;
-        button.innerText = 'Publicando...';
-
-        const newChanga = {
-            title: document.getElementById('pubTitle').value.trim(),
-            category: document.getElementById('pubCategory').value,
-            province: document.getElementById('pubProvince').value,
-            city: document.getElementById('pubCity').value.trim(),
-            budget: Number(document.getElementById('pubBudget').value),
-            description: document.getElementById('pubDescription').value.trim(),
-            client_name: document.getElementById('pubName').value.trim(),
-            client_phone: document.getElementById('pubPhone').value.trim()
-        };
-
-        try {
-            const { error } = await supabaseClient
-                .from('changas')
-                .insert([newChanga]);
-
-            if (error) throw error;
-
-            document.getElementById('formPublish').reset();
-            closeModal('modalPublish');
-
-            alert('¡Changa publicada correctamente!');
-            await fetchChangas();
-
-        } catch (error) {
-            console.error('Error publicando:', error);
-            alert('No se pudo publicar. Revisá los datos y los permisos de Supabase.');
-
-        } finally {
-            button.disabled = false;
-            button.innerText = 'Publicar en la Nube';
-        }
-    }
-
-    function openModal(modalId) {
-        document.getElementById(modalId).classList.remove('hidden');
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-    }
-</script>
-
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
