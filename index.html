@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,68 +13,110 @@
 
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --celeste: #28a9e0;
+      --celeste-oscuro: #087fb9;
+      --celeste-claro: #e8f7ff;
+      --amarillo: #ffda45;
+      --amarillo-claro: #fff8d9;
+      --texto: #193247;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f3f8fc;
-      color: #18202b;
+      background: #f3faff;
+      color: var(--texto);
       margin: 0;
     }
-    .brand { color: #168bd2; }
-    .bg-brand { background: #168bd2; }
+
+    .brand { color: var(--celeste-oscuro); }
+    .bg-brand { background: var(--celeste); }
+
     .panel {
       background: white;
-      border: 1px solid #e3edf5;
-      border-radius: 16px;
-      box-shadow: 0 5px 20px rgba(20,50,80,.05);
+      border: 1px solid #dceefa;
+      border-radius: 18px;
+      box-shadow: 0 6px 22px rgba(20,100,150,.07);
     }
+
     .field {
       width: 100%;
-      border: 1px solid #dce5ed;
-      border-radius: 10px;
-      padding: 12px;
+      border: 1px solid #d7e8f2;
+      border-radius: 12px;
+      padding: 13px;
       background: white;
       outline: none;
       font-size: 14px;
     }
-    .field:focus { border-color: #168bd2; }
+
+    .field:focus {
+      border-color: var(--celeste);
+      box-shadow: 0 0 0 3px rgba(40,169,224,.12);
+    }
+
     .btn {
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px 17px;
       font-weight: 700;
       cursor: pointer;
       transition: .2s;
     }
-    .btn-primary { background: #168bd2; color: white; }
-    .btn-primary:hover { background: #0875b9; }
-    .btn-light { background: #e8f5ff; color: #0875b9; }
+
+    .btn-primary {
+      background: var(--celeste);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--celeste-oscuro); }
+
+    .btn-light {
+      background: var(--amarillo-claro);
+      color: #765900;
+      border: 1px solid #f4df86;
+    }
+
+    .btn-light:hover { background: var(--amarillo); }
+
     .hidden { display: none !important; }
+
     .avatar {
       width: 42px;
       height: 42px;
       border-radius: 50%;
       object-fit: cover;
-      background: #e7f1f8;
+      background: var(--celeste-claro);
+      border: 2px solid #d9f1ff;
     }
+
     .job-card {
       background: white;
-      border: 1px solid #e3edf5;
-      border-radius: 15px;
-      padding: 17px;
-      box-shadow: 0 4px 15px rgba(20,50,80,.04);
+      border: 1px solid #dceefa;
+      border-radius: 17px;
+      padding: 19px;
+      box-shadow: 0 5px 18px rgba(20,100,150,.06);
+      transition: .2s;
     }
+
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 24px rgba(20,100,150,.11);
+    }
+
     .tag {
       display: inline-block;
-      background: #e8f5ff;
-      color: #0875b9;
-      padding: 5px 9px;
+      background: var(--amarillo-claro);
+      color: #806000;
+      padding: 6px 11px;
       border-radius: 20px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
     }
+
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(10,20,30,.65);
+      background: rgba(10,30,45,.65);
       z-index: 50;
       display: flex;
       align-items: center;
@@ -81,15 +124,17 @@
       padding: 15px;
       overflow-y: auto;
     }
+
     .modal {
       width: 100%;
       max-width: 470px;
       background: white;
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 23px;
       max-height: 92vh;
       overflow-y: auto;
     }
+
     .status {
       font-size: 11px;
       font-weight: 700;
@@ -98,6 +143,42 @@
       padding: 5px 9px;
       border-radius: 20px;
     }
+
+    .hero {
+      background: linear-gradient(125deg, #dff5ff 0%, #f1fbff 65%, #fff4c5 100%);
+      border-bottom: 1px solid #d9effa;
+    }
+
+    .hero-label {
+      display: inline-block;
+      background: var(--amarillo);
+      color: #594500;
+      padding: 8px 13px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .info-card {
+      background: white;
+      border: 1px solid #e0edf5;
+      border-radius: 17px;
+      padding: 22px;
+      box-shadow: 0 5px 18px rgba(20,100,150,.05);
+    }
+
+    .info-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--amarillo-claro);
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
     @media (max-width: 600px) {
       .desktop-only { display: none !important; }
     }
@@ -106,6 +187,7 @@
 
 <body>
 
+<!-- ENCABEZADO -->
 <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
   <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
     <a href="#" class="text-2xl font-extrabold tracking-tight">
@@ -113,47 +195,131 @@
     </a>
 
     <div class="flex items-center gap-2">
-      <button id="loginBtn" class="btn btn-light text-sm" onclick="openAuth()">Ingresar</button>
-      <button id="publishBtn" class="btn btn-primary text-sm" onclick="openPublish()">+ Publicar</button>
+      <button id="loginBtn" class="btn btn-light text-sm" onclick="openAuth()">
+        Ingresar
+      </button>
+
+      <button id="publishBtn" class="btn btn-primary text-sm" onclick="openPublish()">
+        + Publicar
+      </button>
 
       <div id="userMenu" class="hidden flex items-center gap-2">
         <img id="headerAvatar" class="avatar" src="" alt="Foto de perfil">
-        <button onclick="logout()" class="text-sm font-semibold text-gray-600">Salir</button>
+        <button onclick="logout()" class="text-sm font-semibold text-gray-600">
+          Salir
+        </button>
       </div>
     </div>
   </div>
 </header>
 
-<section class="bg-white">
-  <div class="max-w-6xl mx-auto px-4 py-10 md:py-14">
-    <div class="max-w-2xl">
-      <span class="tag">EN TODA ARGENTINA 🇦🇷</span>
-      <h1 class="text-3xl md:text-5xl font-extrabold mt-4 leading-tight">
+<!-- PRESENTACIÓN PRINCIPAL -->
+<section class="hero">
+  <div class="max-w-6xl mx-auto px-4 py-12 md:py-16">
+    <div class="max-w-3xl">
+      <span class="hero-label">🇦🇷 EN TODA ARGENTINA</span>
+
+      <h1 class="text-3xl md:text-5xl font-extrabold mt-5 leading-tight">
         Encontrá una changa.
         <span class="brand">Conseguí trabajo.</span>
       </h1>
-      <p class="text-gray-500 mt-4 leading-relaxed">
-        Publicá lo que necesitás o encontrá personas que buscan trabajar.
-        Fácil, rápido y sin intermediarios.
+
+      <p class="text-gray-600 mt-5 leading-relaxed text-base md:text-lg">
+        Una oportunidad puede estar más cerca de lo que pensás.
+        Publicá un trabajo, encontrá personas que necesitan contratar
+        o descubrí nuevas oportunidades laborales en tu ciudad.
       </p>
-      <div class="flex flex-wrap gap-3 mt-6">
-        <button class="btn btn-primary" onclick="openPublish()">Publicar una changa</button>
-        <button class="btn btn-light" onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">
+
+      <div class="flex flex-wrap gap-3 mt-7">
+        <button class="btn btn-primary" onclick="openPublish()">
+          + Publicar una changa
+        </button>
+
+        <button class="btn btn-light"
+          onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">
           Buscar trabajos
         </button>
+      </div>
+
+      <div class="flex flex-wrap gap-4 mt-7 text-sm font-semibold text-gray-600">
+        <span>✓ Publicaciones gratuitas</span>
+        <span>✓ Contacto directo</span>
+        <span>✓ En toda Argentina</span>
       </div>
     </div>
   </div>
 </section>
 
+<!-- EXPLICACIÓN: CÓMO FUNCIONA CHANGA YA -->
+<section class="max-w-6xl mx-auto px-4 py-10">
+  <div class="text-center max-w-2xl mx-auto mb-8">
+    <span class="hero-label">¿QUÉ ES CHANGA YA?</span>
+
+    <h2 class="text-2xl md:text-3xl font-extrabold mt-4">
+      Un lugar para conectar oportunidades
+    </h2>
+
+    <p class="text-gray-500 mt-3 leading-relaxed">
+      Changa Ya es una plataforma que conecta a personas que ofrecen
+      trabajos con personas que buscan una oportunidad laboral.
+      Queremos hacer más fácil encontrar trabajo y contratar ayuda.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="info-card">
+      <div class="info-icon">📝</div>
+      <h3 class="font-extrabold text-lg">Publicá un trabajo</h3>
+      <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+        ¿Necesitás un albañil, electricista, jardinero o alguien
+        para una tarea? Publicá gratis lo que necesitás.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">🔎</div>
+      <h3 class="font-extrabold text-lg">Buscá oportunidades</h3>
+      <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+        Explorá las changas disponibles y filtrá por provincia,
+        rubro o ciudad para encontrar trabajos.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">📲</div>
+      <h3 class="font-extrabold text-lg">Contactá directamente</h3>
+      <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+        Hablá directamente por WhatsApp con quien publicó
+        el trabajo. Sin intermediarios.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-7 rounded-2xl p-6 text-center"
+       style="background:#fff5c9;border:1px solid #f4df86">
+    <h3 class="font-extrabold text-lg">
+      ¡Tu próxima oportunidad puede estar acá! 🚀
+    </h3>
+    <p class="text-sm text-gray-600 mt-2">
+      Changa Ya: conectando personas con trabajo en toda Argentina.
+    </p>
+  </div>
+</section>
+
+<!-- PUBLICACIONES Y BUSCADOR -->
 <main class="max-w-6xl mx-auto px-4 py-8">
   <section id="listings">
     <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
       <div>
         <h2 class="text-2xl font-extrabold">Changas disponibles</h2>
-        <p class="text-sm text-gray-500 mt-1">Encontrá oportunidades cerca tuyo.</p>
+        <p class="text-sm text-gray-500 mt-1">
+          Encontrá oportunidades cerca tuyo.
+        </p>
       </div>
-      <span id="jobsCount" class="text-sm text-gray-500">Cargando publicaciones...</span>
+
+      <span id="jobsCount" class="text-sm text-gray-500">
+        Cargando publicaciones...
+      </span>
     </div>
 
     <div class="panel p-4 mb-5">
@@ -200,7 +366,9 @@
     </div>
 
     <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="panel p-6 text-center text-gray-500">Cargando publicaciones...</div>
+      <div class="panel p-6 text-center text-gray-500">
+        Cargando publicaciones...
+      </div>
     </div>
 
     <div id="emptyMessage" class="hidden panel p-8 text-center mt-4">
@@ -213,9 +381,12 @@
   </section>
 </main>
 
+<!-- PIE DE PÁGINA -->
 <footer class="bg-white border-t mt-12">
   <div class="max-w-6xl mx-auto px-4 py-7 text-center">
-    <p class="font-extrabold text-xl">Changa <span class="brand">Ya</span> 🚀</p>
+    <p class="font-extrabold text-xl">
+      Changa <span class="brand">Ya</span> 🚀
+    </p>
     <p class="text-sm text-gray-500 mt-2">
       Conectamos personas con oportunidades de trabajo en Argentina.
     </p>
@@ -232,24 +403,43 @@
     </div>
 
     <div class="flex gap-2 mb-5">
-      <button id="loginTab" onclick="showAuthTab('login')" class="btn btn-primary flex-1">Ingresar</button>
-      <button id="registerTab" onclick="showAuthTab('register')" class="btn btn-light flex-1">Crear cuenta</button>
+      <button id="loginTab" onclick="showAuthTab('login')"
+        class="btn btn-primary flex-1">Ingresar</button>
+
+      <button id="registerTab" onclick="showAuthTab('register')"
+        class="btn btn-light flex-1">Crear cuenta</button>
     </div>
 
     <form id="loginForm" class="space-y-3">
-      <input id="loginEmail" class="field" type="email" placeholder="Correo electrónico" required>
-      <input id="loginPassword" class="field" type="password" placeholder="Contraseña" required>
-      <button class="btn btn-primary w-full" type="submit">Ingresar</button>
+      <input id="loginEmail" class="field" type="email"
+        placeholder="Correo electrónico" required>
+
+      <input id="loginPassword" class="field" type="password"
+        placeholder="Contraseña" required>
+
+      <button class="btn btn-primary w-full" type="submit">
+        Ingresar
+      </button>
     </form>
 
     <form id="registerForm" class="hidden space-y-3">
-      <input id="registerName" class="field" type="text" placeholder="Nombre y apellido" required>
-      <input id="registerEmail" class="field" type="email" placeholder="Correo electrónico" required>
+      <input id="registerName" class="field" type="text"
+        placeholder="Nombre y apellido" required>
+
+      <input id="registerEmail" class="field" type="email"
+        placeholder="Correo electrónico" required>
+
       <input id="registerPassword" class="field" type="password"
-        placeholder="Crear contraseña (mínimo 6 caracteres)" minlength="6" required>
-      <button class="btn btn-primary w-full" type="submit">Crear mi cuenta</button>
+        placeholder="Crear contraseña (mínimo 6 caracteres)"
+        minlength="6" required>
+
+      <button class="btn btn-primary w-full" type="submit">
+        Crear mi cuenta
+      </button>
+
       <p class="text-xs text-gray-500">
-        Después de registrarte, confirmá tu correo electrónico para poder ingresar.
+        Después de registrarte, confirmá tu correo electrónico
+        para poder ingresar.
       </p>
     </form>
 
@@ -261,12 +451,14 @@
 <div id="profileModal" class="modal-bg hidden">
   <div class="modal">
     <h2 class="text-xl font-extrabold mb-2">Completá tu perfil</h2>
+
     <p class="text-sm text-gray-500 mb-5">
       Necesitamos estos datos para que puedas publicar y contactar trabajos.
     </p>
 
     <form id="profileForm" class="space-y-3">
-      <input id="profileName" class="field" type="text" placeholder="Nombre y apellido" required>
+      <input id="profileName" class="field" type="text"
+        placeholder="Nombre y apellido" required>
 
       <select id="profileProvince" class="field" required>
         <option value="">Seleccioná tu provincia</option>
@@ -296,12 +488,20 @@
         <option>Tucumán</option>
       </select>
 
-      <input id="profileCity" class="field" type="text" placeholder="Tu ciudad" required>
+      <input id="profileCity" class="field" type="text"
+        placeholder="Tu ciudad" required>
 
-      <label class="block text-sm font-semibold">Foto de perfil (obligatoria)</label>
-      <input id="profilePhoto" class="field" type="file" accept="image/*" required>
+      <label class="block text-sm font-semibold">
+        Foto de perfil (obligatoria)
+      </label>
 
-      <button class="btn btn-primary w-full" type="submit">Guardar mi perfil</button>
+      <input id="profilePhoto" class="field" type="file"
+        accept="image/*" required>
+
+      <button class="btn btn-primary w-full" type="submit">
+        Guardar mi perfil
+      </button>
+
       <p id="profileMessage" class="text-sm text-center"></p>
     </form>
   </div>
@@ -312,12 +512,14 @@
   <div class="modal">
     <div class="flex justify-between items-center mb-5">
       <h2 class="text-xl font-extrabold">Publicar una changa</h2>
-      <button onclick="closeModal('publishModal')" class="text-2xl text-gray-400">×</button>
+      <button onclick="closeModal('publishModal')"
+        class="text-2xl text-gray-400">×</button>
     </div>
 
     <form id="publishForm" class="space-y-3">
       <input id="jobTitle" class="field" type="text"
-        placeholder="¿Qué trabajo necesitás?" maxlength="100" required>
+        placeholder="¿Qué trabajo necesitás?"
+        maxlength="100" required>
 
       <select id="jobCategory" class="field" required>
         <option value="">Seleccioná el rubro</option>
@@ -327,12 +529,14 @@
         placeholder="Pago ofrecido (opcional)" maxlength="80">
 
       <textarea id="jobDescription" class="field" rows="4"
-        placeholder="Contá un poco más sobre el trabajo..." maxlength="1500" required></textarea>
+        placeholder="Contá un poco más sobre el trabajo..."
+        maxlength="1500" required></textarea>
 
       <input id="jobPhone" class="field" type="tel"
         placeholder="Tu WhatsApp (ej: 5493411234567)" required>
 
       <label class="block text-sm font-semibold">Provincia</label>
+
       <select id="jobProvince" class="field" required>
         <option value="">Seleccioná una provincia</option>
         <option>Buenos Aires</option>
@@ -364,7 +568,10 @@
       <input id="jobCity" class="field" type="text"
         placeholder="Ciudad o localidad" maxlength="80" required>
 
-      <label class="block text-sm font-semibold">¿Cuánto tiempo querés que esté publicada?</label>
+      <label class="block text-sm font-semibold">
+        ¿Cuánto tiempo querés que esté publicada?
+      </label>
+
       <select id="jobDuration" class="field" required>
         <option value="24">24 horas</option>
         <option value="48">48 horas</option>
@@ -372,7 +579,10 @@
         <option value="96">96 horas (4 días)</option>
       </select>
 
-      <button class="btn btn-primary w-full" type="submit">Publicar changa</button>
+      <button class="btn btn-primary w-full" type="submit">
+        Publicar changa
+      </button>
+
       <p id="publishMessage" class="text-sm text-center"></p>
     </form>
   </div>
@@ -513,7 +723,10 @@ const categories = [
   'Otros'
 ];
 
-// Completa ambos selectores con exactamente los mismos rubros.
+// ==========================================
+// COMPLETAR SELECTORES DE RUBROS
+// ==========================================
+
 function populateCategories() {
   const filter = document.getElementById('categoryFilter');
   const publish = document.getElementById('jobCategory');
@@ -919,6 +1132,7 @@ async function loadJobs() {
         <p class="text-xs mt-2">${escapeHTML(error.message)}</p>
       </div>
     `;
+
     document.getElementById('jobsCount').textContent = 'Error al cargar';
     return;
   }
@@ -993,6 +1207,7 @@ async function renderJobs() {
     const ownerName = profile?.full_name || job.client_name || 'Usuario';
     const avatar = profile?.avatar_url || '';
     const phone = normalizePhone(job.client_phone);
+
     const whatsappText = encodeURIComponent(
       `Hola ${ownerName}, vi tu publicación "${job.title}" en Changa Ya y me interesa.`
     );
@@ -1025,6 +1240,7 @@ async function renderJobs() {
               ? `<img class="avatar" src="${escapeHTML(avatar)}" alt="Foto de perfil">`
               : `<div class="avatar flex items-center justify-center">👤</div>`
           }
+
           <div>
             <p class="font-bold text-sm">${escapeHTML(ownerName)}</p>
             <p class="text-xs text-gray-500">
@@ -1140,9 +1356,11 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
     currentUser = null;
     currentProfile = null;
+
     document.getElementById('loginBtn').classList.remove('hidden');
     document.getElementById('userMenu').classList.add('hidden');
     document.getElementById('headerAvatar').src = '';
+
     loadJobs();
   }
 });
@@ -1151,4 +1369,5 @@ startApp();
 
 </script>
 </body>
-</html> <!-- PARTE 2: PEGAR AQUÍ EL SCRIPT -->
+</html>
+<!-- LA PARTE 2 CONTINÚA AQUÍ, CON EL SCRIPT -->
