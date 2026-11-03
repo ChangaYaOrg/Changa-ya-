@@ -1,7 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changa Ya - Trabajos y Servicios en Argentina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- CONEXIÓN CON SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        celeste: {
+                            50: '#f0f9ff', 100: '#e0f2fe', 400: '#38bdf8',
+                            500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1'
+                        },
+                        sol: '#f59e0b'
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
 
+    <style>
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+
+<header class="bg-gradient-to-r from-celeste-600 via-celeste-500 to-sky-600 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="resetFilters()">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">
+                <i class="fa-solid fa-briefcase text-celeste-600 text-lg sm:text-xl"></i>
+            </div>
+            <div>
+                <div class="flex items-center space-x-1">
+                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-white">CHANGA</span>
+                    <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-sol">YA!</span>
+                </div>
+                <p class="text-[10px] sm:text-xs text-celeste-100 font-medium tracking-wide">Trabajo independiente en Argentina 🇦🇷</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button onclick="openModal('modalPublish')" class="bg-sol hover:bg-amber-600 text-slate-900 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-1">
+                <i class="fa-solid fa-circle-plus"></i><span>Publicar</span>
+            </button>
+            <button id="btnUserAuth" onclick="handleAuthClick()" class="bg-white/10 hover:bg-white/25 text-white border border-white/30 font-semibold px-2.5 py-2 rounded-xl text-xs sm:text-sm">
+                <i class="fa-solid fa-user-circle"></i>
+                <span id="txtUserAuth">Ingresar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="bg-gradient-to-b from-celeste-600 to-sky-700 text-white py-6 sm:py-8 px-4 shadow-inner">
+    <div class="max-w-4xl mx-auto text-center space-y-3">
+        <span class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">🇦🇷 Sincronizado en la Nube</span>
+        <h1 class="text-2xl sm:text-4xl font-extrabold">Encontrá laburo o contratá al toque</h1>
+        <p class="text-xs sm:text-sm text-celeste-100 max-w-xl mx-auto">
+            Conectamos personas que necesitan resolver un trabajo rápido con trabajadores independientes de todo el país.
+        </p>
+    </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 z-20 relative">
+    <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-5 border border-slate-200">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">¿Qué buscás?</label>
+                <input type="text" id="searchKeyword" oninput="applyFilters()" placeholder="Ej. Armar mueble, pintura..." class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">Provincia</label>
+                <select id="filterProvince" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
+                    <option value="TODAS">Todas las Provincias</option>
+                    <option value="Buenos Aires">Buenos Aires</option>
+                    <option value="CABA">CABA</option>
+                    <option value="Catamarca">Catamarca</option>
+                    <option value="Chaco">Chaco</option>
+                    <option value="Chubut">Chubut</option>
+                    <option value="Córdoba">Córdoba</option>
+                    <option value="Corrientes">Corrientes</option>
+                    <option value="Entre Ríos">Entre Ríos</option>
+                    <option value="Formosa">Formosa</option>
+                    <option value="Jujuy">Jujuy</option>
+                    <option value="La Pampa">La Pampa</option>
+                    <option value="La Rioja">La Rioja</option>
+                    <option value="Mendoza">Mendoza</option>
+                    <option value="Misiones">Misiones</option>
+                    <option value="Neuquén">Neuquén</option>
+                    <option value="Río Negro">Río Negro</option>
+                    <option value="Salta">Salta</option>
+                    <option value="San Juan">San Juan</option>
+                    <option value="San Luis">San Luis</option>
+                    <option value="Santa Cruz">Santa Cruz</option>
+                    <option value="Santa Fe">Santa Fe</option>
+                    <option value="Santiago del Estero">Santiago del Estero</option>
+                    <option value="Tierra del Fuego">Tierra del Fuego</option>
+                    <option value="Tucumán">Tucumán</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">Categoría</label>
+                <select id="filterCategory" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border rounded-xl text-sm">
+                    <option value="TODAS">Todas las Categorías</option>
+                    <option value="Muebles y Carpintería">Muebles y Carpintería</option>
+                    <option value="Construcción y Albañilería">Construcción y Albañilería</option>
+                    <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
+                    <option value="Jardinería y Poda">Jardinería y Poda</option>
+                    <option value="Electricidad y Plomería">Electricidad y Plomería</option>
+                    <option value="Pintura">Pintura</option>
+                    <option value="Fletes y Traslados">Fletes y Traslados</option>
+                    <option value="Reparaciones / Varios">Reparaciones / Varios</option>
+                </select>
+            </div>
+
+            <div class="flex items-end">
+                <button onclick="resetFilters()" class="w-full py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-xl text-sm border">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-slate-900">
+                Changas en la Nube
+                <span id="badgeCount" class="bg-celeste-100 text-celeste-700 text-xs px-2.5 py-0.5 rounded-full">0</span>
+            </h2>
+            <p class="text-xs text-slate-500">Sincronizadas en tiempo real para cualquier dispositivo.</p>
+        </div>
+        <span class="text-emerald-700 font-semibold bg-emerald-50 text-xs px-2.5 py-1 rounded-lg">🟢 Nube Activa</span>
+    </div>
+
+    <div id="loadingIndicator" class="text-center py-10 text-slate-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i>
+        <p>Conectando con la base de datos...</p>
+    </div>
+
+    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border shadow-sm">
+        <h3 class="text-lg font-bold text-slate-800 mb-1">No hay changas publicadas</h3>
+        <p class="text-sm text-slate-500">Sé el primero en publicar una changa.</p>
+    </div>
+</main>
+
+<footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-auto text-center">
+    <span class="font-black text-white text-base">CHANGA <span class="text-sol">YA!</span></span>
+    <p class="mt-2">© 2026 Changa Ya Argentina - Red de Trabajo Independiente.</p>
+</footer>
+
+<div id="modalAuth" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex justify-between items-center">
+            <h3 class="font-bold text-lg">Ingresar</h3>
+            <button onclick="closeModal('modalAuth')">✕</button>
+        </div>
+        <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+            <input type="email" id="authEmail" required placeholder="Tu correo" class="w-full px-3 py-2 border rounded-xl text-sm">
+            <button type="submit" class="w-full bg-celeste-600 text-white font-bold py-2 rounded-xl text-sm">Entrar</button>
+        </form>
+    </div>
+</div>
+
+<div id="modalPublish" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
+        <div class="flex justify-between items-center bg-sol p-3 rounded-xl">
+            <h3 class="font-extrabold text-slate-900">Publicar Changa</h3>
+            <button onclick="closeModal('modalPublish')">✕</button>
+        </div>
+
+        <form id="formPublish" onsubmit="handlePublishSubmit(event)" class="space-y-3">
+            <input type="text" id="pubTitle" required maxlength="120" placeholder="Título del trabajo" class="w-full px-3 py-2 border rounded-xl text-sm">
+
+            <select id="pubCategory" required class="w-full px-3 py-2 border rounded-xl text-sm">
+                <option value="Muebles y Carpintería">Muebles y Carpintería</option>
+                <option value="Construcción y Albañilería">Construcción y Albañilería</option>
+                <option value="Limpieza de Hogar/Oficina">Limpieza de Hogar/Oficina</option>
+                <option value="Jardinería y Poda">Jardinería y Poda</option>
+                <option value="Electricidad y Plomería">Electricidad y Plomería</option>
+                <option value="Pintura">Pintura</option>
+                <option value="Fletes y Traslados">Fletes y Traslados</option>
+                <option value="Reparaciones / Varios">Reparaciones / Varios</option>
+            </select>
+
+            <select id="pubProvince" required class="w-full px-3 py-2 border rounded-xl text-sm">
+                <option value="Santa Fe">Santa Fe</option>
+                <option value="Buenos Aires">Buenos Aires</option>
+                <option value="CABA">CABA</option>
+                <option value="Córdoba">Córdoba</option>
+                <option value="Mendoza">Mendoza</option>
+                <option value="Formosa">Formosa</option>
+                <option value="Tucumán">Tucumán</option>
+            </select>
+
+            <input type="text" id="pubCity" required maxlength="100" placeholder="Ciudad / Barrio" class="w-full px-3 py-2 border rounded-xl text-sm">
+            <input type="number" id="pubBudget" required min="0" step="1" placeholder="Monto en $ARS" class="w-full px-3 py-2 border rounded-xl text-sm">
+            <textarea id="pubDescription" required maxlength="2000" placeholder="Descripción" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm"></textarea>
+            <input type="text" id="pubName" required maxlength="100" placeholder="Tu Nombre" class="w-full px-3 py-2 border rounded-xl text-sm">
+            <input type="tel" id="pubPhone" required maxlength="30" placeholder="WhatsApp (Ej: 3415551234)" class="w-full px-3 py-2 border rounded-xl text-sm">
+
+            <button type="submit" class="w-full bg-sol text-slate-900 font-extrabold py-2.5 rounded-xl text-sm shadow">
+                Publicar en la Nube
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="modalContact" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex justify-between items-center">
+            <h3 class="font-bold text-base text-emerald-700">Contacto Directo</h3>
+            <button onclick="closeModal('modalContact')">✕</button>
+        </div>
+        <div id="contactModalContent" class="space-y-3"></div>
+    </div>
+</div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_5mpiP-ptii-HE_7OOY9AJQ_dQjSDDDZ';
@@ -60,12 +291,17 @@
 
         } catch (error) {
             console.error('Error cargando changas:', error);
-            loading.innerHTML =
-                '<p class="text-rose-500">No se pudieron cargar las publicaciones. Revisá la conexión.</p>';
+            loading.innerHTML = `
+                <p class="text-rose-500">
+                    No se pudieron cargar las publicaciones.
+                    Revisá la conexión y los permisos de Supabase.
+                </p>`;
         }
     }
 
     function subscribeToChangas() {
+        if (realtimeChannel) return;
+
         realtimeChannel = supabaseClient
             .channel('changas-en-tiempo-real')
             .on(
@@ -91,7 +327,9 @@
     }
 
     function handleAuthClick() {
-        if (!currentUser) openModal('modalAuth');
+        if (!currentUser) {
+            openModal('modalAuth');
+        }
     }
 
     function handleAuthSubmit(e) {
@@ -101,7 +339,11 @@
             email: document.getElementById('authEmail').value
         };
 
-        localStorage.setItem('changa_user', JSON.stringify(currentUser));
+        localStorage.setItem(
+            'changa_user',
+            JSON.stringify(currentUser)
+        );
+
         updateAuthUI();
         closeModal('modalAuth');
 
@@ -111,9 +353,8 @@
     function renderChangas(list) {
         const grid = document.getElementById('jobsGrid');
         const emptyState = document.getElementById('emptyState');
-        const badgeCount = document.getElementById('badgeCount');
 
-        badgeCount.innerText = list.length;
+        document.getElementById('badgeCount').innerText = list.length;
         grid.innerHTML = '';
 
         if (list.length === 0) {
@@ -128,8 +369,11 @@
         list.forEach(item => {
             const card = document.createElement('div');
 
-            card.className =
-                'bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition border border-slate-200 flex flex-col justify-between animate-fade-in';
+            card.className = `
+                bg-white rounded-2xl p-5 shadow-sm
+                hover:shadow-md transition border border-slate-200
+                flex flex-col justify-between animate-fade-in
+            `;
 
             const formattedBudget = new Intl.NumberFormat('es-AR', {
                 style: 'currency',
@@ -140,7 +384,7 @@
             card.innerHTML = `
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-celeste-100">
+                        <span class="bg-celeste-50 text-celeste-700 text-[11px] font-bold px-2.5 py-1 rounded-lg border">
                             ${escapeHTML(item.category)}
                         </span>
                         <span class="text-[11px] text-slate-400">Reciente</span>
@@ -150,9 +394,12 @@
                         ${escapeHTML(item.title)}
                     </h3>
 
-                    <div class="flex items-center space-x-1.5 text-xs text-slate-600 font-medium mb-3">
+                    <div class="flex items-center space-x-1.5 text-xs text-slate-600 mb-3">
                         <i class="fa-solid fa-location-dot text-rose-500"></i>
-                        <span>${escapeHTML(item.city)}, <strong>${escapeHTML(item.province)}</strong></span>
+                        <span>
+                            ${escapeHTML(item.city)},
+                            <strong>${escapeHTML(item.province)}</strong>
+                        </span>
                     </div>
 
                     <p class="text-xs text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">
@@ -162,11 +409,16 @@
 
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Presupuesto</span>
-                        <span class="text-lg font-black text-slate-900">${formattedBudget}</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">
+                            Presupuesto
+                        </span>
+                        <span class="text-lg font-black text-slate-900">
+                            ${formattedBudget}
+                        </span>
                     </div>
 
-                    <button onclick="postulateToChanga('${item.id}')"
+                    <button
+                        onclick="postulateToChanga('${escapeHTML(item.id)}')"
                         class="bg-celeste-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow">
                         Ver Contacto
                     </button>
@@ -178,7 +430,10 @@
     }
 
     function applyFilters() {
-        const keyword = document.getElementById('searchKeyword').value.toLowerCase().trim();
+        const keyword = document
+            .getElementById('searchKeyword')
+            .value.toLowerCase().trim();
+
         const province = document.getElementById('filterProvince').value;
         const category = document.getElementById('filterCategory').value;
 
@@ -188,13 +443,9 @@
                 (item.description || '').toLowerCase().includes(keyword) ||
                 (item.city || '').toLowerCase().includes(keyword);
 
-            const matchesProvince =
-                province === 'TODAS' || item.province === province;
-
-            const matchesCategory =
-                category === 'TODAS' || item.category === category;
-
-            return matchesKeyword && matchesProvince && matchesCategory;
+            return matchesKeyword &&
+                (province === 'TODAS' || item.province === province) &&
+                (category === 'TODAS' || item.category === category);
         });
 
         renderChangas(filtered);
@@ -209,7 +460,10 @@
     }
 
     function postulateToChanga(changaId) {
-        const changa = changas.find(c => String(c.id) === String(changaId));
+        const changa = changas.find(
+            item => String(item.id) === String(changaId)
+        );
+
         if (!changa) return;
 
         const formattedBudget = new Intl.NumberFormat('es-AR', {
@@ -222,19 +476,30 @@
 
         document.getElementById('contactModalContent').innerHTML = `
             <div class="bg-slate-50 p-3 rounded-xl border">
-                <h4 class="font-bold text-slate-900 text-sm">${escapeHTML(changa.title)}</h4>
-                <p class="text-xs text-slate-600">Presupuesto: ${formattedBudget}</p>
+                <h4 class="font-bold text-slate-900 text-sm">
+                    ${escapeHTML(changa.title)}
+                </h4>
+                <p class="text-xs text-slate-600">
+                    Presupuesto: ${formattedBudget}
+                </p>
             </div>
 
             <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="font-bold text-slate-800 text-sm">${escapeHTML(changa.clientName)}</div>
-                <div class="text-xs text-slate-500">Teléfono: ${escapeHTML(changa.clientPhone)}</div>
+                <div class="font-bold text-slate-800 text-sm">
+                    ${escapeHTML(changa.clientName)}
+                </div>
+                <div class="text-xs text-slate-500">
+                    Teléfono: ${escapeHTML(changa.clientPhone)}
+                </div>
             </div>
 
             <a href="https://wa.me/${phone}?text=${encodeURIComponent(
-                'Hola ' + changa.clientName + ', me interesa tu changa: ' + changa.title
-            )}" target="_blank" rel="noopener noreferrer"
-                class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm text-center block shadow">
+                'Hola ' + changa.clientName +
+                ', me interesa tu changa: ' + changa.title
+            )}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm text-center block shadow">
                 <i class="fa-brands fa-whatsapp text-lg"></i>
                 Contactar por WhatsApp
             </a>
@@ -268,16 +533,16 @@
 
             if (error) throw error;
 
-            document.querySelector('#modalPublish form').reset();
+            document.getElementById('formPublish').reset();
             closeModal('modalPublish');
 
             alert('¡Changa publicada correctamente!');
-
             await fetchChangas();
 
         } catch (error) {
             console.error('Error publicando:', error);
-            alert('No se pudo publicar. Revisá los datos y los permisos.');
+            alert('No se pudo publicar. Revisá los datos y los permisos de Supabase.');
+
         } finally {
             button.disabled = false;
             button.innerText = 'Publicar en la Nube';
@@ -292,6 +557,7 @@
         document.getElementById(modalId).classList.add('hidden');
     }
 </script>
+
 </body>
 </html>
 
