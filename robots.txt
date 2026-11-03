@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://changayaorg.github.io/Changa-ya-/sitemap.xml
