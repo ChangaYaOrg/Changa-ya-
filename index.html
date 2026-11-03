@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changa Ya - Trabajos y Servicios en Argentina</title>
 
+    <!-- Supabase CDN Oficial -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://yyfldvialbkozrclylxg.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5ZmxkdmlhbGJrb3pyY2x5bHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjI3NDksImV4cCI6MjA1NTkzODc0OX0.kZ_S7V5z-yD7tW2P3e0kX1_4L6I8B0Q'
+        window.supabase = createClient(supabaseUrl, supabaseKey)
+        window.dispatchEvent(new Event('supabase-ready'));
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -211,38 +220,27 @@
 </div>
 
 <script>
-    const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
-    const SUPABASE_KEY = 'sb_secret_TgmHMMZzAUGj6Tf9onfOcg_8Jxd2DQq';
-
     let defaultChangas = [
         { id: 1, title: "Armado de placard", category: "Muebles y Carpintería", province: "Santa Fe", city: "Rosario", budget: 40000, description: "Armado rápido en domicilio.", clientname: "Martín", clientphone: "549341000000", date: "Ejemplo" },
         { id: 2, title: "Pintura de living", category: "Pintura", province: "Buenos Aires", city: "La Plata", budget: 35000, description: "Pintar paredes y techo.", clientname: "Valeria", clientphone: "549110000000", date: "Ejemplo" }
     ];
     let changas = [...defaultChangas];
 
+    window.addEventListener('supabase-ready', () => { fetchSupabaseChangas(); });
     window.addEventListener('DOMContentLoaded', () => { 
-        fetchSupabaseChangas();
+        if(window.supabase) fetchSupabaseChangas();
+        else renderJobs(changas);
     });
 
     async function fetchSupabaseChangas() {
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/publicaciones?select=*&order=id.desc`, {
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    changas = [...data, ...defaultChangas];
-                    renderJobs(changas);
-                }
-            }
-        } catch (e) {
-            console.error("Error al cargar:", e);
+        if (!window.supabase) return;
+        const { data, error } = await window.supabase.from('publicaciones').select('*').order('id', { ascending: false });
+        if (!error && data && data.length > 0) {
+            changas = [...data, ...defaultChangas];
+            renderJobs(changas);
+        } else {
+            renderJobs(changas);
         }
-        renderJobs(changas);
     }
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -271,26 +269,12 @@
             date: "Recién publicado"
         };
         
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/publicaciones`, {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(newJob)
-            });
-
-            if (!response.ok) {
-                const errText = await response.text();
-                alert("Error al guardar en Supabase: " + errText);
+        if (window.supabase) {
+            const { error } = await window.supabase.from('publicaciones').insert([newJob]);
+            if (error) {
+                alert("Error al guardar en Supabase: " + error.message);
                 return;
             }
-        } catch (err) {
-            alert("Error de red al conectar con Supabase: " + err.message);
-            return;
         }
         
         closeModal('modalPublish');
@@ -362,6 +346,7 @@
 </script>
 </body>
 </html>
+
 
 
 
