@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changa Ya - Trabajos y Servicios en Argentina</title>
 
-    <!-- Supabase CDN -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-        const supabaseUrl = 'https://yyfldvialbkozrclylxg.supabase.co'
-        const supabaseKey = 'Sb_publishable_c-o6mUSgeksJnHTS1DHb1g_Tpcdm7yU'
-        window.supabase = createClient(supabaseUrl, supabaseKey)
-        window.dispatchEvent(new Event('supabase-ready'));
-    </script>
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -220,27 +211,38 @@
 </div>
 
 <script>
+    const SUPABASE_URL = 'https://yyfldvialbkozrclylxg.supabase.co';
+    const SUPABASE_KEY = 'Sb_publishable_c-o6mUSgeksJnHTS1DHb1g_Tpcdm7yU';
+
     let defaultChangas = [
         { id: 1, title: "Armado de placard", category: "Muebles y Carpintería", province: "Santa Fe", city: "Rosario", budget: 40000, description: "Armado rápido en domicilio.", clientname: "Martín", clientphone: "549341000000", date: "Ejemplo" },
         { id: 2, title: "Pintura de living", category: "Pintura", province: "Buenos Aires", city: "La Plata", budget: 35000, description: "Pintar paredes y techo.", clientname: "Valeria", clientphone: "549110000000", date: "Ejemplo" }
     ];
     let changas = [...defaultChangas];
 
-    window.addEventListener('supabase-ready', () => { fetchSupabaseChangas(); });
     window.addEventListener('DOMContentLoaded', () => { 
-        if(window.supabase) fetchSupabaseChangas();
-        else renderJobs(changas);
+        fetchSupabaseChangas();
     });
 
     async function fetchSupabaseChangas() {
-        if (!window.supabase) return;
-        const { data, error } = await window.supabase.from('publicaciones').select('*').order('id', { ascending: false });
-        if (!error && data && data.length > 0) {
-            changas = [...data, ...defaultChangas];
-            renderJobs(changas);
-        } else {
-            renderJobs(changas);
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/publicaciones?select=*&order=id.desc`, {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    changas = [...data, ...defaultChangas];
+                    renderJobs(changas);
+                }
+            }
+        } catch (e) {
+            console.error("Error al cargar:", e);
         }
+        renderJobs(changas);
     }
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -269,12 +271,26 @@
             date: "Recién publicado"
         };
         
-        if (window.supabase) {
-            const { error } = await window.supabase.from('publicaciones').insert([newJob]);
-            if (error) {
-                alert("Error al guardar en Supabase: " + error.message);
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/publicaciones`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(newJob)
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                alert("Error al guardar en Supabase: " + errText);
                 return;
             }
+        } catch (err) {
+            alert("Error de red al conectar con Supabase: " + err.message);
+            return;
         }
         
         closeModal('modalPublish');
@@ -311,7 +327,7 @@
 
     function contactJob(job) {
         const clientName = job.clientname || job.clientName || 'Cliente';
-        const clientPhone = job.clientphone || job.clientPhone || '';
+        const clientPhone = job.clientphone || job.clientphone || '';
         document.getElementById('contactModalContent').innerHTML = `
             <div class="bg-slate-50 p-3 rounded-xl border">
                 <h4 class="font-bold text-sm">${job.title}</h4>
@@ -346,6 +362,7 @@
 </script>
 </body>
 </html>
+
 
 
 
