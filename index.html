@@ -655,7 +655,10 @@ $("newPasswordForm").addEventListener("submit",async e=>{
   $("newPasswordForm").reset();
   closeModal("newPasswordModal");
 
-  alert("¡Contraseña actualizada correctamente!");
+  showSuccessModal(
+   "¡Contraseña actualizada!",
+   "Tu contraseña se actualizó correctamente. 🔐"
+  );
 
  }catch(error){
   showMessage("newPasswordMessage",error.message||"No pudimos cambiar tu contraseña.","error");
@@ -708,7 +711,10 @@ async function loadProfile(){
 
  }catch(error){
   console.error("Error cargando perfil:",error);
-  alert("No pudimos cargar tu perfil. Intentá nuevamente.");
+  showSuccessModal(
+   "No pudimos cargar tu perfil",
+   "Intentá nuevamente."
+  );
  }
 }
 
@@ -807,7 +813,11 @@ $("profileForm").addEventListener("submit",async e=>{
   $("profileModal").querySelector(".modal-close").style.display="block";
 
   await loadJobs();
-  alert("¡Tu perfil quedó guardado! 🎉");
+
+  showSuccessModal(
+   "¡Perfil guardado!",
+   "Tu perfil quedó guardado correctamente. 🎉"
+  );
 
  }catch(error){
   showMessage("profileMessage",error.message||"No pudimos guardar tu perfil.","error");
@@ -817,10 +827,21 @@ $("profileForm").addEventListener("submit",async e=>{
 });
 
 async function logout(){
- if(!confirm("¿Querés cerrar sesión?"))return;
+ showConfirmModal(
+  "Cerrar sesión",
+  "¿Querés cerrar sesión?",
+  async function(){
+   const {error}=await db.auth.signOut();
 
- const {error}=await db.auth.signOut();
- if(error)alert("No pudimos cerrar la sesión: "+error.message);
+   if(error){
+    showSuccessModal(
+     "No pudimos cerrar la sesión",
+     error.message
+    );
+   }
+  },
+  "Cerrar sesión"
+ );
 }
 
 // =============================================
@@ -973,8 +994,14 @@ async function openPublish(){
  }
 
  if(!currentProfile){
-  alert("Primero completá tu perfil para poder publicar.");
-  openProfile(true);
+  showConfirmModal(
+   "Completá tu perfil",
+   "Para publicar una changa primero necesitás completar los datos de tu perfil.",
+   function(){
+    openProfile(true);
+   },
+   "Completar perfil"
+  );
   return;
  }
 
@@ -1054,6 +1081,7 @@ $("publishForm").addEventListener("submit",async e=>{
 // EDITAR PUBLICACIONES PROPIAS
 // =============================================
 
+
 function openEditJob(id){
  if(!currentUser){
   openAuth();
@@ -1063,12 +1091,18 @@ function openEditJob(id){
  const job=allJobs.find(item=>String(item.id)===String(id));
 
  if(!job){
-  alert("No encontramos esa publicación. Actualizá la página e intentá nuevamente.");
+  showSuccessModal(
+   "Publicación no encontrada",
+   "Actualizá la página e intentá nuevamente."
+  );
   return;
  }
 
  if(job.owner_id!==currentUser.id){
-  alert("Solo podés editar tus propias publicaciones.");
+  showSuccessModal(
+   "Acceso denegado",
+   "Solo podés editar tus propias publicaciones."
+  );
   return;
  }
 
@@ -1160,7 +1194,12 @@ $("editJobForm").addEventListener("submit",async e=>{
   }
 
   closeModal("editJobModal");
-  alert("¡Tu publicación se actualizó correctamente! ✅");
+
+  showSuccessModal(
+   "¡Cambios guardados!",
+   "Tu publicación se actualizó correctamente. ✅"
+  );
+
   await loadJobs();
 
  }catch(error){
@@ -1170,9 +1209,11 @@ $("editJobForm").addEventListener("submit",async e=>{
  }
 });
 
+
 // =============================================
 // ELIMINAR PUBLICACIONES PROPIAS
 // =============================================
+
 
 async function deleteJob(id){
  if(!currentUser){
@@ -1183,43 +1224,59 @@ async function deleteJob(id){
  const job=allJobs.find(item=>String(item.id)===String(id));
 
  if(!job){
-  alert("No encontramos esa publicación. Actualizá la página e intentá nuevamente.");
+  showSuccessModal(
+   "Publicación no encontrada",
+   "Actualizá la página e intentá nuevamente."
+  );
   return;
  }
 
  if(job.owner_id!==currentUser.id){
-  alert("Solo podés eliminar tus propias publicaciones.");
+  showSuccessModal(
+   "Acceso denegado",
+   "Solo podés eliminar tus propias publicaciones."
+  );
   return;
  }
 
- const confirmed=confirm(
-  `¿Querés eliminar definitivamente la publicación "${job.title}"? Esta acción no se puede deshacer.`
+ showConfirmModal(
+  "¿Eliminar publicación?",
+  `¿Querés eliminar definitivamente "${job.title}"? Esta acción no se puede deshacer.`,
+  async function(){
+
+   try{
+    const {data,error}=await db.from("changas")
+     .delete()
+     .eq("id",id)
+     .eq("owner_id",currentUser.id)
+     .select("id");
+
+    if(error)throw error;
+
+    if(!data||!data.length){
+     throw new Error("No se pudo eliminar la publicación.");
+    }
+
+    allJobs=allJobs.filter(item=>String(item.id)!==String(id));
+
+    showSuccessModal(
+     "¡Publicación eliminada!",
+     "La publicación se eliminó correctamente. 🗑️"
+    );
+
+    await loadJobs();
+
+   }catch(error){
+    console.error("Error eliminando publicación:",error);
+
+    showSuccessModal(
+     "No pudimos eliminarla",
+     error.message||"Intentá nuevamente."
+    );
+   }
+  },
+  "Sí, eliminar"
  );
-
- if(!confirmed)return;
-
- try{
-  const {data,error}=await db.from("changas")
-   .delete()
-   .eq("id",id)
-   .eq("owner_id",currentUser.id)
-   .select("id");
-
-  if(error)throw error;
-
-  if(!data||!data.length){
-   throw new Error("No se pudo eliminar. Verificá que la publicación siga siendo tuya y que tengas permiso.");
-  }
-
-  allJobs=allJobs.filter(item=>String(item.id)!==String(id));
-
-  alert("La publicación se eliminó correctamente.");
-  await loadJobs();
-
- }catch(error){
-  console.error("Error eliminando publicación:",error);
-  alert("No pudimos eliminar la publicación: "+error.message);
- }
 }
 
 // =============================================
@@ -1421,34 +1478,45 @@ async function renderJobs(){
   });
  });
 
- $("jobsContainer").querySelectorAll("[data-feature]").forEach(button=>{
+ 
+$("jobsContainer").querySelectorAll("[data-feature]").forEach(button=>{
   button.addEventListener("click",async()=>{
-   const confirmed=confirm(
-    "¿Querés utilizar tu destacado gratuito en esta publicación? Se destacará durante un máximo de 7 días y no podrás recuperar el beneficio."
+
+   showConfirmModal(
+    "¿Usar destacado gratuito?",
+    "¿Querés utilizar tu destacado gratuito en esta publicación? Se destacará durante un máximo de 7 días y no podrás recuperar el beneficio.",
+    async function(){
+
+     button.disabled=true;
+
+     try{
+      const {error}=await db.rpc("usar_destacado_gratis",{
+       p_changa_id:Number(button.dataset.feature)
+      });
+
+      if(error)throw error;
+
+      showSuccessModal(
+       "¡Publicación destacada!",
+       "Tu changa ya tiene su estrella ⭐ durante un máximo de 7 días."
+      );
+
+      await loadJobs();
+
+     }catch(error){
+      console.error("Error al destacar publicación:",error);
+
+      showSuccessModal(
+       "No pudimos destacar tu publicación",
+       error.message||"Intentá nuevamente."
+      );
+
+      button.disabled=false;
+     }
+    },
+    "Usar destacado"
    );
 
-   if(!confirmed)return;
-
-   button.disabled=true;
-
-   try{
-    const {error}=await db.rpc("usar_destacado_gratis",{
-     p_changa_id:Number(button.dataset.feature)
-    });
-
-    if(error)throw error;
-
-    showSuccessModal(
-     "¡Publicación destacada!",
-     "Tu changa ya tiene su estrella ⭐ durante un máximo de 7 días."
-    );
-
-    await loadJobs();
-
-   }catch(error){
-    alert("No pudimos destacar tu publicación: "+error.message);
-    button.disabled=false;
-   }
   });
  });
 }
@@ -1469,7 +1537,10 @@ function markAsFinished(id){
  const job=allJobs.find(item=>String(item.id)===String(id));
 
  if(!job||job.owner_id!==currentUser.id){
-  alert("Solo podés modificar tus propias publicaciones.");
+  showSuccessModal(
+   "Acceso denegado",
+   "Solo podés modificar tus propias publicaciones."
+  );
   return;
  }
 
@@ -1481,6 +1552,7 @@ function closeFinishModal(){
  $("finishModal").style.display="none";
  jobToFinishId=null;
 }
+
 
 async function confirmFinishJob(){
  if(!jobToFinishId||!currentUser)return;
@@ -1511,12 +1583,16 @@ async function confirmFinishJob(){
   await loadJobs();
 
  }catch(error){
-  alert("No pudimos actualizar la publicación: "+error.message);
+  showSuccessModal(
+   "No pudimos actualizar la publicación",
+   error.message||"Intentá nuevamente."
+  );
  }finally{
   button.disabled=false;
   button.textContent="Sí, confirmar";
  }
 }
+
 
 // =============================================
 // FILTROS
@@ -1626,6 +1702,28 @@ startApp();
     <button type="button" class="btn btn-primary" onclick="closeSuccessModal()">
       ¡Genial!
     </button>
+  </div>
+</div>
+
+<!-- CONFIRMACIÓN PERSONALIZADA CHANGA YA -->
+<div id="confirmModal" class="success-overlay" style="display:none;">
+  <div class="success-box">
+    <div class="success-icon" id="confirmIcon">?</div>
+    <h2 id="confirmTitle">¿Estás seguro?</h2>
+    <p id="confirmText">Confirmá esta acción.</p>
+
+    <div class="finish-actions">
+      <button type="button" class="btn btn-light"
+        onclick="closeConfirmModal(false)">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn btn-primary"
+        id="confirmActionButton"
+        onclick="closeConfirmModal(true)">
+        Confirmar
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1751,6 +1849,29 @@ function showSuccessModal(title, message) {
 function closeSuccessModal() {
   document.getElementById("successModal").style.display = "none";
 }
+
+let confirmCallback = null;
+
+function showConfirmModal(title, message, callback, buttonText = "Confirmar") {
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmText").textContent = message;
+  document.getElementById("confirmActionButton").textContent = buttonText;
+
+  confirmCallback = callback;
+  document.getElementById("confirmModal").style.display = "flex";
+}
+
+function closeConfirmModal(confirmed) {
+  document.getElementById("confirmModal").style.display = "none";
+
+  const callback = confirmCallback;
+  confirmCallback = null;
+
+  if (confirmed && typeof callback === "function") {
+    callback();
+  }
+}
+
 </script>
 
 </body>
