@@ -196,13 +196,14 @@ footer p{color:#d6ebf8}
   <div class="section-heading" style="margin-top:42px;margin-bottom:20px">
    <span class="section-kicker">ASÍ DE FÁCIL</span><h2>¿Cómo se usa la página?</h2>
   </div>
-  <div class="steps-grid">
-   <article class="step-card"><div class="step-icon">📝</div><h3>1. Publicá</h3><p>Contá qué trabajo necesitás realizar o qué servicio ofrecés. Completá los datos y publicá.</p></article>
-   <article class="step-card"><div class="step-icon">🔎</div><h3>2. Buscá</h3><p>Explorá las changas disponibles. Podés buscar por provincia, rubro o palabra clave.</p></article>
-   <article class="step-card"><div class="step-icon">📲</div><h3>3. Contactá</h3><p>Encontraste lo que buscabas. Contactá directamente por WhatsApp y conversá los detalles.</p></article>
-  </div>
-  <div class="callout"><span style="font-size:29px">💡</span><span>¡No necesitás ser una empresa! Cualquier persona puede ofrecer un servicio o publicar una changa.</span></div>
- </div>
+ <div class="steps-grid">
+  <article class="step-card">
+    <div class="step-icon">📝</div>
+    <h3>1. Publicá</h3>
+    <p>Contá qué trabajo necesitás realizar o qué servicio ofrecés.</p>
+  </article>
+</div>
+</div>
 </section>
 
 <section class="section" style="background:#f9fcff">
@@ -243,6 +244,83 @@ footer p{color:#d6ebf8}
   <div id="emptyMessage" class="empty" style="display:none"><div class="emoji">🔍</div><h3 style="color:var(--blue-dark);font-size:21px;font-weight:900">Todavía no encontramos publicaciones</h3><p>Probá cambiar los filtros o volvé a buscar más tarde.</p><button class="btn btn-primary" onclick="openPublish()">Publicar una changa</button></div>
  </div>
 </section>
+
+<!-- SERVICIOS DISPONIBLES -->
+<section class="section listing-section" id="services">
+ <div class="container">
+
+  <div class="listing-top">
+   <div>
+    <span class="section-kicker">PROFESIONALES Y TRABAJADORES</span>
+    <h2>Servicios disponibles 🛠️</h2>
+    <p style="color:var(--muted);margin:5px 0 0">
+     Encontrá personas que ofrecen servicios en tu provincia.
+    </p>
+   </div>
+   <span class="tag" id="servicesCount">Servicios disponibles</span>
+  </div>
+
+  <div class="panel search-panel">
+   <div class="filters">
+    <input class="field" id="serviceSearchInput"
+     type="search" placeholder="🔎 ¿Qué servicio necesitás?">
+
+    <select class="field" id="serviceProvinceFilter">
+     <option value="">Todas las provincias</option>
+    </select>
+
+    <select class="field" id="serviceCategoryFilter">
+     <option value="">Todos los rubros</option>
+    </select>
+
+    <button class="btn btn-primary" onclick="loadServices()">
+     Buscar
+    </button>
+   </div>
+  </div>
+
+  <div id="servicesContainer" class="job-grid"></div>
+
+ </div>
+
+</section>
+
+<!-- ===================================
+     GESTIÓN DE POSTULACIONES
+=================================== -->
+
+<section class="section" id="applicationsSection" style="display:none">
+ <div class="container">
+
+  <div class="section-heading">
+   <span class="section-kicker">TU ACTIVIDAD</span>
+   <h2>Mis postulaciones 🙋</h2>
+   <p>Consultá el estado de los trabajos a los que te postulaste.</p>
+  </div>
+
+  <div id="myApplicationsContainer" class="job-grid"></div>
+
+  <div class="section-heading" style="margin-top:40px">
+   <span class="section-kicker">CONTRATACIONES</span>
+   <h2>Postulantes recibidos 🤝</h2>
+   <p>Revisá quiénes quieren trabajar con vos y elegí a una persona.</p>
+  </div>
+
+  <div id="receivedApplicationsContainer" class="job-grid"></div>
+
+  <div class="section-heading" style="margin-top:40px">
+   <span class="section-kicker">REPUTACIÓN</span>
+   <h2>Mis calificaciones ⭐</h2>
+   <p>Calificá a las personas con las que trabajaste y consultá tus opiniones recibidas.</p>
+  </div>
+
+  <div id="pendingReviewsContainer" class="job-grid"></div>
+
+  <div id="myReviewsContainer" class="job-grid"></div>
+
+ </div>
+</section>
+
 </main>
 
 <footer><div class="container"><div style="font-size:25px;font-weight:900">🚀 Changa Ya!</div><p>Conectamos personas, trabajos y oportunidades.</p><small>Una oportunidad puede empezar acá.</small></div></footer>
@@ -252,6 +330,7 @@ footer p{color:#d6ebf8}
  <button onclick="scrollToJobs()"><span>🔎</span>Buscar</button>
  <button onclick="openPublish()"><span>➕</span>Publicar</button>
  <button onclick="openMyProfile()"><span>👤</span>Mi perfil</button>
+<button onclick="openApplications()"><span>📋</span>Mi actividad</button>
  <button onclick="openMyPlan()"><span>⭐</span>Mi plan</button>
 </nav>
 
@@ -304,22 +383,97 @@ footer p{color:#d6ebf8}
  <div id="profileMessage" class="message"></div>
 </div></div>
 
-<div class="modal-bg" id="publishModal"><div class="modal">
- <button class="modal-close" onclick="closeModal('publishModal')">×</button>
- <h2>Publicá tu changa 📣</h2><p class="modal-subtitle">Contanos qué trabajo necesitás o qué servicio ofrecés.</p>
- <form id="publishForm">
-  <div class="form-group"><label for="jobTitle">¿Qué trabajo es?</label><input class="field" id="jobTitle" required maxlength="100" placeholder="Ej. Busco pintor para una casa"></div>
-  <div class="form-group"><label for="jobCategory">Rubro</label><select class="field" id="jobCategory" required><option value="">Seleccioná un rubro</option></select></div>
-  <div class="form-group"><label for="jobDescription">Descripción</label><textarea class="field" id="jobDescription" rows="4" maxlength="1500" required placeholder="Contá los detalles del trabajo..."></textarea></div>
-  <div class="form-group"><label for="jobBudget">Pago o presupuesto (opcional)</label><input class="field" id="jobBudget" maxlength="80" placeholder="Ej. A convenir o $30.000"></div>
-  <div class="form-group"><label for="jobPhone">WhatsApp de contacto</label><input class="field" id="jobPhone" type="tel" required maxlength="25" placeholder="Código de área + número"></div>
-  <div class="form-group"><label for="jobProvince">Provincia</label><select class="field" id="jobProvince" required></select></div>
-  <div class="form-group"><label for="jobCity">Ciudad o localidad</label><input class="field" id="jobCity" required maxlength="100" placeholder="Ciudad"></div>
-  <div class="form-group"><label for="jobDuration">¿Cuánto tiempo querés que esté publicada?</label><select class="field" id="jobDuration" required><option value="24">24 horas</option><option value="48">48 horas</option><option value="72" selected>72 horas</option><option value="96">96 horas</option></select></div>
-  <button id="publishSubmit" class="btn btn-primary" style="width:100%" type="submit">Publicar changa</button>
- </form>
- <div id="publishMessage" class="message"></div>
-</div></div>
+
+<!-- PUBLICAR EN CHANGA YA -->
+<div class="modal-bg" id="publishModal">
+ <div class="modal">
+  <button class="modal-close" onclick="closeModal('publishModal')">×</button>
+
+  <h2>¿Qué querés publicar? 📣</h2>
+  <p class="modal-subtitle">Elegí cómo querés participar en Changa Ya!</p>
+
+  <div id="publishChoices" style="display:grid;gap:14px;margin:20px 0">
+
+   <button type="button" class="btn btn-primary"
+    style="width:100%;padding:18px;white-space:normal"
+    onclick="selectPublishType('changa')">
+    🔎 Necesito un trabajo
+    <small style="display:block;margin-top:6px">Publicar una changa que necesito realizar</small>
+   </button>
+
+   <button type="button" class="btn btn-light"
+    style="width:100%;padding:18px;white-space:normal"
+    onclick="selectPublishType('servicio')">
+    🛠️ Ofrezco un servicio
+    <small style="display:block;margin-top:6px">Mostrar lo que sé hacer y conseguir clientes</small>
+   </button>
+
+  </div>
+
+  <div id="changaFormContainer" style="display:none">
+   <button type="button" class="btn btn-light"
+    onclick="backToPublishChoices()">← Volver</button>
+
+   <h3 style="margin-top:18px">Publicar una changa</h3>
+
+   <form id="publishForm">
+    <div class="form-group"><label for="jobTitle">¿Qué trabajo necesitás?</label><input class="field" id="jobTitle" required maxlength="100" placeholder="Ej. Busco pintor para una casa"></div>
+    <div class="form-group"><label for="jobCategory">Rubro</label><select class="field" id="jobCategory" required><option value="">Seleccioná un rubro</option></select></div>
+    <div class="form-group"><label for="jobDescription">Descripción</label><textarea class="field" id="jobDescription" rows="4" maxlength="1500" required placeholder="Contá los detalles del trabajo..."></textarea></div>
+    <div class="form-group"><label for="jobBudget">Pago o presupuesto (opcional)</label><input class="field" id="jobBudget" maxlength="80" placeholder="Ej. A convenir o $30.000"></div>
+    <div class="form-group"><label for="jobPhone">WhatsApp de contacto</label><input class="field" id="jobPhone" type="tel" required maxlength="25" placeholder="Código de área + número"></div>
+    <div class="form-group"><label for="jobProvince">Provincia</label><select class="field" id="jobProvince" required></select></div>
+    <div class="form-group"><label for="jobCity">Ciudad o localidad</label><input class="field" id="jobCity" required maxlength="100" placeholder="Ciudad"></div>
+    <div class="form-group"><label for="jobDuration">¿Cuánto tiempo querés que esté publicada?</label><select class="field" id="jobDuration" required><option value="24">24 horas</option><option value="48">48 horas</option><option value="72" selected>72 horas</option><option value="96">96 horas</option></select></div>
+    <button id="publishSubmit" class="btn btn-primary" style="width:100%" type="submit">Publicar changa</button>
+   </form>
+   <div id="publishMessage" class="message"></div>
+  </div>
+
+  <div id="serviceFormContainer" style="display:none">
+   <button type="button" class="btn btn-light"
+    onclick="backToPublishChoices()">← Volver</button>
+
+   <h3 style="margin-top:18px">Ofrecer un servicio</h3>
+   <p class="modal-subtitle"> Ofrecé tus servicios y conectá con personas que necesitan tu trabajo. </p>
+
+   <div class="form-group">
+    <label>¿Qué servicio ofrecés?</label>
+    <input class="field" id="serviceTitle" maxlength="100" placeholder="Ej. Electricista a domicilio">
+   </div>
+   <div class="form-group">
+    <label>Rubro</label>
+    <select class="field" id="serviceCategory">
+     <option value="">Seleccioná un rubro</option>
+    </select>
+   </div>
+   <div class="form-group">
+    <label>Descripción</label>
+    <textarea class="field" id="serviceDescription" rows="4" maxlength="1500" placeholder="Contá qué servicios ofrecés..."></textarea>
+   </div>
+   <div class="form-group">
+    <label>Provincia</label>
+    <select class="field" id="serviceProvince"></select>
+   </div>
+   <div class="form-group">
+    <label>Ciudad o localidad</label>
+    <input class="field" id="serviceCity" maxlength="100" placeholder="Ciudad">
+   </div>
+   <div class="form-group">
+    <label>WhatsApp de contacto</label>
+    <input class="field" id="servicePhone" type="tel" maxlength="25" placeholder="Código de área + número">
+   </div>
+   <div id="serviceMessage" class="message" style="display:none"></div>
+
+<button type="button" class="btn btn-primary"
+ id="serviceSubmit" onclick="publishService()">
+ Publicar servicio
+</button>
+  </div>
+
+ </div>
+</div>
+
 
 <!-- EDITAR PUBLICACIÓN -->
 <div class="modal-bg" id="editJobModal"><div class="modal">
@@ -376,6 +530,7 @@ const {createClient}=window.supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser=null,currentProfile=null,allJobs=[];
+let allServices=[];
 let loadingJobs=false,refreshRequested=false,recoveryMode=false;
 
 const categories=[
@@ -493,13 +648,26 @@ function fillSelect(id,items){
 }
 
 function populateCategories(){
- ["categoryFilter","jobCategory","editJobCategory"].forEach(id=>{
+ [
+  "categoryFilter",
+  "jobCategory",
+  "editJobCategory",
+  "serviceCategory",
+  "serviceCategoryFilter"
+ ].forEach(id=>{
   fillSelect(id,categories);
  });
 }
 
 function populateProvinces(){
- ["provinceFilter","profileProvince","jobProvince","editJobProvince"].forEach(id=>{
+ [
+  "provinceFilter",
+  "profileProvince",
+  "jobProvince",
+  "editJobProvince",
+  "serviceProvince",
+  "serviceProvinceFilter"
+ ].forEach(id=>{
   fillSelect(id,provinces);
  });
 }
@@ -675,7 +843,10 @@ async function handleUser(user){
  currentUser=user;
 
  if(!user){
+
   currentProfile=null;
+  $("provinceFilter").value="";
+ $("serviceProvinceFilter").value="";
   $("loginBtn").style.display="inline-flex";
   $("publishBtn").style.display="inline-flex";
   $("userMenu").style.display="none";
@@ -687,6 +858,11 @@ async function handleUser(user){
  $("userMenu").style.display="flex";
 
  await loadProfile();
+
+ if(currentProfile?.province){
+  $("provinceFilter").value=currentProfile.province;
+$("serviceProvinceFilter").value=currentProfile.province;
+ }
 }
 
 async function loadProfile(){
@@ -741,6 +917,28 @@ function openProfile(required=false){
 function openMyProfile(){
  if(!currentUser)return openAuth();
  openProfile(false);
+}
+
+function openApplications(){
+
+ if(!currentUser)return openAuth();
+
+ closeModal("profileModal");
+ closeModal("planModal");
+
+ const section=$("applicationsSection");
+
+ if(!section)return;
+
+ section.style.display="block";
+
+ section.scrollIntoView({
+  behavior:"smooth",
+  block:"start"
+ });
+
+ loadApplications();
+ loadReviews();
 }
 
 $("profilePhoto").addEventListener("change",e=>{
@@ -807,12 +1005,15 @@ $("profileForm").addEventListener("submit",async e=>{
   if(error)throw error;
 
   currentProfile=profileData;
+$("provinceFilter").value=province;
+$("serviceProvinceFilter").value=province;
   $("headerAvatar").src=avatarUrl;
 
   closeModal("profileModal");
   $("profileModal").querySelector(".modal-close").style.display="block";
 
   await loadJobs();
+await loadServices();
 
   showSuccessModal(
    "¡Perfil guardado!",
@@ -987,6 +1188,28 @@ function renderMyPlan(plan,subscription,plans,used){
 // PUBLICAR CHANGAS
 // =============================================
 
+function selectPublishType(type){
+ $("publishChoices").style.display="none";
+ $("changaFormContainer").style.display=
+  type==="changa"?"block":"none";
+ $("serviceFormContainer").style.display=
+  type==="servicio"?"block":"none";
+
+ if(type==="servicio"){
+  $("serviceProvince").innerHTML=$("jobProvince").innerHTML;
+  $("serviceProvince").value=currentProfile?.province||"";
+  $("serviceCity").value=currentProfile?.city||"";
+  $("servicePhone").value="";
+  $("serviceCategory").innerHTML=$("jobCategory").innerHTML;
+ }
+}
+
+function backToPublishChoices(){
+ $("changaFormContainer").style.display="none";
+ $("serviceFormContainer").style.display="none";
+ $("publishChoices").style.display="grid";
+}
+
 async function openPublish(){
  if(!currentUser){
   openAuth();
@@ -1008,74 +1231,476 @@ async function openPublish(){
  hideMessage("publishMessage");
 
  $("jobProvince").value=currentProfile.province;
- $("jobCity").value=currentProfile.city;
- $("jobTitle").value="";
- $("jobCategory").value="";
- $("jobDescription").value="";
- $("jobBudget").value="";
- $("jobPhone").value="";
- $("jobDuration").value="72";
-
+ $("jobCity").value=currentProfile.city||"";
  openModal("publishModal");
 }
 
-$("publishForm").addEventListener("submit",async e=>{
- e.preventDefault();
- hideMessage("publishMessage");
+ }catch(error){
+  console.error("Error cargando postulaciones:",error);
+  myContainer.innerHTML="<p>No pudimos cargar tus postulaciones.</p>";
+  receivedContainer.innerHTML="<p>No pudimos cargar los postulantes.</p>";
+ }
+}
 
- if(!currentUser||!currentProfile)return openAuth();
+// =============================================
+// CALIFICACIONES MUTUAS
+// =============================================
 
- const title=$("jobTitle").value.trim();
- const category=$("jobCategory").value;
- const description=$("jobDescription").value.trim();
- const budget=$("jobBudget").value.trim();
- const phone=normalizePhone($("jobPhone").value);
- const province=$("jobProvince").value;
- const city=$("jobCity").value.trim();
- const duration=Number($("jobDuration").value);
+async function loadReviews(){
 
- if(!title||!category||!description||!province||!city)
-  return showMessage("publishMessage","Completá todos los campos obligatorios.","error");
+ const pendingContainer=$("pendingReviewsContainer");
+ const myContainer=$("myReviewsContainer");
 
- if(phone.length<10||phone.length>15)
-  return showMessage("publishMessage","Revisá el número de WhatsApp. Debe incluir código de área.","error");
+ if(!pendingContainer||!myContainer)return;
 
- if(![24,48,72,96].includes(duration))
-  return showMessage("publishMessage","Elegí una duración válida.","error");
-
- const button=$("publishSubmit");
- setButtonLoading(button,true,"Publicar changa");
+ if(!currentUser){
+  pendingContainer.innerHTML="";
+  myContainer.innerHTML="";
+  return;
+ }
 
  try{
-  const now=new Date();
-  const expiresAt=new Date(now.getTime()+duration*60*60*1000);
 
-  const {error}=await db.from("changas").insert({
-   title,category,description,budget:budget||null,
-   province,city,
-   client_name:currentProfile.full_name,
-   client_phone:phone,
+  // BUSCAR CHANGAS FINALIZADAS DEL USUARIO
+  const {data:jobs,error:jobsError}=await db
+   .from("changas")
+   .select("id,title,owner_id,worker_id,completed_at")
+   .not("completed_at","is",null)
+   .or(`owner_id.eq.${currentUser.id},worker_id.eq.${currentUser.id}`);
+
+  if(jobsError)throw jobsError;
+
+  // BUSCAR CALIFICACIONES REALIZADAS
+  const {data:givenReviews,error:givenError}=await db
+   .from("calificaciones_trabajadores")
+   .select("changa_id,reviewer_id")
+   .eq("reviewer_id",currentUser.id);
+
+  if(givenError)throw givenError;
+
+  const alreadyReviewed=new Set(
+   (givenReviews||[]).map(r=>String(r.changa_id))
+  );
+
+  // IDENTIFICAR TRABAJOS PENDIENTES
+  const pending=(jobs||[]).filter(job=>
+   !alreadyReviewed.has(String(job.id)) &&
+   (job.owner_id===currentUser.id || job.worker_id===currentUser.id)
+  );
+
+  // BUSCAR PERFILES
+  const profileIds=[...new Set(
+   (jobs||[]).flatMap(job=>[job.owner_id,job.worker_id]).filter(Boolean)
+  )];
+
+  let profiles=[];
+
+  if(profileIds.length){
+   const {data,error}=await db
+    .from("profiles")
+    .select("id,full_name")
+    .in("id",profileIds);
+
+   if(error)throw error;
+   profiles=data||[];
+  }
+
+  const profileMap={};
+  profiles.forEach(profile=>{
+   profileMap[profile.id]=profile.full_name||"Usuario";
+  });
+
+  // MOSTRAR CALIFICACIONES PENDIENTES
+  if(!pending.length){
+
+   pendingContainer.innerHTML=
+    "<p>No tenés calificaciones pendientes. ⭐</p>";
+
+  }else{
+
+   pendingContainer.innerHTML=pending.map(job=>{
+
+    const isOwner=job.owner_id===currentUser.id;
+    const revieweeId=isOwner?job.worker_id:job.owner_id;
+    const revieweeName=profileMap[revieweeId]||"Usuario";
+
+    return `
+     <article class="job-card">
+      <h3>${escapeHTML(job.title||"Changa #"+job.id)}</h3>
+
+      <p>Calificá a: <strong>${escapeHTML(revieweeName)}</strong></p>
+
+      <form data-review-form
+       data-job-id="${job.id}"
+       data-reviewee-id="${revieweeId}">
+
+       <label>Calificación</label>
+
+       <select name="stars" required>
+        <option value="">Elegí las estrellas</option>
+        <option value="1">⭐ 1 estrella</option>
+        <option value="2">⭐⭐ 2 estrellas</option>
+        <option value="3">⭐⭐⭐ 3 estrellas</option>
+        <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
+        <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
+       </select>
+
+       <label>Comentario</label>
+
+       <textarea name="comment"
+        placeholder="Contá cómo fue tu experiencia..."></textarea>
+
+       <button type="submit">
+        Enviar calificación
+       </button>
+
+      </form>
+     </article>
+    `;
+
+   }).join("");
+
+  }
+
+  // ENVIAR CALIFICACIONES
+  pendingContainer.querySelectorAll("[data-review-form]")
+   .forEach(form=>{
+
+    form.addEventListener("submit",async event=>{
+
+     event.preventDefault();
+
+     const jobId=Number(form.dataset.jobId);
+     const revieweeId=form.dataset.revieweeId;
+     const stars=Number(form.querySelector('[name="stars"]').value);
+     const comment=form.querySelector('[name="comment"]').value.trim();
+
+     if(!stars||stars<1||stars>5){
+      alert("Elegí una calificación de 1 a 5 estrellas.");
+      return;
+     }
+
+     const button=form.querySelector("button");
+     button.disabled=true;
+     button.textContent="Enviando...";
+
+     try{
+
+      const {error}=await db
+       .from("calificaciones_trabajadores")
+       .insert({
+        changa_id:jobId,
+        reviewer_id:currentUser.id,
+        reviewee_id:revieweeId,
+        stars:stars,
+        comment:comment
+       });
+
+      if(error)throw error;
+
+      alert("¡Calificación enviada correctamente! ⭐");
+
+      await loadReviews();
+
+     }catch(error){
+
+      console.error("Error enviando calificación:",error);
+      alert("No pudimos enviar la calificación. Intentá nuevamente.");
+
+      button.disabled=false;
+      button.textContent="Enviar calificación";
+
+     }
+
+    });
+
+   });
+
+  // BUSCAR CALIFICACIONES RECIBIDAS
+  const {data:receivedReviews,error:receivedError}=await db
+   .from("calificaciones_trabajadores")
+   .select("changa_id,reviewer_id,stars,comment,created_at")
+   .eq("reviewee_id",currentUser.id)
+   .order("created_at",{ascending:false});
+
+  if(receivedError)throw receivedError;
+
+  if(!receivedReviews||!receivedReviews.length){
+
+   myContainer.innerHTML=
+    "<p>Todavía no recibiste calificaciones.</p>";
+
+  }else{
+
+   // BUSCAR NOMBRES Y TRABAJOS
+   const reviewerIds=[...new Set(
+    receivedReviews.map(r=>r.reviewer_id)
+   )];
+
+   const jobIds=[...new Set(
+    receivedReviews.map(r=>r.changa_id)
+   )];
+
+   const {data:reviewerProfiles,error:reviewerError}=await db
+    .from("profiles")
+    .select("id,full_name")
+    .in("id",reviewerIds);
+
+   if(reviewerError)throw reviewerError;
+
+   const {data:reviewedJobs,error:reviewedJobsError}=await db
+    .from("changas")
+    .select("id,title")
+    .in("id",jobIds);
+
+   if(reviewedJobsError)throw reviewedJobsError;
+
+   const reviewerMap={};
+   (reviewerProfiles||[]).forEach(profile=>{
+    reviewerMap[profile.id]=profile.full_name||"Usuario";
+   });
+
+   const jobMap={};
+   (reviewedJobs||[]).forEach(job=>{
+    jobMap[job.id]=job.title||"Changa #"+job.id;
+   });
+
+   // MOSTRAR CALIFICACIONES RECIBIDAS
+   myContainer.innerHTML=receivedReviews.map(review=>`
+
+    <article class="job-card">
+
+     <h3>${escapeHTML(jobMap[review.changa_id]||"Changa")}</h3>
+
+     <p>
+      <strong>${escapeHTML(reviewerMap[review.reviewer_id]||"Usuario")}</strong>
+     </p>
+
+     <p>${"⭐".repeat(review.stars)}</p>
+
+     <p>${escapeHTML(review.comment||"Sin comentario")}</p>
+
+     <small>
+      ${new Date(review.created_at).toLocaleDateString("es-AR")}
+     </small>
+
+    </article>
+
+   `).join("");
+
+  }
+
+ }catch(error){
+
+  console.error("Error cargando calificaciones:",error);
+
+  pendingContainer.innerHTML=
+   "<p>No pudimos cargar las calificaciones pendientes.</p>";
+
+  myContainer.innerHTML=
+   "<p>No pudimos cargar tus calificaciones recibidas.</p>";
+
+ }
+
+}
+
+// =============================================
+// INICIO DE LA APLICACIÓN
+// =============================================
+
+async function startApp(){
+ populateCategories();
+ populateProvinces();
+
+// =============================================
+// PUBLICAR CHANGAS
+// =============================================
+
+const publishForm = $("publishForm");
+
+if (publishForm) {
+  publishForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const button = $("publishSubmit");
+
+    hideMessage("publishMessage");
+    setButtonLoading(button, true, "Publicando...");
+
+    try {
+      if (!currentUser) {
+        throw new Error("Tenés que iniciar sesión para publicar.");
+      }
+
+      const title = $("jobTitle").value.trim();
+      const category = $("jobCategory").value;
+      const description = $("jobDescription").value.trim();
+      const budget = $("jobBudget").value.trim() || "A convenir";
+      const phone = $("jobPhone").value.trim();
+      const province = $("jobProvince").value;
+      const city = $("jobCity").value.trim();
+      const duration = Number($("jobDuration").value);
+
+      const normalizedPhone = normalizePhone(phone);
+      const phoneDigits = normalizedPhone.replace(/\D/g, "");
+
+      if (
+        !title ||
+        !category ||
+        !description ||
+        !province ||
+        !city ||
+        !phone
+      ) {
+        throw new Error("Completá todos los campos obligatorios.");
+      }
+
+      if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+        throw new Error("Ingresá un número de WhatsApp válido.");
+      }
+
+      if (![24, 48, 72, 96].includes(duration)) {
+        throw new Error("Seleccioná una duración válida.");
+      }
+
+      const expiresAt = new Date(
+        Date.now() + duration * 60 * 60 * 1000
+      ).toISOString();
+
+      const { error } = await db
+        .from("changas")
+        .insert({
+          title: title,
+          category: category,
+          description: description,
+          budget: budget,
+          client_name: currentProfile?.full_name || "Usuario",
+          client_phone: normalizedPhone,
+          province: province,
+          city: city,
+          status: "disponible",
+          owner_id: currentUser.id,
+          expires_at: expiresAt
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      publishForm.reset();
+
+      closeModal("publishModal");
+
+      try {
+        await loadJobs();
+      } catch (refreshError) {
+        console.error("Error al actualizar las changas:", refreshError);
+      }
+
+      showSuccessModal(
+        "¡Changa publicada!",
+        "Tu publicación ya está disponible en Changa Ya."
+      );
+
+    } catch (error) {
+      console.error("Error al publicar changa:", error);
+
+      showMessage(
+        "publishMessage",
+        error.message || "No pudimos publicar la changa. Intentá nuevamente.",
+        "error"
+      );
+
+    } finally {
+      setButtonLoading(button, false, "Publicar changa");
+    }
+  });
+}
+
+// =============================================
+// PUBLICAR SERVICIOS
+// =============================================
+
+async function publishService(){
+
+ hideMessage("serviceMessage");
+
+ if(!currentUser||!currentProfile){
+  openAuth();
+  return;
+ }
+
+ const title=$("serviceTitle").value.trim();
+ const category=$("serviceCategory").value;
+ const description=$("serviceDescription").value.trim();
+ const province=$("serviceProvince").value;
+ const city=$("serviceCity").value.trim();
+ const phone=normalizePhone($("servicePhone").value);
+
+ if(!title||!category||!description||!province||!city||!phone){
+  return showMessage(
+   "serviceMessage",
+   "Completá todos los campos obligatorios.",
+   "error"
+  );
+ }
+
+ if(phone.length<10||phone.length>15){
+  return showMessage(
+   "serviceMessage",
+   "Revisá el número de WhatsApp. Debe incluir código de área.",
+   "error"
+  );
+ }
+
+ const button=$("serviceSubmit");
+ setButtonLoading(button,true,"Publicar servicio");
+
+ try{
+
+  const {error}=await db.from("servicios").insert({
    owner_id:currentUser.id,
-   status:"disponible",
-   created_at:now.toISOString(),
-   expires_at:expiresAt.toISOString()
+   title:title,
+   category:category,
+   description:description,
+   province:province,
+   city:city,
+   contact_phone:phone,
+   active:true
   });
 
   if(error)throw error;
 
-  $("publishForm").reset();
-  closeModal("publishModal");
-  showSuccessModal("¡Changa publicada!", "Tu publicación ya está disponible en Changa Ya! 🚀");
+await loadServices();
 
-  await loadJobs();
-  scrollToJobs();
+$("serviceTitle").value="";
+  $("serviceCategory").value="";
+  $("serviceDescription").value="";
+  $("servicePhone").value="";
+
+  closeModal("publishModal");
+
+  showSuccessModal(
+   "¡Servicio publicado!",
+   "Tu servicio ya fue publicado en Changa Ya! 🚀"
+  );
 
  }catch(error){
-  showMessage("publishMessage",error.message||"No pudimos publicar tu changa.","error");
+
+  console.error("Error publicando servicio:",error);
+
+  showMessage(
+   "serviceMessage",
+   error.message||"No pudimos publicar tu servicio.",
+   "error"
+  );
+
  }finally{
-  setButtonLoading(button,false,"Publicar changa");
+
+  setButtonLoading(button,false,"Publicar servicio");
+
  }
-});
+}
 
 // =============================================
 // EDITAR PUBLICACIONES PROPIAS
@@ -1163,7 +1788,7 @@ $("editJobForm").addEventListener("submit",async e=>{
    title,
    category,
    description,
-   budget:budget||null,
+   budget:budget||"A convenir",
    client_phone:phone,
    province,
    city
@@ -1280,8 +1905,263 @@ async function deleteJob(id){
 }
 
 // =============================================
-// CARGAR PUBLICACIONES
+// CARGAR Y MOSTRAR SERVICIOS
 // =============================================
+
+const exampleServices = [
+ {
+  title:"Albañilería y refacciones",
+  category:"Albañilería",
+  description:"Trabajos de albañilería, revoques, colocación de pisos y refacciones.",
+  city:"Rosario",
+  province:"Santa Fe"
+ },
+ {
+  title:"Electricista domiciliario",
+  category:"Electricidad",
+  description:"Instalaciones eléctricas, reparaciones y mantenimiento del hogar.",
+  city:"Córdoba",
+  province:"Córdoba"
+ },
+ {
+  title:"Plomería en general",
+  category:"Plomería",
+  description:"Reparación de pérdidas, instalaciones de agua y mantenimiento.",
+  city:"Resistencia",
+  province:"Chaco"
+ },
+ {
+  title:"Pintura de casas",
+  category:"Pintura",
+  description:"Pintura interior y exterior. Trabajos particulares y comerciales.",
+  city:"Mendoza",
+  province:"Mendoza"
+ },
+ {
+  title:"Barbería y peluquería",
+  category:"Barbería",
+  description:"Cortes de cabello, barba, perfilados y atención personalizada.",
+  city:"Santa Fe",
+  province:"Santa Fe"
+ },
+ {
+  title:"Limpieza de hogares",
+  category:"Limpieza",
+  description:"Limpieza general de casas, departamentos y oficinas.",
+  city:"Buenos Aires",
+  province:"Buenos Aires"
+ },
+ {
+  title:"Jardinería y mantenimiento",
+  category:"Jardinería",
+  description:"Corte de césped, poda y mantenimiento de jardines.",
+  city:"Paraná",
+  province:"Entre Ríos"
+ },
+ {
+  title:"Fletes y mudanzas",
+  category:"Fletes y mudanzas",
+  description:"Traslados, pequeñas mudanzas y transporte de muebles.",
+  city:"San Miguel de Tucumán",
+  province:"Tucumán"
+ }
+];
+
+async function loadServices(){
+
+ try{
+
+  if(!currentUser){
+
+   allServices=exampleServices.map(service=>({
+    ...service,
+    isExample:true
+   }));
+
+  }else{
+
+   const {data,error}=await db
+    .from("servicios")
+    .select("*")
+    .eq("active",true)
+    .order("created_at",{ascending:false});
+
+   if(error)throw error;
+
+   allServices=data||[];
+
+  }
+
+  await renderServices();
+
+ }catch(error){
+
+  console.error("Error cargando servicios:",error);
+
+  $("servicesContainer").innerHTML=`
+   <div class="empty" style="grid-column:1/-1">
+    <div class="emoji">⚠️</div>
+    <h3>No pudimos cargar los servicios</h3>
+    <p>Revisá tu conexión e intentá nuevamente.</p>
+    <button class="btn btn-primary" onclick="loadServices()">
+     Volver a intentar
+    </button>
+   </div>`;
+
+  $("servicesCount").textContent="Error al cargar";
+
+ }
+}
+
+// =============================================
+// MOSTRAR SERVICIOS
+// =============================================
+
+async function renderServices(){
+
+ const search=$("serviceSearchInput").value.trim().toLowerCase();
+ const province=$("serviceProvinceFilter").value;
+ const category=$("serviceCategoryFilter").value;
+
+ const filtered=allServices.filter(service=>{
+
+  const text=[
+   service.title,
+   service.description,
+   service.category,
+   service.city,
+   service.province
+  ].join(" ").toLowerCase();
+
+  return (!search||text.includes(search))&&
+   (!province||service.province===province)&&
+   (!category||service.category===category);
+
+ });
+
+ $("servicesCount").textContent=
+  `${filtered.length} ${filtered.length===1?"servicio":"servicios"}`;
+
+ $("servicesContainer").innerHTML="";
+
+ if(!filtered.length){
+
+  $("servicesContainer").innerHTML=`
+   <div class="empty" style="grid-column:1/-1">
+    <div class="emoji">🔎</div>
+    <h3>No encontramos servicios</h3>
+    <p>Probá cambiar los filtros de búsqueda.</p>
+   </div>`;
+
+  return;
+ }
+
+ const ownerIds=[
+  ...new Set(
+   filtered
+    .filter(service=>!service.isExample)
+    .map(service=>service.owner_id)
+    .filter(Boolean)
+  )
+ ];
+
+ let profiles={};
+
+ if(ownerIds.length){
+
+  const {data,error}=await db
+   .from("profiles")
+   .select("id,full_name,avatar_url")
+   .in("id",ownerIds);
+
+  if(!error){
+   (data||[]).forEach(profile=>{
+    profiles[profile.id]=profile;
+   });
+  }
+
+ }
+
+ filtered.forEach(service=>{
+
+  const profile=profiles[service.owner_id]||{};
+
+  const name=service.isExample
+   ?"Servicio de ejemplo"
+   :(profile.full_name||"Usuario");
+
+  const avatar=profile.avatar_url||
+   "https://placehold.co/100x100/e8f7ff/1267a5?text=YA";
+
+  const phone=currentUser&&!service.isExample
+   ?normalizePhone(service.contact_phone)
+   :"";
+
+  const whatsappText=encodeURIComponent(
+   `Hola, vi tu servicio "${service.title}" en Changa Ya! y me interesa.`
+  );
+
+  const whatsappLink=phone
+   ?`https://wa.me/${phone}?text=${whatsappText}`
+   :"";
+
+  const isOwner=!!currentUser&&
+   !service.isExample&&
+   currentUser.id===service.owner_id;
+
+  const date=service.created_at
+   ?new Date(service.created_at).toLocaleDateString("es-AR")
+   :"";
+
+  const card=document.createElement("article");
+
+  card.className="job-card";
+
+  card.innerHTML=`
+   ${service.isExample
+    ?'<span class="featured-tag">EJEMPLO</span>'
+    :""}
+
+   <span class="tag">${escapeHTML(service.category)}</span>
+
+   <h3>${escapeHTML(service.title)}</h3>
+
+   <p>${escapeHTML(service.description)}</p>
+
+   <div class="job-meta">
+    <span>📍 ${escapeHTML(service.city)}, ${escapeHTML(service.province)}</span>
+    ${date?`<span>📅 ${date}</span>`:""}
+   </div>
+
+   <div class="job-owner">
+    <img class="avatar"
+     src="${escapeHTML(avatar)}"
+     alt="Foto de ${escapeHTML(name)}"
+     onerror="this.src='https://placehold.co/100x100/e8f7ff/1267a5?text=YA'">
+
+    <div>
+     <strong>${escapeHTML(name)}</strong>
+     <small>${service.isExample?"Publicación ilustrativa":"Persona que ofrece el servicio"}</small>
+    </div>
+   </div>
+
+   <div class="job-actions">
+    ${whatsappLink?
+     `<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`:
+     service.isExample
+      ?'<span class="tag">Ejemplo ilustrativo</span>'
+      :isOwner
+       ?'<span class="tag">Tu publicación</span>'
+       :'<span class="tag">Contacto no disponible</span>'}
+   </div>
+  `;
+
+  $("servicesContainer").appendChild(card);
+
+ });
+
+}
+
 
 async function loadJobs(){
  if(loadingJobs){
@@ -1292,8 +2172,14 @@ async function loadJobs(){
  loadingJobs=true;
 
  try{
+  // Los visitantes reciben únicamente los datos públicos.
+  // Los usuarios registrados pueden consultar todos los campos.
+  const columns=currentUser
+   ? "*"
+   : "id,title,category,province,city,budget,description,created_at,status,expires_at,destacado_hasta,owner_id";
+
   const {data,error}=await db.from("changas")
-   .select("*")
+   .select(columns)
    .order("created_at",{ascending:false});
 
   if(error)throw error;
@@ -1355,6 +2241,27 @@ async function renderJobs(){
   }
  }
 
+ // =============================================
+ // MIS POSTULACIONES
+ // =============================================
+
+ let myApplications={};
+
+ if(currentUser){
+  const {data,error}=await db
+   .from("postulaciones")
+   .select("changa_id,status")
+   .eq("applicant_id",currentUser.id);
+
+  if(error){
+   console.error("Error consultando postulaciones:",error);
+  }else{
+   (data||[]).forEach(application=>{
+    myApplications[application.changa_id]=application.status;
+   });
+  }
+ }
+
  const filtered=allJobs.filter(job=>{
   const text=[
    job.title,job.description,job.category,job.city,job.province
@@ -1400,7 +2307,9 @@ async function renderJobs(){
   const date=job.created_at?
    new Date(job.created_at).toLocaleDateString("es-AR"):"";
 
-  const phone=normalizePhone(job.client_phone);
+const phone=currentUser
+ ? normalizePhone(job.client_phone)
+ : "";
 
   const whatsappText=encodeURIComponent(
    `Hola ${name}, vi tu publicación "${job.title}" en Changa Ya! y me interesa.`
@@ -1410,6 +2319,19 @@ async function renderJobs(){
    `https://wa.me/${phone}?text=${whatsappText}`:"";
 
   const isOwner=!!currentUser&&currentUser.id===job.owner_id;
+
+  const applicationStatus=myApplications[job.id];
+
+  const canApply=
+   !!currentUser&&
+   !isOwner&&
+   job.status==="disponible"&&
+   !applicationStatus;
+
+  const applicationLabel=
+   applicationStatus==="pendiente"?"Postulación enviada":
+   applicationStatus==="seleccionado"?"¡Fuiste seleccionado!":
+   applicationStatus==="no_seleccionado"?"No seleccionado":"";
 
   const estaDestacada=job.destacado_hasta&&
    new Date(job.destacado_hasta).getTime()>Date.now();
@@ -1442,10 +2364,15 @@ async function renderJobs(){
     </div>
    </div>
 
-   <div class="job-actions">
-    ${whatsappLink?
+    <div class="job-actions">
+    ${whatsappLink&&!isOwner?
      `<a class="btn btn-primary" href="${whatsappLink}" target="_blank" rel="noopener noreferrer">📲 Contactar por WhatsApp</a>`:
-     '<span class="tag">Contacto no disponible</span>'}
+     (!isOwner?'<span class="tag">Contacto no disponible</span>':"")}
+
+    ${canApply?
+     `<button class="btn btn-primary" data-apply="${escapeHTML(job.id)}">🙋 Postularme</button>`:
+     (applicationStatus?
+      `<span class="tag">${escapeHTML(applicationLabel)}</span>`:"")}
 
     ${isOwner?`
      ${tieneDestacadoGratis?
@@ -1458,6 +2385,56 @@ async function renderJobs(){
    </div>`;
 
   $("jobsContainer").appendChild(card);
+ });
+
+ // =============================================
+ // POSTULARSE A UNA CHANGA
+ // =============================================
+
+ $("jobsContainer").querySelectorAll("[data-apply]").forEach(button=>{
+  button.addEventListener("click",async()=>{
+
+   if(!currentUser){
+    showMessage("publishMessage","Tenés que iniciar sesión para postularte.","error");
+    return;
+   }
+
+   const changaId=Number(button.dataset.apply);
+
+   button.disabled=true;
+   button.textContent="Enviando...";
+
+   try{
+    const {error}=await db
+     .from("postulaciones")
+     .insert({
+      changa_id:changaId,
+      applicant_id:currentUser.id
+     });
+
+    if(error)throw error;
+
+    showSuccessModal(
+     "¡Postulación enviada!",
+     "El dueño de la changa ya puede ver tu postulación."
+    );
+
+    await loadJobs();
+
+   }catch(error){
+    console.error("Error al postularse:",error);
+
+    showSuccessModal(
+     "No se pudo enviar",
+     error.code==="23505"
+      ?"Ya te postulaste a esta changa."
+      :(error.message||"Intentá nuevamente.")
+    );
+
+    button.disabled=false;
+    button.textContent="🙋 Postularme";
+   }
+  });
  });
 
  $("jobsContainer").querySelectorAll("[data-finish]").forEach(button=>{
@@ -1564,12 +2541,9 @@ async function confirmFinishJob(){
  button.textContent="Confirmando...";
 
  try{
-  const {error}=await db.from("changas").update({
-   status:"conseguida",
-   finished_at:new Date().toISOString()
-  })
-  .eq("id",id)
-  .eq("owner_id",currentUser.id);
+  const {error}=await db.rpc("finalizar_changa",{
+ p_changa_id:Number(id)
+});
 
   if(error)throw error;
 
@@ -1581,8 +2555,11 @@ async function confirmFinishJob(){
   );
 
   await loadJobs();
+  await loadApplications();
+  await loadReviews();
 
  }catch(error){
+
   showSuccessModal(
    "No pudimos actualizar la publicación",
    error.message||"Intentá nuevamente."
@@ -1602,6 +2579,10 @@ $("searchInput").addEventListener("input",renderJobs);
 $("provinceFilter").addEventListener("change",renderJobs);
 $("categoryFilter").addEventListener("change",renderJobs);
 
+$("serviceSearchInput").addEventListener("input",renderServices);
+$("serviceProvinceFilter").addEventListener("change",renderServices);
+$("serviceCategoryFilter").addEventListener("change",renderServices);
+
 // =============================================
 // ACTUALIZACIONES EN TIEMPO REAL
 // =============================================
@@ -1615,6 +2596,211 @@ db.channel("changas-en-vivo")
  .subscribe();
 
 // =============================================
+// CARGAR POSTULACIONES
+// =============================================
+
+async function loadApplications(){
+
+ if(!currentUser)return;
+
+ const myContainer=$("myApplicationsContainer");
+ const receivedContainer=$("receivedApplicationsContainer");
+
+ if(!myContainer||!receivedContainer)return;
+
+ myContainer.innerHTML="<p>Cargando postulaciones...</p>";
+ receivedContainer.innerHTML="<p>Cargando postulantes...</p>";
+
+ try{
+
+  // Postulaciones enviadas por el usuario
+  const {data:mine,error:mineError}=await db
+   .from("postulaciones")
+   .select("id,changa_id,status,created_at")
+   .eq("applicant_id",currentUser.id)
+   .order("created_at",{ascending:false});
+
+  if(mineError)throw mineError;
+
+    if(!mine||!mine.length){
+
+   myContainer.innerHTML="<p>Todavía no te postulaste a ninguna changa.</p>";
+
+  }else{
+
+   const myJobIds=[...new Set(mine.map(app=>app.changa_id))];
+
+   const {data:myJobs,error:myJobsError}=await db
+    .from("changas")
+    .select("id,title,city,province")
+    .in("id",myJobIds);
+
+   if(myJobsError)throw myJobsError;
+
+   const myJobsMap={};
+
+   (myJobs||[]).forEach(job=>{
+    myJobsMap[job.id]=job;
+   });
+
+   myContainer.innerHTML=mine.map(app=>{
+
+    const job=myJobsMap[app.changa_id];
+
+    const statusLabel=
+     app.status==="pendiente"?"Postulación pendiente":
+     app.status==="seleccionado"?"¡Fuiste seleccionado!":
+     app.status==="no_seleccionado"?"No seleccionado":
+     app.status;
+
+    return `
+     <article class="job-card">
+      <h3>${escapeHTML(job?.title||"Changa")}</h3>
+      <p>📍 ${escapeHTML(job?.city||"")}, ${escapeHTML(job?.province||"")}</p>
+      <span class="tag">${escapeHTML(statusLabel)}</span>
+      <p>Fecha: ${new Date(app.created_at).toLocaleDateString("es-AR")}</p>
+     </article>
+    `;
+
+   }).join("");
+
+  }
+
+  // Postulaciones recibidas en publicaciones propias
+  const {data:jobs,error:jobsError}=await db
+   .from("changas")
+   .select("id,title")
+   .eq("owner_id",currentUser.id);
+
+  if(jobsError)throw jobsError;
+
+  const jobIds=(jobs||[]).map(job=>job.id);
+
+  if(!jobIds.length){
+   receivedContainer.innerHTML="<p>Todavía no tenés postulantes.</p>";
+   return;
+  }
+
+  const {data:received,error:receivedError}=await db
+   .from("postulaciones")
+   .select("id,changa_id,applicant_id,status,created_at")
+   .in("changa_id",jobIds)
+   .order("created_at",{ascending:false});
+
+  if(receivedError)throw receivedError;
+
+  // Buscar los nombres de los postulantes
+  const applicantIds=[
+   ...new Set((received||[]).map(app=>app.applicant_id))
+  ];
+
+  let applicantProfiles={};
+
+  if(applicantIds.length){
+
+   const {data:profiles,error:profilesError}=await db
+    .from("profiles")
+    .select("id,full_name")
+    .in("id",applicantIds);
+
+   if(profilesError)throw profilesError;
+
+   (profiles||[]).forEach(profile=>{
+    applicantProfiles[profile.id]=profile;
+   });
+  }
+
+  if(!received||!received.length){
+   receivedContainer.innerHTML="<p>Todavía no recibiste postulaciones.</p>";
+  }else{
+   receivedContainer.innerHTML=received.map(app=>{
+    const job=jobs.find(item=>item.id===app.changa_id);
+    const profile=applicantProfiles[app.applicant_id]||{};
+    const applicantName=profile.full_name||"Usuario";
+
+    return `
+     <article class="job-card">
+      <h3>${escapeHTML(job?.title||"Changa")}</h3>
+     <p>Postulante: ${escapeHTML(applicantName)}</p>
+      <span class="tag">${escapeHTML(app.status)}</span>
+      ${app.status==="pendiente"?`
+       <button class="btn btn-primary"
+        data-select-app="${app.id}"
+        data-changa="${app.changa_id}">
+        Elegir trabajador
+       </button>
+      `:""}
+     </article>
+    `;
+   }).join("");
+  }
+
+
+  // =============================================
+  // ELEGIR TRABAJADOR
+  // =============================================
+
+  receivedContainer.querySelectorAll("[data-select-app]").forEach(button=>{
+   button.addEventListener("click",async()=>{
+
+    const changaId=Number(button.dataset.changa);
+    const postulationId=Number(button.dataset.selectApp);
+
+    showConfirmModal(
+     "¿Elegir a este trabajador?",
+     "Esta persona será seleccionada y las demás postulaciones pendientes quedarán como no seleccionadas.",
+     async function(){
+
+      button.disabled=true;
+      button.textContent="Seleccionando...";
+
+      try{
+
+       const {error}=await db.rpc("seleccionar_trabajador",{
+        p_changa_id:changaId,
+        p_postulacion_id:postulationId
+       });
+
+       if(error)throw error;
+
+       showSuccessModal(
+        "¡Trabajador seleccionado!",
+        "La persona fue seleccionada correctamente. Las demás postulaciones pendientes fueron cerradas."
+       );
+
+       await loadApplications();
+       await loadJobs();
+
+      }catch(error){
+
+       console.error("Error seleccionando trabajador:",error);
+
+       showSuccessModal(
+        "No pudimos seleccionar",
+        error.message||"Intentá nuevamente."
+       );
+
+       button.disabled=false;
+       button.textContent="Elegir trabajador";
+
+      }
+
+     },
+     "Sí, elegir"
+    );
+
+   });
+  });
+
+ }catch(error){
+  console.error("Error cargando postulaciones:",error);
+
+  myContainer.innerHTML="<p>No pudimos cargar tus postulaciones.</p>";
+  receivedContainer.innerHTML="<p>No pudimos cargar los postulantes.</p>";
+ }
+}
+
+// =============================================
 // INICIO DE LA APLICACIÓN
 // =============================================
 
@@ -1625,11 +2811,13 @@ async function startApp(){
  try{
   const {data,error}=await db.auth.getSession();
 
-  if(error)throw error;
+  if(error)throw error; 
 
   await handleUser(data?.session?.user||null);
   await loadJobs();
-
+  await loadServices();
+await loadApplications();
+  await loadReviews();
   const hash=window.location.hash;
 
   if(hash.includes("type=recovery")||hash.includes("access_token")){
@@ -1662,15 +2850,21 @@ db.auth.onAuthStateChange((event,session)=>{
   setTimeout(async()=>{
    await handleUser(session?.user||null);
    await loadJobs();
+    await loadServices();
+await loadApplications();
+await loadReviews();
   },0);
  }
 
  if(event==="SIGNED_OUT"){
   setTimeout(async()=>{
-   await handleUser(null);
-   await loadJobs();
+    await handleUser(null);
+    await loadJobs();
+await loadServices();
+await loadApplications();
+await loadReviews();
   },0);
- }
+}
 
  if(event==="USER_UPDATED"){
   currentUser=session?.user||currentUser;
